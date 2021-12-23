@@ -81,7 +81,6 @@ GLuint ShaderLoader::CreateGeometryProgram(const char* VertexShaderFilename, con
 		return 0;
 	}
 	return program;
-
 }
 
 GLuint ShaderLoader::CreateShader(GLenum shaderType, const char* shaderName)

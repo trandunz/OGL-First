@@ -1,4 +1,5 @@
 #include "NumptyBehavior.h"
+#include "ShaderLoader.h"
 
 void CleanupAllPointers();
 
@@ -54,7 +55,6 @@ int main()
 	// Main Update & Render Loop
 	while (!glfwWindowShouldClose(m_RenderWindow))
 	{
-
 		glfwGetFramebufferSize(m_RenderWindow, &width, &height);
 
 		glViewport(0, 0, width, height);
@@ -65,7 +65,7 @@ int main()
 		glfwPollEvents();
 
 		// Body 
-
+		
 
 		
 
