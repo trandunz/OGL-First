@@ -1,14 +1,26 @@
-﻿  Main.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(43,1): warning C4150: deletion of pointer to incomplete type 'GLFWwindow'; no destructor called
+﻿  CCircle.cpp
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCircle.cpp(30,11): warning C4305: '+=': truncation from 'double' to 'GLfloat'
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCircle.cpp(32,11): warning C4305: '-=': truncation from 'double' to 'GLfloat'
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCircle.cpp(34,11): warning C4305: '+=': truncation from 'double' to 'GLfloat'
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCircle.cpp(36,11): warning C4305: '-=': truncation from 'double' to 'GLfloat'
+  CShape.cpp
+  CTriangle.cpp
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.cpp(31,11): warning C4305: '+=': truncation from 'double' to 'GLfloat'
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.cpp(33,11): warning C4305: '-=': truncation from 'double' to 'GLfloat'
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.cpp(35,11): warning C4305: '+=': truncation from 'double' to 'GLfloat'
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.cpp(37,11): warning C4305: '-=': truncation from 'double' to 'GLfloat'
+  Main.cpp
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(50,1): warning C4150: deletion of pointer to incomplete type 'GLFWwindow'; no destructor called
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\include\GLFW\glfw3.h(1186): message : see declaration of 'GLFWwindow'
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(33): message : see reference to function template instantiation 'void NumptyBehavior::DeletePointer<T>(T *)' being compiled
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(40): message : see reference to function template instantiation 'void NumptyBehavior::DeletePointer<T>(T *)' being compiled
           with
           [
               T=GLFWwindow
           ]
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(101): message : see reference to function template instantiation 'void NumptyBehavior::CleanupPointer<GLFWwindow>(T *)' being compiled
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(112): message : see reference to function template instantiation 'void NumptyBehavior::CleanupPointer<GLFWwindow>(T *)' being compiled
           with
           [
               T=GLFWwindow
           ]
+  Generating Code...
   OGL.vcxproj -> C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Debug\OGL.exe

@@ -1,12 +1,14 @@
 #pragma once
 
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include<fstream>
-#include<vector>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <vector>
+#include <algorithm>
 
 class NumptyBehavior
 {

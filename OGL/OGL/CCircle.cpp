@@ -1,7 +1,27 @@
 #include "CCircle.h"
 
+CCircle::~CCircle()
+{
+}
+
 void CCircle::Start()
 {
+	m_ShaderProgram = CShaderLoader::CreateShaderProgram("Resources/Shaders/TriangleShader.vs", "Resources/Shaders/TriangleShader.fs");
+	glGenBuffers(1, &VAO);
+
+	glGenBuffers(1, &VBO);
+	// 1. bind Vertex Array Object
+	glBindVertexArray(VAO);
+	// 2. copy our vertices array in a buffer for OpenGL to use
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	// 3. then set our vertex attributes pointers
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
 }
 
 void CCircle::Input(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -23,14 +43,7 @@ void CCircle::Update()
 
 void CCircle::Render()
 {
-	glColor3f(r, g, b);
-	glBegin(GL_POLYGON);
-	for (int i = 0; i < 360; i++)
-	{
-		float rad = i * (3.141592654 / 180);
-		// 3f is 3d hence 0 z
-		// Transformation Matrix + Translation
-		glVertex3f((cos(rad) * 1.f) + x, (sin(rad) * 1.f) + y, 0);
-	}
-	glEnd();
+	glUseProgram(m_ShaderProgram);
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
