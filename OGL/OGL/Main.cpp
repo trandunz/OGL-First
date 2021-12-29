@@ -60,7 +60,7 @@ void InitGLFW()
 	glfwSetErrorCallback(error_callback);
 
 	// Check if glfw Initalises correctly
-	if (!glfwInit())
+	if (glfwInit() == GLFW_FALSE)
 	{
 		std::cout << "Failed to Initalise GLFW" << std::endl;
 	}
@@ -80,9 +80,10 @@ void InitGLFW()
 	glfwSetKeyCallback(m_RenderWindow, key_callback);
 
 	glfwMakeContextCurrent(m_RenderWindow);
+
 	glfwSwapInterval(1);
 
-	if (!glewInit())
+	if (!glewInit() == GLFW_FALSE)
 	{
 		std::cout << "Failed to Initalise GLEW" << std::endl;
 	}

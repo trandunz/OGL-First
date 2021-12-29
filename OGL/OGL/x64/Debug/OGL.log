@@ -1,6 +1,14 @@
-﻿  CTriangle.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.cpp(48,11): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.cpp(50,11): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.cpp(52,11): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.cpp(54,11): warning C4305: '-=': truncation from 'double' to 'GLfloat'
+﻿  Main.cpp
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(50,1): warning C4150: deletion of pointer to incomplete type 'GLFWwindow'; no destructor called
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\include\GLFW\glfw3.h(1186): message : see declaration of 'GLFWwindow'
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(40): message : see reference to function template instantiation 'void NumptyBehavior::DeletePointer<T>(T *)' being compiled
+          with
+          [
+              T=GLFWwindow
+          ]
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(113): message : see reference to function template instantiation 'void NumptyBehavior::CleanupPointer<GLFWwindow>(T *)' being compiled
+          with
+          [
+              T=GLFWwindow
+          ]
   OGL.vcxproj -> C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Debug\OGL.exe
