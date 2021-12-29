@@ -25,7 +25,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 	
-	m_CircleTest->Input(window, key, scancode, action, mods);
+	//m_CircleTest->Input(window, key, scancode, action, mods);
 	m_TriangleTest->Input(window, key, scancode, action, mods);
 }
 
@@ -92,9 +92,9 @@ void Start()
 {
 	InitGLFW();
 
-	if (!m_CircleTest)
+	/*if (!m_CircleTest)
 		m_CircleTest = new CCircle;
-	m_CircleTest->Start();
+	m_CircleTest->Start();*/
 
 	if (!m_TriangleTest)
 		m_TriangleTest = new CTriangle;
@@ -103,7 +103,7 @@ void Start()
 
 void Update()
 {
-	m_CircleTest->Update();
+	//m_CircleTest->Update();
 	m_TriangleTest->Update();
 }
 
