@@ -7,7 +7,7 @@ public:
     virtual ~CTriangle();
     void Start();
     void Input(GLFWwindow* window, int key, int scancode, int action, int mods);
-    void Update();
+    void Update(float _dt, GLFWwindow* _renderWindow);
     void Render();
 private:
 	// Vertices coordinates
@@ -28,4 +28,21 @@ private:
 		3, 2, 4, // Lower right triangle
 		5, 4, 1 // Upper triangle
 	};
+
+	std::map<int, bool> keypresses;
+
+	float m_MovementSpeed = 1.f;
+
+	float m_dt;
+
+	void Movement(float _dt)
+	{
+		if (UpdateVertexPositions(x * _dt, y * _dt, z * _dt))
+		{
+			ShaderNonsense();
+		}
+	}
+
+	void ShaderNonsense();
+	bool UpdateVertexPositions(float _x = 0.0f, float _y = 0.0f, float _z = 0.0f);
 };

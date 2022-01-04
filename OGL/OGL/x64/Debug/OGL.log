@@ -1,12 +1,21 @@
 ﻿  Main.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(50,1): warning C4150: deletion of pointer to incomplete type 'GLFWwindow'; no destructor called
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(136,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(137,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(138,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CShape.h(21,25): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CProp.h(12,63): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CProp.h(12,49): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CProp.h(12,35): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(130,19): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(175,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(158,1): warning C4150: deletion of pointer to incomplete type 'GLFWwindow'; no destructor called
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\include\GLFW\glfw3.h(1186): message : see declaration of 'GLFWwindow'
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(40): message : see reference to function template instantiation 'void NumptyBehavior::DeletePointer<T>(T *)' being compiled
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(85): message : see reference to function template instantiation 'void NumptyBehavior::DeletePointer<T>(T *)' being compiled
           with
           [
               T=GLFWwindow
           ]
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(113): message : see reference to function template instantiation 'void NumptyBehavior::CleanupPointer<GLFWwindow>(T *)' being compiled
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(163): message : see reference to function template instantiation 'void NumptyBehavior::CleanupPointer<GLFWwindow>(T *)' being compiled
           with
           [
               T=GLFWwindow

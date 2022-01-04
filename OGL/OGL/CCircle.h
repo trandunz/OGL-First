@@ -11,12 +11,15 @@ public:
     void Render();
 
 private:
-    GLfloat vertices[9]
-    {
-        -0.5f, ( - 0.5f * float(sqrt(3)) / 3), 0.0f,
-        0.5f, ( - 0.5f * float(sqrt(3)) / 3), 0.0f,
-        0.0f, (0.5f * float(sqrt(3)) * 2 / 3), 0.0f,
-    };
+	// Vertices coordinates
+	Vector3 vertices[360]{};
 
+	// Indices for vertices order
+	GLuint indices[9] =
+	{
+		0, 3, 5, // Lower left triangle
+		3, 2, 4, // Lower right triangle
+		5, 4, 1 // Upper triangle
+	};
 };
 

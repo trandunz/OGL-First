@@ -150,12 +150,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CCircle.cpp" />
+    <ClCompile Include="CProp.cpp" />
     <ClCompile Include="CShape.cpp" />
     <ClCompile Include="CTriangle.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCircle.h" />
+    <ClInclude Include="CProp.h" />
     <ClInclude Include="CShaderLoader.h" />
     <ClInclude Include="CShape.h" />
     <ClInclude Include="CTriangle.h" />

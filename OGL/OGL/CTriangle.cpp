@@ -6,10 +6,131 @@ CTriangle::~CTriangle()
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
 	glDeleteProgram(m_ShaderProgram);
+	
+	keypresses.clear();
 }
 
 void CTriangle::Start()
 {
+	ShaderNonsense();
+}
+
+void CTriangle::Input(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	x = 0.0f;
+	y = 0.0f;
+	z = 0.0f;
+
+	if (action == GLFW_PRESS)
+	{
+		keypresses[key] = true;
+	}
+	else if (action == GLFW_RELEASE)
+	{
+		keypresses[key] = false;
+	}
+
+	for (auto& item : keypresses)
+	{
+		if (item.second == true)
+		{
+			switch (item.first)
+			{
+			case GLFW_KEY_D:
+			{
+				x += m_MovementSpeed;
+				break;
+			}
+			case GLFW_KEY_A:
+			{
+				x -= m_MovementSpeed;
+				break;
+			}
+			case GLFW_KEY_W:
+			{
+				y += m_MovementSpeed;
+				break;
+			}
+			case GLFW_KEY_S:
+			{
+				y -= m_MovementSpeed;
+			}
+			
+			case GLFW_KEY_SPACE:
+			{
+				z += m_MovementSpeed;
+			}
+			case GLFW_KEY_LEFT_CONTROL:
+			{
+				z -= m_MovementSpeed;
+				break;
+			}
+			default:
+				break;
+			}
+		}
+	}
+	
+	if (y > m_MovementSpeed)
+	{
+		y = m_MovementSpeed;
+	}
+	else if (y < -m_MovementSpeed)
+	{
+		y = -m_MovementSpeed;
+	}
+
+	if (x > m_MovementSpeed)
+	{
+		x = m_MovementSpeed;
+	}
+	else if (x < -m_MovementSpeed)
+	{
+		x = -m_MovementSpeed;
+	}
+
+	if (z > m_MovementSpeed)
+	{
+		z = m_MovementSpeed;
+	}
+	else if (z < -m_MovementSpeed)
+	{
+		z = -m_MovementSpeed;
+	}
+
+
+}
+
+void CTriangle::Update(float _dt, GLFWwindow* _renderWindow)
+{
+	m_dt = _dt;
+	Movement(m_dt);
+	
+	Render();
+}
+
+void CTriangle::Render()
+{
+	glUseProgram(m_ShaderProgram);
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+}
+
+void CTriangle::ShaderNonsense()
+{
+	if (m_ShaderProgram)
+	{
+		glDeleteVertexArrays(1, &VAO);
+		glDeleteBuffers(1, &VBO);
+		glDeleteBuffers(1, &EBO);
+
+		glDeleteVertexArrays(0, &VAO);
+		glDeleteBuffers(0, &VBO);
+		glDeleteBuffers(0, &EBO);
+
+		glDeleteProgram(m_ShaderProgram);
+	}
+
 	m_ShaderProgram = CShaderLoader::CreateShaderProgram("Resources/Shaders/TriangleShader.vs", "Resources/Shaders/TriangleShader.fs");
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -42,26 +163,39 @@ void CTriangle::Start()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void CTriangle::Input(GLFWwindow* window, int key, int scancode, int action, int mods)
+bool CTriangle::UpdateVertexPositions(float _x, float _y, float _z)
 {
-	if (key == GLFW_KEY_D && action == GLFW_PRESS)
-		x += 0.1;
-	if (key == GLFW_KEY_A && action == GLFW_PRESS)
-		x -= 0.1;
-	if (key == GLFW_KEY_W && action == GLFW_PRESS)
-		y += 0.1;
-	if (key == GLFW_KEY_S && action == GLFW_PRESS)
-		y -= 0.1;
-}
+	bool moved = false;
+	if (_x >= 0.000000001 || _x <= -0.000000001)
+	{
+		vertices[0] += _x;
+		vertices[3] += _x;
+		vertices[6] += _x;
+		vertices[9] += _x;
+		vertices[12] += _x;
+		vertices[15] += _x;
+		moved = true;
+	}
+	if (_y >= 0.000000001 || _y <= -0.000000001)
+	{
+		vertices[1] += _y;
+		vertices[4] += _y;
+		vertices[7] += _y;
+		vertices[10] += _y;
+		vertices[13] += _y;
+		vertices[16] += _y;
+		moved = true;
+	}
+	if (_z >= 0.000000001 || _z <= -0.000000001)
+	{
+		vertices[2] += _z;
+		vertices[5] += _z;
+		vertices[8] += _z;
+		vertices[11] += _z;
+		vertices[14] += _z;
+		vertices[17] += _z;
+		moved = true;
+	}
 
-void CTriangle::Update()
-{
-	Render();
-}
-
-void CTriangle::Render()
-{
-	glUseProgram(m_ShaderProgram);
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+	return moved;
 }
