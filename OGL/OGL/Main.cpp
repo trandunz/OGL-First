@@ -1,4 +1,3 @@
-#include "CCircle.h"
 #include "CTriangle.h"
 #include "CProp.h"
 

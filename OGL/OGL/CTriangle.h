@@ -37,7 +37,7 @@ private:
 
 	void Movement(float _dt)
 	{
-		if (UpdateVertexPositions(x * _dt, y * _dt, z * _dt))
+		if (UpdateVertexPositions(m_Velocity.x * _dt, m_Velocity.y * _dt, m_Velocity.z * _dt))
 		{
 			ShaderNonsense();
 		}

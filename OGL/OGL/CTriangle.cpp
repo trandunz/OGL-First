@@ -17,9 +17,9 @@ void CTriangle::Start()
 
 void CTriangle::Input(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	x = 0.0f;
-	y = 0.0f;
-	z = 0.0f;
+	m_Velocity.x = 0.0f;
+	m_Velocity.y = 0.0f;
+	m_Velocity.z = 0.0f;
 
 	if (action == GLFW_PRESS)
 	{
@@ -38,31 +38,31 @@ void CTriangle::Input(GLFWwindow* window, int key, int scancode, int action, int
 			{
 			case GLFW_KEY_D:
 			{
-				x += m_MovementSpeed;
+				m_Velocity.x += m_MovementSpeed;
 				break;
 			}
 			case GLFW_KEY_A:
 			{
-				x -= m_MovementSpeed;
+				m_Velocity.x -= m_MovementSpeed;
 				break;
 			}
 			case GLFW_KEY_W:
 			{
-				y += m_MovementSpeed;
+				m_Velocity.y += m_MovementSpeed;
 				break;
 			}
 			case GLFW_KEY_S:
 			{
-				y -= m_MovementSpeed;
+				m_Velocity.y -= m_MovementSpeed;
 			}
 			
 			case GLFW_KEY_SPACE:
 			{
-				z += m_MovementSpeed;
+				m_Velocity.z += m_MovementSpeed;
 			}
 			case GLFW_KEY_LEFT_CONTROL:
 			{
-				z -= m_MovementSpeed;
+				m_Velocity.z -= m_MovementSpeed;
 				break;
 			}
 			default:
@@ -71,34 +71,32 @@ void CTriangle::Input(GLFWwindow* window, int key, int scancode, int action, int
 		}
 	}
 	
-	if (y > m_MovementSpeed)
+	if (m_Velocity.y > m_MovementSpeed)
 	{
-		y = m_MovementSpeed;
+		m_Velocity.y = m_MovementSpeed;
 	}
-	else if (y < -m_MovementSpeed)
+	else if (m_Velocity.y < -m_MovementSpeed)
 	{
-		y = -m_MovementSpeed;
-	}
-
-	if (x > m_MovementSpeed)
-	{
-		x = m_MovementSpeed;
-	}
-	else if (x < -m_MovementSpeed)
-	{
-		x = -m_MovementSpeed;
+		m_Velocity.y = -m_MovementSpeed;
 	}
 
-	if (z > m_MovementSpeed)
+	if (m_Velocity.x > m_MovementSpeed)
 	{
-		z = m_MovementSpeed;
+		m_Velocity.x = m_MovementSpeed;
 	}
-	else if (z < -m_MovementSpeed)
+	else if (m_Velocity.x < -m_MovementSpeed)
 	{
-		z = -m_MovementSpeed;
+		m_Velocity.x = -m_MovementSpeed;
 	}
 
-
+	if (m_Velocity.z > m_MovementSpeed)
+	{
+		m_Velocity.z = m_MovementSpeed;
+	}
+	else if (m_Velocity.z < -m_MovementSpeed)
+	{
+		m_Velocity.z = -m_MovementSpeed;
+	}
 }
 
 void CTriangle::Update(float _dt, GLFWwindow* _renderWindow)

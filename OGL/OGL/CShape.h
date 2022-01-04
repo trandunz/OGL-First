@@ -14,9 +14,7 @@ protected:
     GLuint VAO, VBO, EBO;
     GLuint m_ShaderProgram;
 
-    GLfloat x = 0.0f;
-    GLfloat y = 0.0f;
-    GLfloat z = 0.0f;
+    Vector3 m_Velocity;
 
     GLfloat aspectRatio = 1.77777777778; // 16:9
 };
