@@ -4,12 +4,18 @@
 class CTriangle : public CShape
 {
 public:
+	CTriangle(std::map<int,bool>& _keyMap);
     virtual ~CTriangle();
     void Start();
     void Input(GLFWwindow* window, int key, int scancode, int action, int mods);
     void Update(float _dt, GLFWwindow* _renderWindow);
     void Render();
-private:
+
+	void SetAspectRatio(float _value)
+	{
+		aspectRatio = _value;
+	}
+protected:
 	// Vertices coordinates
 	GLfloat vertices[24] =
 	{
@@ -18,7 +24,7 @@ private:
 		0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,	// Upper corner
 		-0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,	// Inner left
 		0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,	// Inner right
-		0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f,		// Inner down
+		0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f		// Inner down
 	};
 
 	// Indices for vertices order
@@ -29,11 +35,15 @@ private:
 		5, 4, 1 // Upper triangle
 	};
 
-	std::map<int, bool> keypresses;
+
+
+	std::map<int, bool>* keypresses = nullptr;
 
 	float m_MovementSpeed = 1.f;
 
 	float m_dt;
+
+	float aspectRatio = 1.0f;
 
 	void Movement(float _dt)
 	{
@@ -45,4 +55,5 @@ private:
 
 	void ShaderNonsense();
 	bool UpdateVertexPositions(float _x = 0.0f, float _y = 0.0f, float _z = 0.0f);
+
 };

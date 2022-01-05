@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Resource Files\Shapes">
+      <UniqueIdentifier>{06a574c6-f0b9-4178-b85f-00aff2390b91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shapes\Square">
+      <UniqueIdentifier>{a971335c-3e23-44e2-a184-f487b8aba219}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shapes\Triangle">
+      <UniqueIdentifier>{ec6e781e-4857-4304-ac3c-332db9a0f828}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -25,6 +34,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CProp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CSquare.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,13 +56,25 @@
     <ClInclude Include="CProp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Textures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CSquare.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\TriangleShader.fs">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="Resources\Shaders\TriangleShader.vs">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Shapes\Triangle</Filter>
+    </None>
+    <None Include="Resources\Shaders\TriangleShader.fs">
+      <Filter>Resource Files\Shapes\Triangle</Filter>
+    </None>
+    <None Include="Resources\Shaders\SquareShader.fs">
+      <Filter>Resource Files\Shapes\Square</Filter>
+    </None>
+    <None Include="Resources\Shaders\SquareShader.vs">
+      <Filter>Resource Files\Shapes\Square</Filter>
     </None>
   </ItemGroup>
 </Project>

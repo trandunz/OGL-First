@@ -1,13 +1,18 @@
 #include "CTriangle.h"
 
+CTriangle::CTriangle(std::map<int, bool>& _keyMap)
+{
+	keypresses = &_keyMap;
+}
+
 CTriangle::~CTriangle()
 {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
 	glDeleteProgram(m_ShaderProgram);
-	
-	keypresses.clear();
+
+	keypresses = nullptr;
 }
 
 void CTriangle::Start()
@@ -21,16 +26,7 @@ void CTriangle::Input(GLFWwindow* window, int key, int scancode, int action, int
 	m_Velocity.y = 0.0f;
 	m_Velocity.z = 0.0f;
 
-	if (action == GLFW_PRESS)
-	{
-		keypresses[key] = true;
-	}
-	else if (action == GLFW_RELEASE)
-	{
-		keypresses[key] = false;
-	}
-
-	for (auto& item : keypresses)
+	for (auto& item : (*keypresses))
 	{
 		if (item.second == true)
 		{
@@ -56,7 +52,7 @@ void CTriangle::Input(GLFWwindow* window, int key, int scancode, int action, int
 				m_Velocity.y -= m_MovementSpeed;
 			}
 			
-			case GLFW_KEY_SPACE:
+			case GLFW_KEY_LEFT_SHIFT:
 			{
 				m_Velocity.z += m_MovementSpeed;
 			}

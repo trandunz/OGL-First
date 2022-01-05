@@ -1,11 +1,14 @@
 #include "CTriangle.h"
-#include "CProp.h"
+#include "CSquare.h"
 
-static int m_WindowWidth = 800;
-static int m_WindowHeight = 800;
+static int m_WindowWidth = 1600;
+static int m_WindowHeight = 900;
 
-static float deltaTime = 0.0f;	// Time between current frame and last frame
-static float lastFrame = 0.0f; // Time of last frame
+GLfloat halfScreenWidth = 1920 / 2;
+GLfloat halfScreenHeight = 1080 / 2;
+
+static long double deltaTime = 0.0;	// Time between current frame and last frame
+static long double lastFrame = 0.0; // Time of last frame
 
 void InitGLFW();
 void Start();
@@ -15,9 +18,15 @@ void CalculateDeltaTime();
 
 GLFWwindow* m_RenderWindow;
 CTriangle* m_TriangleTest;
+
+CSquare* m_CubeTest;
+
+
 std::vector<CProp*> m_Props;
 
 std::map<int, bool> m_Keypresses;
+
+GLuint m_TimeQuery;
 
 static void error_callback(int error, const char* description)
 {
@@ -26,7 +35,7 @@ static void error_callback(int error, const char* description)
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	// General Input
+	// Collect Input
 	if (action == GLFW_PRESS)
 	{
 		m_Keypresses[key] = true;
@@ -36,6 +45,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		m_Keypresses[key] = false;
 	}
 
+	// General Input
 	for (auto& item : m_Keypresses)
 	{
 		if (item.second == true)
@@ -49,6 +59,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 				// Only Single Press Thanks
 				m_Keypresses[key] = false;
 				break;
+
 			default:
 				break;
 			}
@@ -56,19 +67,20 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	}
 
 	// Object Input
-	m_TriangleTest->Input(window, key, scancode, action, mods);
+	//m_TriangleTest->Input(window, key, scancode, action, mods);
+	m_CubeTest->Input(window, key, scancode, action, mods);
 }
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
+	float aspect = (float)width / (float)height;
 	glViewport(0, 0, width, height);
 }
 
 static void window_content_scale_callback(GLFWwindow* window, float xscale, float yscale)
 {
-	//set_interface_scale(xscale, yscale);
 }
 
 int main()
@@ -78,10 +90,6 @@ int main()
 
 	while (!glfwWindowShouldClose(m_RenderWindow))
 	{
-
-		glfwGetFramebufferSize(m_RenderWindow, &m_WindowWidth, &m_WindowHeight);
-		glViewport(0, 0, m_WindowWidth, m_WindowHeight);
-		glfwSetFramebufferSizeCallback(m_RenderWindow, framebuffer_size_callback);
 		glClear(GL_COLOR_BUFFER_BIT);
 		//
 		// MAIN UPDATE
@@ -109,9 +117,9 @@ void InitGLFW()
 		std::cout << "Failed to Initalise GLFW" << std::endl;
 	}
 
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+	/*glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);*/
 
 	m_RenderWindow = glfwCreateWindow(m_WindowWidth, m_WindowHeight, "My Title", NULL, NULL);
 
@@ -123,45 +131,65 @@ void InitGLFW()
 
 	glfwSetKeyCallback(m_RenderWindow, key_callback);
 	glfwSetWindowContentScaleCallback(m_RenderWindow, window_content_scale_callback);
+	
 	glfwMakeContextCurrent(m_RenderWindow);
-	glfwSetWindowAspectRatio(m_RenderWindow, 16, 9);
+	
+	glViewport(0.0f, 0.0f, m_WindowWidth, m_WindowHeight); // specifies the part of the window to which OpenGL will draw (in pixels), convert from normalised to pixels
+	glMatrixMode(GL_PROJECTION); // projection matrix defines the properties of the camera that views the objects in the world coordinate frame. Here you typically set the zoom factor, aspect ratio and the near and far clipping planes
+	glLoadIdentity(); // replace the current matrix with the identity matrix and starts us a fresh because matrix transforms such as glOrpho and glRotate cumulate, basically puts us at (0, 0, 0)
+	glOrtho(0, m_WindowWidth, 0, m_WindowHeight, 0, 10000); // essentially set coordinate system
+	glMatrixMode(GL_MODELVIEW); // (default matrix mode) modelview matrix defines how your objects are transformed (meaning translation, rotation and scaling) in your world
+	glLoadIdentity(); // same as above comment
 
+	//glfwSetWindowAspectRatio(m_RenderWindow, 16, 9);
 	glfwSwapInterval(0.1f);
 
 	if (!glewInit() == GLFW_FALSE)
 	{
 		std::cout << "Failed to Initalise GLEW" << std::endl;
 	}
+
+	//glfwGetFramebufferSize(m_RenderWindow, &m_WindowWidth, &m_WindowHeight);
+	//glfwSetFramebufferSizeCallback(m_RenderWindow, framebuffer_size_callback);
 }
 
 void Start()
 {
 	InitGLFW();
 
-	if (!m_TriangleTest)
-		m_TriangleTest = new CTriangle;
-	m_TriangleTest->Start();
+	/*if (!m_TriangleTest)
+		m_TriangleTest = new CTriangle(m_Keypresses);
+	m_TriangleTest->Start();*/
 
-	m_Props.push_back(new CProp);
-	m_Props.back()->Start();
+	if (!m_CubeTest)
+		m_CubeTest = new CSquare(m_Keypresses);
+
+	//m_CubeTest->Start();
+
+	/*m_Props.push_back(new CSquare());
+	m_Props.back()->Start();*/
 }
 
 void Update()
 {
 	CalculateDeltaTime();
 
-	m_TriangleTest->Update(deltaTime, m_RenderWindow);
-	for (auto& item : m_Props)
+	//m_TriangleTest->Update(deltaTime, m_RenderWindow);
+
+	m_CubeTest->Update(deltaTime);
+
+	/*for (auto& item : m_Props)
 	{
 		item->Update();
-	}
+
+	}*/
 }
 
 void CleanupAllPointers()
 {
 	NumptyBehavior::CleanupPointer(m_RenderWindow);
 	NumptyBehavior::CleanupPointer(m_TriangleTest);
-
+	NumptyBehavior::CleanupPointer(m_CubeTest);
 	for (auto& item : m_Props)
 	{
 		NumptyBehavior::CleanupPointer(item);
