@@ -14,6 +14,7 @@ public:
 	};
 
 	virtual void Start() override {
+
 	};
 	virtual void Update(long double _dt){
 		glPushMatrix();
@@ -21,7 +22,6 @@ public:
 		glTranslatef(halfScreenWidth, halfScreenHeight, -500);
 		glRotatef(rotationX, 1, 0, 0);
 		glRotatef(rotationY, 0, 1, 0);
-
 		glTranslatef(-halfScreenWidth, -halfScreenHeight, 500);
 
 		DrawCircle(halfScreenWidth, halfScreenHeight, 0, 120, 36);
@@ -75,7 +75,7 @@ public:
 			glDeleteProgram(m_ShaderProgram);
 		}
 
-		m_ShaderProgram = CShaderLoader::CreateShaderProgram("Resources/Shaders/TriangleShader.vs", "Resources/Shaders/TriangleShader.fs");
+		m_ShaderProgram = CShaderLoader::CreateShader("Resources/Shaders/TriangleShader.vs", "Resources/Shaders/TriangleShader.fs");
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
 		glGenBuffers(1, &EBO);

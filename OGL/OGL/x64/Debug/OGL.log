@@ -1,39 +1,10 @@
-﻿  CSquare.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(136,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+﻿  CTriangle.cpp
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(137,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(138,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(139,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.h(69,26): warning C4244: 'initializing': conversion from 'GLdouble' to 'GLfloat', possible loss of data
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CShape.h(20,25): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CProp.h(13,63): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CProp.h(13,49): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CProp.h(13,35): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CSquare.h(114,1): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
-  Main.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(136,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(137,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(138,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CShape.h(20,25): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.h(50,82): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.h(50,62): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.h(50,42): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CProp.h(13,63): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CProp.h(13,49): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CProp.h(13,35): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CSquare.h(114,1): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(137,19): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(137,13): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(145,19): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(202,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(158,1): warning C4150: deletion of pointer to incomplete type 'GLFWwindow'; no destructor called
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\include\GLFW\glfw3.h(1186): message : see declaration of 'GLFWwindow'
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(85): message : see reference to function template instantiation 'void NumptyBehavior::DeletePointer<T>(T *)' being compiled
-          with
-          [
-              T=GLFWwindow
-          ]
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(190): message : see reference to function template instantiation 'void NumptyBehavior::CleanupPointer<GLFWwindow>(T *)' being compiled
-          with
-          [
-              T=GLFWwindow
-          ]
-  Generating Code...
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.h(57,82): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.h(57,62): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.h(57,42): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   OGL.vcxproj -> C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Debug\OGL.exe

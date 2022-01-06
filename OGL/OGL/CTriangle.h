@@ -8,7 +8,7 @@ public:
     virtual ~CTriangle();
     void Start();
     void Input(GLFWwindow* window, int key, int scancode, int action, int mods);
-    void Update(float _dt, GLFWwindow* _renderWindow);
+    void Update(float _dt, CCamera& _camera);
     void Render();
 
 	void SetAspectRatio(float _value)
@@ -17,7 +17,7 @@ public:
 	}
 protected:
 	// Vertices coordinates
-	GLfloat vertices[24] =
+	GLfloat vertices[18] =
 	{
 		-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,	// Lower left corner
 		0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,		// Lower right corner
@@ -44,6 +44,13 @@ protected:
 	float m_dt;
 
 	float aspectRatio = 1.0f;
+
+	GLfloat halfScreenWidth = 1920 / 2;
+	GLfloat halfScreenHeight = 1080 / 2;
+
+	GLfloat rotationX = 0.0f;
+	GLfloat rotationY = 0.0f;
+	const GLfloat rotationSpeed = 1;
 
 	void Movement(float _dt)
 	{

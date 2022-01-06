@@ -3,6 +3,7 @@
 CTriangle::CTriangle(std::map<int, bool>& _keyMap)
 {
 	keypresses = &_keyMap;
+	m_ShaderProgram = CShaderLoader::CreateShader("Resources/Shaders/TriangleShader.vs", "Resources/Shaders/TriangleShader.fs");
 }
 
 CTriangle::~CTriangle()
@@ -10,6 +11,11 @@ CTriangle::~CTriangle()
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
+
+	glDeleteVertexArrays(0, &VAO);
+	glDeleteBuffers(0, &VBO);
+	glDeleteBuffers(0, &EBO);
+
 	glDeleteProgram(m_ShaderProgram);
 
 	keypresses = nullptr;
@@ -51,16 +57,6 @@ void CTriangle::Input(GLFWwindow* window, int key, int scancode, int action, int
 			{
 				m_Velocity.y -= m_MovementSpeed;
 			}
-			
-			case GLFW_KEY_LEFT_SHIFT:
-			{
-				m_Velocity.z += m_MovementSpeed;
-			}
-			case GLFW_KEY_LEFT_CONTROL:
-			{
-				m_Velocity.z -= m_MovementSpeed;
-				break;
-			}
 			default:
 				break;
 			}
@@ -95,37 +91,27 @@ void CTriangle::Input(GLFWwindow* window, int key, int scancode, int action, int
 	}
 }
 
-void CTriangle::Update(float _dt, GLFWwindow* _renderWindow)
+void CTriangle::Update(float _dt, CCamera& _camera)
 {
 	m_dt = _dt;
 	Movement(m_dt);
-	
+
 	Render();
 }
 
 void CTriangle::Render()
 {
-	glUseProgram(m_ShaderProgram);
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, nullptr);
 }
 
 void CTriangle::ShaderNonsense()
 {
-	if (m_ShaderProgram)
-	{
-		glDeleteVertexArrays(1, &VAO);
-		glDeleteBuffers(1, &VBO);
-		glDeleteBuffers(1, &EBO);
+	// Cleanup
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 
-		glDeleteVertexArrays(0, &VAO);
-		glDeleteBuffers(0, &VBO);
-		glDeleteBuffers(0, &EBO);
-
-		glDeleteProgram(m_ShaderProgram);
-	}
-
-	m_ShaderProgram = CShaderLoader::CreateShaderProgram("Resources/Shaders/TriangleShader.vs", "Resources/Shaders/TriangleShader.fs");
+	// Generatee Buffers
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
@@ -135,26 +121,39 @@ void CTriangle::ShaderNonsense()
 
 	// Bind the VBO specifying it's a GL_ARRAY_BUFFER
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
 	// Introduce the vertices into the VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+
+	// Enable the Vertex Attribute so that OpenGL knows to use it // attribPointer is that of the laast param above
+	glEnableVertexAttribArray(0);
+
+	// Configure the Vertex Attribute so that OpenGL knows how to read the VBO
+	// 0, 3 dimentions, type is float, dont normialize it, stride between each vertex is 3 times float, offset for the vertex types, we nly have positition in our array so we will start at bite 0.
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (const void*)0);
 
 	// Bind the EBO specifying it's a GL_ELEMENT_ARRAY_BUFFER
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	// Introduce the indices into the EBO
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	// Configure the Vertex Attribute so that OpenGL knows how to read the VBO
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	// Enable the Vertex Attribute so that OpenGL knows to use it
-	glEnableVertexAttribArray(0);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW);
 
 	// Bind both the VBO and VAO to 0 so that we don't accidentally modify the VAO and VBO we created
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
 	// Bind the EBO to 0 so that we don't accidentally modify it
 	// MAKE SURE TO UNBIND IT AFTER UNBINDING THE VAO, as the EBO is linked in the VAO
 	// This does not apply to the VBO because the VBO is already linked to the VAO during glVertexAttribPointer
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glBindVertexArray(VAO);
+
+	glUseProgram(m_ShaderProgram);
+
+	// Color Uniform
+	GLint location = glGetUniformLocation(m_ShaderProgram, "u_Color");
+	assert(location != -1);
+	glUniform4f(location, 0.2f, 0.3f, 0.8f, 1.0f); // Blue
 }
 
 bool CTriangle::UpdateVertexPositions(float _x, float _y, float _z)
