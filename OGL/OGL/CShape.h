@@ -1,11 +1,18 @@
 #pragma once
 #include "NumptyBehavior.h"
-#include "CShaderLoader.h"
+#include "Shader.h"
 #include "CCamera.h"
+#include "VertexArray.h"
+#include "IndexBuffer.h"
 
 class CShape :	public NumptyBehavior
 {
 public:
+    virtual ~CShape()
+    {
+        CleanupPointer(m_Shader);
+    }
+
     virtual void Start() = 0;
     virtual void Input(GLFWwindow* window, int key, int scancode, int action, int mods) {};
     virtual void Update(float _dt) {};
@@ -13,7 +20,7 @@ public:
 
 protected:
     GLuint VAO, VBO, EBO;
-    GLuint m_ShaderProgram;
+    Shader* m_Shader;
 
     Vector3 m_Velocity;
 

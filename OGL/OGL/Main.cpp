@@ -1,5 +1,4 @@
 #include "CTriangle.h"
-#include "CSquare.h"
 #include "CCamera.h"
 #include "Singleton.h"
 
@@ -21,10 +20,8 @@ void CalculateDeltaTime();
 
 GLFWwindow* m_RenderWindow;
 CTriangle* m_TriangleTest;
-CSquare* m_CubeTest;
 CCamera m_MainCamera;
 
-std::vector<CProp*> m_Props;
 
 std::map<int, bool> m_Keypresses;
 std::map<int, bool> m_Mousepresses;
@@ -114,7 +111,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 	// Object Input
 	m_TriangleTest->Input(window, key, scancode, action, mods);
-	//m_CubeTest->Input(window, key, scancode, action, mods);
 
 	m_MainCamera.Input(window, key, scancode, action, mods);
 		
@@ -183,9 +179,9 @@ void InitGLFW()
 		std::cout << "Failed to Initalise GLFW" << std::endl;
 	}
 
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	m_RenderWindow = glfwCreateWindow(m_WindowWidth, m_WindowHeight, "My Title", NULL, NULL);
 
@@ -243,14 +239,7 @@ void Start()
 		m_TriangleTest = new CTriangle(m_Keypresses);
 	m_TriangleTest->Start();
 
-	//if (!m_CubeTest)
-	//	m_CubeTest = new CSquare(m_Keypresses);
-	//m_CubeTest->Start();
-
 	m_MainCamera.SetKeyMap(m_Keypresses);
-
-	/*m_Props.push_back(new CSquare());
-	m_Props.back()->Start();*/
 }
 
 void Update()
@@ -260,24 +249,11 @@ void Update()
 	m_MainCamera.Update(deltaTime);
 
 	m_TriangleTest->Update(deltaTime, m_MainCamera);
-
-	/*m_CubeTest->Update(deltaTime);*/
-
-	/*for (auto& item : m_Props)
-	{
-		item->Update();
-	}*/
 }
 
 void CleanupAllPointers()
 {
 	NumptyBehavior::CleanupPointer(m_TriangleTest);
-	NumptyBehavior::CleanupPointer(m_CubeTest);
-	for (auto& item : m_Props)
-	{
-		NumptyBehavior::CleanupPointer(item);
-	}
-	m_Props.clear();
 	m_Mousepresses.clear();
 	m_Keypresses.clear();
 	NumptyBehavior::CleanupPointer(m_RenderWindow);

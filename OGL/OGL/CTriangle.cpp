@@ -3,20 +3,15 @@
 CTriangle::CTriangle(std::map<int, bool>& _keyMap)
 {
 	keypresses = &_keyMap;
-	m_ShaderProgram = CShaderLoader::CreateShader("Resources/Shaders/TriangleShader.vs", "Resources/Shaders/TriangleShader.fs");
+	CleanupPointer(m_Shader);
+	m_Shader = new Shader("Resources/Shaders/TriangleShader.shader");
+	m_Shader->Bind();
 }
 
 CTriangle::~CTriangle()
 {
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
-
-	glDeleteVertexArrays(0, &VAO);
-	glDeleteBuffers(0, &VBO);
-	glDeleteBuffers(0, &EBO);
-
-	glDeleteProgram(m_ShaderProgram);
+	CleanupPointer(m_VertBuffer);
+	CleanupPointer(m_IndexBuffer);
 
 	keypresses = nullptr;
 }
@@ -101,59 +96,40 @@ void CTriangle::Update(float _dt, CCamera& _camera)
 
 void CTriangle::Render()
 {
+	m_Shader->Bind();
+	m_Shader->SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+
+	m_VertexArray->Bind();
+	m_IndexBuffer->Bind();
+
 	glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, nullptr);
 }
 
 void CTriangle::ShaderNonsense()
 {
-	// Cleanup
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
+	CleanupPointer(m_VertBuffer);
+	m_VertBuffer = new VertexBuffer(vertices, sizeof(vertices));
 
-	// Generatee Buffers
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
+	CleanupPointer(m_VertexArray);
+	m_VertexArray = new VertexArray();
 
-	// Make the VAO the current Vertex Array Object by binding it
-	glBindVertexArray(VAO);
+	CleanupPointer(m_IndexBuffer);
+	m_IndexBuffer = new IndexBuffer(indices, 9);
 
-	// Bind the VBO specifying it's a GL_ARRAY_BUFFER
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	// Introduce the vertices into the VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
-
-	// Enable the Vertex Attribute so that OpenGL knows to use it // attribPointer is that of the laast param above
-	glEnableVertexAttribArray(0);
-
-	// Configure the Vertex Attribute so that OpenGL knows how to read the VBO
-	// 0, 3 dimentions, type is float, dont normialize it, stride between each vertex is 3 times float, offset for the vertex types, we nly have positition in our array so we will start at bite 0.
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (const void*)0);
-
-	// Bind the EBO specifying it's a GL_ELEMENT_ARRAY_BUFFER
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	// Introduce the indices into the EBO
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW);
+	m_VertexArray->UnBind();
 
 	// Bind both the VBO and VAO to 0 so that we don't accidentally modify the VAO and VBO we created
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	m_VertBuffer->UnBind();
+	m_VertexArray->UnBind();
 
 	// Bind the EBO to 0 so that we don't accidentally modify it
 	// MAKE SURE TO UNBIND IT AFTER UNBINDING THE VAO, as the EBO is linked in the VAO
 	// This does not apply to the VBO because the VBO is already linked to the VAO during glVertexAttribPointer
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	m_IndexBuffer->UnBind();
 
-	glBindVertexArray(VAO);
+	if (m_Shader)
+		m_Shader->UnBind();
 
-	glUseProgram(m_ShaderProgram);
-
-	// Color Uniform
-	GLint location = glGetUniformLocation(m_ShaderProgram, "u_Color");
-	assert(location != -1);
-	glUniform4f(location, 0.2f, 0.3f, 0.8f, 1.0f); // Blue
 }
 
 bool CTriangle::UpdateVertexPositions(float _x, float _y, float _z)

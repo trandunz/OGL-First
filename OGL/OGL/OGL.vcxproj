@@ -150,27 +150,30 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CCamera.cpp" />
-    <ClCompile Include="CProp.cpp" />
     <ClCompile Include="CShape.cpp" />
-    <ClCompile Include="CSquare.cpp" />
     <ClCompile Include="CTriangle.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCamera.h" />
-    <ClInclude Include="CProp.h" />
     <ClInclude Include="CShaderLoader.h" />
     <ClInclude Include="CShape.h" />
-    <ClInclude Include="CSquare.h" />
     <ClInclude Include="CTriangle.h" />
+    <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="NumptyBehavior.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Textures.h" />
+    <ClInclude Include="VertexArray.h" />
+    <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="VertexBufferLayout.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\SquareShader.fs" />
     <None Include="Resources\Shaders\SquareShader.vs" />
     <None Include="Resources\Shaders\TriangleShader.fs" />
+    <None Include="Resources\Shaders\TriangleShader.shader" />
     <None Include="Resources\Shaders\TriangleShader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

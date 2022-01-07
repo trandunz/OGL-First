@@ -35,7 +35,9 @@ protected:
 		5, 4, 1 // Upper triangle
 	};
 
-
+	VertexBuffer* m_VertBuffer = nullptr;
+	IndexBuffer* m_IndexBuffer = nullptr;
+	VertexArray* m_VertexArray = nullptr;
 
 	std::map<int, bool>* keypresses = nullptr;
 

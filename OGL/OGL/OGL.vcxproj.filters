@@ -33,12 +33,6 @@
     <ClCompile Include="CShape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CProp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CSquare.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -56,19 +50,31 @@
     <ClInclude Include="CShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CProp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Textures.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CSquare.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Singleton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBufferLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -84,6 +90,9 @@
     </None>
     <None Include="Resources\Shaders\SquareShader.vs">
       <Filter>Resource Files\Shapes\Square</Filter>
+    </None>
+    <None Include="Resources\Shaders\TriangleShader.shader">
+      <Filter>Resource Files\Shapes\Triangle</Filter>
     </None>
   </ItemGroup>
 </Project>
