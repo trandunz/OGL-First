@@ -1,6 +1,7 @@
 #include "CTriangle.h"
-#include "CCamera.h"
-#include "Singleton.h"
+#include "ImGui/imgui.h"
+#include "ImGui/imgui_impl_glfw.h"
+#include "ImGui/imgui_impl_opengl3.h"
 
 static int m_WindowWidth = 1600;
 static int m_WindowHeight = 900;
@@ -13,6 +14,7 @@ static long double lastFrame = 0.0; // Time of last frame
 
 void InitCursor();
 void InitGLFW();
+void InitImGUI();
 void Start();
 void Update();
 void CleanupAllPointers();
@@ -20,13 +22,9 @@ void CalculateDeltaTime();
 
 GLFWwindow* m_RenderWindow;
 CTriangle* m_TriangleTest;
-CCamera m_MainCamera;
-
 
 std::map<int, bool> m_Keypresses;
 std::map<int, bool> m_Mousepresses;
-
-glm::mat4 m_ViewModelMatrix = m_MainCamera.GetViewMatrix();
 
 static void error_callback(int error, const char* description)
 {
@@ -35,7 +33,6 @@ static void error_callback(int error, const char* description)
 
 static void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos)
 {
-	m_MainCamera.MouseInput(window, xPos, yPos);
 }
 
 static void cursorEnterCallback(GLFWwindow* window, int entered)
@@ -110,10 +107,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	}
 
 	// Object Input
-	m_TriangleTest->Input(window, key, scancode, action, mods);
-
-	m_MainCamera.Input(window, key, scancode, action, mods);
-		
+	m_TriangleTest->Input(window, key, scancode, action, mods);	
 }
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -130,7 +124,6 @@ static void window_content_scale_callback(GLFWwindow* window, float xscale, floa
 
 static void scrollCallback(GLFWwindow* window, double xOffset, double yOffset)
 {
-	m_MainCamera.ScrollInput(window, yOffset);
 }
 
 int main()
@@ -226,8 +219,19 @@ void InitGLFW()
 
 	//glfwSetWindowAspectRatio(m_RenderWindow, 16, 9);
 	//glfwSwapInterval(0.1f);
+}
 
-
+void InitImGUI()
+{
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	// Setup Platform/Renderer bindings
+	ImGui_ImplGlfw_InitForOpenGL(m_RenderWindow, true);
+	ImGui_ImplOpenGL3_Init("4.6");
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
 }
 
 void Start()
@@ -238,17 +242,14 @@ void Start()
 	if (!m_TriangleTest)
 		m_TriangleTest = new CTriangle(m_Keypresses);
 	m_TriangleTest->Start();
-
-	m_MainCamera.SetKeyMap(m_Keypresses);
 }
 
 void Update()
 {
+
 	CalculateDeltaTime(); 
 
-	m_MainCamera.Update(deltaTime);
-
-	m_TriangleTest->Update(deltaTime, m_MainCamera);
+	m_TriangleTest->Update(deltaTime);
 }
 
 void CleanupAllPointers()

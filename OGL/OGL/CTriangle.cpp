@@ -3,21 +3,32 @@
 CTriangle::CTriangle(std::map<int, bool>& _keyMap)
 {
 	keypresses = &_keyMap;
+
 	CleanupPointer(m_Shader);
-	m_Shader = new Shader("Resources/Shaders/TriangleShader.shader");
+	m_Shader = new Shader("Resources/Shaders/TriangleShader.vs", "Resources/Shaders/TriangleShader.fs");
 	m_Shader->Bind();
+
+	//CleanupPointer(m_Texture);
+	//m_Texture = new Texture("Resources/Textures/test.png");
+	//m_Texture->Bind();
+	//m_Shader->SetUniform1i("u_Texture", 0);
 }
 
 CTriangle::~CTriangle()
 {
 	CleanupPointer(m_VertBuffer);
 	CleanupPointer(m_IndexBuffer);
+	CleanupPointer(m_VertexArray);
+	CleanupPointer(m_Texture);
 
 	keypresses = nullptr;
 }
 
 void CTriangle::Start()
 {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	ShaderNonsense();
 }
 
@@ -86,7 +97,7 @@ void CTriangle::Input(GLFWwindow* window, int key, int scancode, int action, int
 	}
 }
 
-void CTriangle::Update(float _dt, CCamera& _camera)
+void CTriangle::Update(float _dt)
 {
 	m_dt = _dt;
 	Movement(m_dt);
@@ -96,40 +107,37 @@ void CTriangle::Update(float _dt, CCamera& _camera)
 
 void CTriangle::Render()
 {
+	// Make Material For Other Uniforms
 	m_Shader->Bind();
-	m_Shader->SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+	m_Shader->SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
+	SetMVPUniform();
 
-	m_VertexArray->Bind();
-	m_IndexBuffer->Bind();
-
-	glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, nullptr);
+	// Draw
+	m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
 }
 
 void CTriangle::ShaderNonsense()
 {
 	CleanupPointer(m_VertBuffer);
-	m_VertBuffer = new VertexBuffer(vertices, sizeof(vertices));
+	m_VertBuffer = new VertexBuffer(vertices, 4 * 4 * sizeof(float)); // 4 x 4 vertices
 
 	CleanupPointer(m_VertexArray);
 	m_VertexArray = new VertexArray();
 
+	VertexBufferLayout layout;
+	layout.Push<float>(2);
+	layout.Push<float>(2);
+	m_VertexArray->AddBuffer(*m_VertBuffer, layout);
+
 	CleanupPointer(m_IndexBuffer);
-	m_IndexBuffer = new IndexBuffer(indices, 9);
+	m_IndexBuffer = new IndexBuffer(indices, 6);
 
 	m_VertexArray->UnBind();
-
-	// Bind both the VBO and VAO to 0 so that we don't accidentally modify the VAO and VBO we created
 	m_VertBuffer->UnBind();
-	m_VertexArray->UnBind();
-
-	// Bind the EBO to 0 so that we don't accidentally modify it
-	// MAKE SURE TO UNBIND IT AFTER UNBINDING THE VAO, as the EBO is linked in the VAO
-	// This does not apply to the VBO because the VBO is already linked to the VAO during glVertexAttribPointer
 	m_IndexBuffer->UnBind();
 
 	if (m_Shader)
 		m_Shader->UnBind();
-
 }
 
 bool CTriangle::UpdateVertexPositions(float _x, float _y, float _z)
@@ -137,32 +145,17 @@ bool CTriangle::UpdateVertexPositions(float _x, float _y, float _z)
 	bool moved = false;
 	if (_x >= 0.000000001 || _x <= -0.000000001)
 	{
-		vertices[0] += _x;
-		vertices[3] += _x;
-		vertices[6] += _x;
-		vertices[9] += _x;
-		vertices[12] += _x;
-		vertices[15] += _x;
+		m_Position.x += _x;
 		moved = true;
 	}
 	if (_y >= 0.000000001 || _y <= -0.000000001)
 	{
-		vertices[1] += _y;
-		vertices[4] += _y;
-		vertices[7] += _y;
-		vertices[10] += _y;
-		vertices[13] += _y;
-		vertices[16] += _y;
+		m_Position.y += _y;
 		moved = true;
 	}
 	if (_z >= 0.000000001 || _z <= -0.000000001)
 	{
-		vertices[2] += _z;
-		vertices[5] += _z;
-		vertices[8] += _z;
-		vertices[11] += _z;
-		vertices[14] += _z;
-		vertices[17] += _z;
+		m_Position.z += _z;
 		moved = true;
 	}
 

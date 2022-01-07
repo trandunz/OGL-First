@@ -1,9 +1,8 @@
 #pragma once
 #include "NumptyBehavior.h"
-#include "Shader.h"
-#include "CCamera.h"
-#include "VertexArray.h"
-#include "IndexBuffer.h"
+#include "Renderer.h"
+#include "VertexBufferLayout.h"
+#include "Texture.h"
 
 class CShape :	public NumptyBehavior
 {
@@ -17,13 +16,12 @@ public:
     virtual void Input(GLFWwindow* window, int key, int scancode, int action, int mods) {};
     virtual void Update(float _dt) {};
     virtual void Render() {};
-
 protected:
-    GLuint VAO, VBO, EBO;
     Shader* m_Shader;
+    Renderer m_Renderer;
+
+    float m_Scale = 5.0f;
 
     Vector3 m_Velocity;
-
-    GLfloat aspectRatio = 1.77777777778; // 16:9
 };
 

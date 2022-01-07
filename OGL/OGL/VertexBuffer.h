@@ -14,7 +14,7 @@ public:
         glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 
         // Introduce the vertices into the VBO
-        glBufferData(GL_ARRAY_BUFFER, size * sizeof(GLfloat), data, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
     }
     ~VertexBuffer()
     {

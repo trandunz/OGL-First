@@ -8,57 +8,59 @@ public:
     virtual ~CTriangle();
     void Start();
     void Input(GLFWwindow* window, int key, int scancode, int action, int mods);
-    void Update(float _dt, CCamera& _camera);
+    void Update(float _dt);
     void Render();
 
-	void SetAspectRatio(float _value)
+	inline void SetMVPUniform()
 	{
-		aspectRatio = _value;
+		model = glm::translate(glm::mat4(1.0f), m_Position);
+		glm::mat4 mvp = proj * view * model;
+		m_Shader->SetUniformMat4f("u_MVP", mvp);
 	}
 protected:
 	// Vertices coordinates
-	GLfloat vertices[18] =
+	GLfloat vertices[16] =
 	{
-		-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,	// Lower left corner
-		0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,		// Lower right corner
-		0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,	// Upper corner
-		-0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,	// Inner left
-		0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,	// Inner right
-		0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f		// Inner down
+		//-0.5f, -0.5f/* * float(sqrt(3)) / 3*/, 0.0f,	
+		//0.5f, -0.5f/* * float(sqrt(3)) / 3*/, 0.0f,		
+		//0.0f, 0.5f/* * float(sqrt(3)) * 2 / 3*/, 0.0f,	
+		//-0.5f/* / 2*/, 0.5f/* * float(sqrt(3)) / 6*/, 0.0f,
+		////0.5f/* / 2*/, 0.5f/* * float(sqrt(3)) / 6*/, 0.0f,
+		////0.0f, -0.5f/* * float(sqrt(3)) / 3*/, 0.0f,		
+		-0.5f, -0.5f, 0.0f, 0.0f,
+		0.5f, -0.5f, 1.0f, 0.0f,
+		0.5f, 0.5f, 1.0f, 1.0f,
+		-0.5, 0.5f, 0.0f, 1.0f
 	};
 
 	// Indices for vertices order
-	GLuint indices[9] =
+	GLuint indices[6] =
 	{
-		0, 3, 5, // Lower left triangle
-		3, 2, 4, // Lower right triangle
-		5, 4, 1 // Upper triangle
+		0, 1, 2, // Lower left triangle
+		2, 3, 0, // Lower right triangle
 	};
 
 	VertexBuffer* m_VertBuffer = nullptr;
 	IndexBuffer* m_IndexBuffer = nullptr;
 	VertexArray* m_VertexArray = nullptr;
+	Texture* m_Texture = nullptr;
+
+	glm::mat4 proj = glm::ortho(-16.0f / m_Scale, 16.0f / m_Scale, -9.0f / m_Scale, 9.0f / m_Scale, -1.0f, 1.0f);
+	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-1, 0, 0));
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), m_Position);
 
 	std::map<int, bool>* keypresses = nullptr;
 
-	float m_MovementSpeed = 1.f;
-
 	float m_dt;
 
-	float aspectRatio = 1.0f;
-
-	GLfloat halfScreenWidth = 1920 / 2;
-	GLfloat halfScreenHeight = 1080 / 2;
-
-	GLfloat rotationX = 0.0f;
-	GLfloat rotationY = 0.0f;
-	const GLfloat rotationSpeed = 1;
+	glm::vec3 m_Position = { 0, 0, 0 };
+	float m_MovementSpeed = 1.0f;
 
 	void Movement(float _dt)
 	{
 		if (UpdateVertexPositions(m_Velocity.x * _dt, m_Velocity.y * _dt, m_Velocity.z * _dt))
 		{
-			ShaderNonsense();
+			//ShaderNonsense();
 		}
 	}
 

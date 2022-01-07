@@ -1,25 +1,18 @@
 #pragma once
 #include "NumptyBehavior.h"
+#include "VertexArray.h"
+#include "IndexBuffer.h"
+#include "Shader.h"
 
-#define assert(x) if (!(x)) __debugbreak();
-#define GLCall(x) GLClearError();\
-	x;\
-	assert(GLLogCall(#x, __FILE__, __LINE__));
-
-void GLClearError()
+class Renderer : public NumptyBehavior
 {
-	while (glGetError() != GL_NO_ERROR)
+public:
+	void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const
 	{
+		shader.Bind();
+		va.Bind();
+		ib.Bind();
+		glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr);
 	}
-}
-
-bool GLLogCall(const char* function, const char* file, int line)
-{
-	while (GLenum error = glGetError())
-	{
-		std::cout << "[OpenGL Error] (" << error << "):" << function << " " << file << ":" << line << std::endl;
-		return false;
-	}
-	return true;
-}
+};
 

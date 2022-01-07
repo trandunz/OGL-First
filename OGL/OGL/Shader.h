@@ -15,11 +15,12 @@ class Shader :
     public NumptyBehavior
 {
 public:
-    Shader(const std::string& filepath)
-        : m_FilePath(filepath), m_RendererID(0)
+    Shader(const std::string& _vertShader, const std::string& _fragShader)
+        : m_RendererID(0)
     {
        /* ShaderProgramSource source = ParseShader(filepath);*/
-        m_RendererID = CShaderLoader::CreateShader("Resources/Shaders/TriangleShader.vs", "Resources/Shaders/TriangleShader.fs");
+        //m_RendererID = CShaderLoader::CreateShader("Resources/Shaders/TriangleShader.vs", "Resources/Shaders/TriangleShader.fs");
+        m_RendererID = CShaderLoader::CreateShader(_vertShader, _fragShader);
     }
     ~Shader()
     {
@@ -44,6 +45,24 @@ public:
     {
         GLint location = GetUniformLocation(name);
         glUniform4f(location, v0, v1, v2, v3);
+    }
+
+    void SetUniformMat4f(const std::string& name, const glm::mat4& matrix)
+    {
+        GLint location = GetUniformLocation(name);
+        glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
+    }
+
+    void SetUniform1f(const std::string& name, float v0)
+    {
+        GLint location = GetUniformLocation(name);
+        glUniform1f(location, v0);
+    }
+
+    void SetUniform1i(const std::string& name, int v0)
+    {
+        GLint location = GetUniformLocation(name);
+        glUniform1i(location, v0);
     }
 
     ShaderProgramSource ParseShader(const std::string& filepath)
@@ -77,9 +96,9 @@ public:
         return { ss[0].str(), ss[1].str() };
     }
 private:
-    unsigned int GetUniformLocation(const std::string& name)
+    int GetUniformLocation(const std::string& name)
     {
-        unsigned int location = glGetUniformLocation(m_RendererID, name.c_str());
+        int location = glGetUniformLocation(m_RendererID, name.c_str());
         if (location == -1)
         {
             std::cout << "Warning: Uniform '" << name << "' Doesent Exist!" << std::endl;

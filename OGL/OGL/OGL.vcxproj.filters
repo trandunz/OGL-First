@@ -22,6 +22,9 @@
     <Filter Include="Resource Files\Shapes\Triangle">
       <UniqueIdentifier>{ec6e781e-4857-4304-ac3c-332db9a0f828}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Vendor">
+      <UniqueIdentifier>{3561e855-5896-4204-905f-6cf771c45db4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -30,11 +33,29 @@
     <ClCompile Include="CTriangle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CShape.cpp">
+    <ClCompile Include="Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CCamera.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="include\ImGui\imgui.cpp">
+      <Filter>Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_demo.cpp">
+      <Filter>Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_draw.cpp">
+      <Filter>Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_tables.cpp">
+      <Filter>Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_widgets.cpp">
+      <Filter>Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_impl_glfw.cpp">
+      <Filter>Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_impl_opengl3.cpp">
+      <Filter>Vendor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -48,12 +69,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CShape.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Textures.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Singleton.h">
@@ -76,6 +91,36 @@
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imconfig.h">
+      <Filter>Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imgui.h">
+      <Filter>Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imgui_internal.h">
+      <Filter>Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imstb_rectpack.h">
+      <Filter>Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imstb_textedit.h">
+      <Filter>Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imstb_truetype.h">
+      <Filter>Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imgui_impl_glfw.h">
+      <Filter>Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imgui_impl_opengl3.h">
+      <Filter>Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imgui_impl_opengl3_loader.h">
+      <Filter>Vendor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

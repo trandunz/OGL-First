@@ -2,11 +2,14 @@
 
 layout (location = 0) out vec4 color;
 
+in vec2 v_TexCoord;
+
 uniform vec4 u_Color;
+
+//uniform sampler2D u_Texture;
 
 void main()
 {
-    // Blue
-    // color = vec4(0.2f,0.3f,0.8f, 1.0f);
+    //vec4 texColor = texture(u_Texture, v_TexCoord);
     color = u_Color;
 } 
