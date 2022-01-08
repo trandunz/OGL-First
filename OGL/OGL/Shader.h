@@ -15,12 +15,12 @@ class Shader :
     public NumptyBehavior
 {
 public:
-    Shader(const std::string& _vertShader, const std::string& _fragShader)
+    Shader(const std::string& _vertShader, const std::string& _geoShader, const std::string& _fragShader)
         : m_RendererID(0)
     {
        /* ShaderProgramSource source = ParseShader(filepath);*/
         //m_RendererID = CShaderLoader::CreateShader("Resources/Shaders/TriangleShader.vs", "Resources/Shaders/TriangleShader.fs");
-        m_RendererID = CShaderLoader::CreateShader(_vertShader, _fragShader);
+        m_RendererID = CShaderLoader::CreateShader(_vertShader, _geoShader, _fragShader);
     }
     ~Shader()
     {
@@ -60,6 +60,12 @@ public:
     }
 
     void SetUniform1i(const std::string& name, int v0)
+    {
+        GLint location = GetUniformLocation(name);
+        glUniform1i(location, v0);
+    }
+
+    void SetUniformBool(const std::string& name, int v0)
     {
         GLint location = GetUniformLocation(name);
         glUniform1i(location, v0);

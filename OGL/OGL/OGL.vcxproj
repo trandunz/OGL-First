@@ -149,7 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CTriangle.cpp" />
+    <ClCompile Include="CSquare.cpp" />
     <ClCompile Include="include\ImGui\imgui.cpp" />
     <ClCompile Include="include\ImGui\imgui_demo.cpp" />
     <ClCompile Include="include\ImGui\imgui_draw.cpp" />
@@ -163,7 +163,8 @@
   <ItemGroup>
     <ClInclude Include="CShaderLoader.h" />
     <ClInclude Include="CShape.h" />
-    <ClInclude Include="CTriangle.h" />
+    <ClInclude Include="CSquare.h" />
+    <ClInclude Include="GUI.h" />
     <ClInclude Include="include\ImGui\imconfig.h" />
     <ClInclude Include="include\ImGui\imgui.h" />
     <ClInclude Include="include\ImGui\imgui_impl_glfw.h" />
@@ -177,18 +178,16 @@
     <ClInclude Include="NumptyBehavior.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
-    <ClInclude Include="Singleton.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexBufferLayout.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\SquareShader.fs" />
-    <None Include="Resources\Shaders\SquareShader.vs" />
-    <None Include="Resources\Shaders\TriangleShader.fs" />
-    <None Include="Resources\Shaders\TriangleShader.shader" />
-    <None Include="Resources\Shaders\TriangleShader.vs" />
+    <None Include="Resources\Shaders\TestShader.fs" />
+    <None Include="Resources\Shaders\TestShader_FILL.gs" />
+    <None Include="Resources\Shaders\TestShader_WF.gs" />
+    <None Include="Resources\Shaders\TestShader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -16,70 +16,9 @@
 #include <map>
 #include <algorithm>
 
-class Vector3
-{
-public:
-	inline Vector3& operator += (const Vector3& rhs)
-	{
-		x += rhs.x;
-		y += rhs.y;
-		z += rhs.z;
-		return *this; // return the result by reference
-	}
-
-	inline Vector3& operator *= (const Vector3& rhs)
-	{
-		x *= rhs.x;
-		y *= rhs.y;
-		z *= rhs.z;
-		return *this; // return the result by reference
-	}
-
-	inline bool operator == (const Vector3& rhs)
-	{
-		bool truthValue = false;
-		if (x == rhs.x && y == rhs.y && z == rhs.z)
-		{
-			truthValue = true;
-		}
-		return truthValue;
-	}
-
-	inline friend Vector3 operator + (Vector3 lhs, const Vector3& rhs)
-	{
-		lhs += rhs;
-		return lhs; // return the result by value (uses move constructor)
-	}
-
-	inline void setPosition(float _x = 0.0f, float _y = 0.0f, float _z = 0.0f)
-	{
-		x = _x;
-		y = _y;
-		z = _z;
-	}
-
-	double x = 0.0;
-	double y = 0.0;
-	double z = 0.0;
-};
-
 class NumptyBehavior
 {
 public:
-	struct Vector4
-	{
-		double x = 0.0;
-		double y = 0.0;
-		double z = 0.0;
-		double w = 0.0;
-	};
-
-	struct Vector2
-	{
-		double x = 0.0;
-		double y = 0.0;
-	};
-
 	template <class T>
 	static inline void CleanupPointer(T* _pointer)
 	{
@@ -87,16 +26,16 @@ public:
 		_pointer = nullptr;
 	}
 
-	inline Vector3 CalculateChangeInPos(Vector3 _posOne, Vector3 _posTwo)
+	inline glm::vec3 CalculateChangeInPos(glm::vec3 _posOne, glm::vec3 _posTwo)
 	{
-		Vector3 dS;
+		glm::vec3 dS;
 		dS.x = _posOne.x - _posTwo.x;
 		dS.y = _posOne.y - _posTwo.y;
 		dS.z = _posOne.z - _posTwo.z;
 		return dS;
 	}
 
-	inline Vector3 CalculateVelocity(Vector3 _ds, float _dt)
+	inline glm::vec3 CalculateVelocity(glm::vec3 _ds, float _dt)
 	{
 		_ds.x /= _dt;
 		_ds.y /= _dt;
@@ -104,15 +43,15 @@ public:
 		return _ds;
 	}
 
-	inline Vector3 CalculateMomentum(Vector3 _ds, float _dt, float _mass)
+	inline glm::vec3 CalculateMomentum(glm::vec3 _ds, float _dt, float _mass)
 	{
-		Vector3 velocity = CalculateVelocity(_ds, _dt);
+		glm::vec3 velocity = CalculateVelocity(_ds, _dt);
 		_ds.x = velocity.x * _mass;
 		_ds.y = velocity.y * _mass;
 		_ds.z = velocity.z * _mass;
 	}
 
-	inline Vector3 CalculateMomentum(Vector3 _velocity, float _mass)
+	inline glm::vec3 CalculateMomentum(glm::vec3 _velocity, float _mass)
 	{
 		_velocity.x *= _mass;
 		_velocity.y *= _mass;
@@ -120,16 +59,16 @@ public:
 		return _velocity;
 	}
 
-	inline Vector3 CalculateChangeInMomentum(Vector3 _velocityOne, float _massOne, Vector3 _velocityTwo, float _massTwo)
+	inline glm::vec3 CalculateChangeInMomentum(glm::vec3 _velocityOne, float _massOne, glm::vec3 _velocityTwo, float _massTwo)
 	{
-		Vector3 dP;
+		glm::vec3 dP;
 		dP.x = (_velocityOne.x * _massOne) - (_velocityTwo.x * _massTwo);
 		dP.y = (_velocityOne.y * _massOne) - (_velocityTwo.y * _massTwo);
 		dP.z = (_velocityOne.x * _massOne) - (_velocityTwo.x * _massTwo);
 		return dP;
 	}
 
-	inline int DotProduct(Vector3 _vecOne, Vector3 _vecTwo)
+	inline int DotProduct(glm::vec3 _vecOne, glm::vec3 _vecTwo)
 	{
 		int product = 0;
 
@@ -141,9 +80,9 @@ public:
 		return product;
 	}
 
-	inline Vector3 CrossProduct(Vector3 _vecOne, Vector3 _vecTwo)
+	inline glm::vec3 CrossProduct(glm::vec3 _vecOne, glm::vec3 _vecTwo)
 	{
-		Vector3 crossProduct;
+		glm::vec3 crossProduct;
 		crossProduct.x = _vecOne.y * _vecTwo.z - _vecOne.z * _vecTwo.y;
 		crossProduct.y = _vecOne.z * _vecTwo.x - _vecOne.x * _vecTwo.z;
 		crossProduct.z = _vecOne.x * _vecTwo.y - _vecOne.y * _vecTwo.x;

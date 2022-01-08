@@ -1,27 +1,25 @@
-#include "CTriangle.h"
-#include "ImGui/imgui.h"
-#include "ImGui/imgui_impl_glfw.h"
-#include "ImGui/imgui_impl_opengl3.h"
+#include "CSquare.h"
 
 static int m_WindowWidth = 1600;
 static int m_WindowHeight = 900;
 
-GLfloat halfScreenWidth = 1920 / 2;
-GLfloat halfScreenHeight = 1080 / 2;
-
 static long double deltaTime = 0.0;	// Time between current frame and last frame
 static long double lastFrame = 0.0; // Time of last frame
 
-void InitCursor();
 void InitGLFW();
-void InitImGUI();
+void InitGLFWCallbacks();
+void InitInputMode();
 void Start();
 void Update();
+
+int Cleanup();
 void CleanupAllPointers();
 void CalculateDeltaTime();
+void CleanupImGUI();
+void CleanupGLFW();
 
 GLFWwindow* m_RenderWindow;
-CTriangle* m_TriangleTest;
+CSquare* m_SquareTest;
 
 std::map<int, bool> m_Keypresses;
 std::map<int, bool> m_Mousepresses;
@@ -37,6 +35,7 @@ static void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos)
 
 static void cursorEnterCallback(GLFWwindow* window, int entered)
 {
+	m_SquareTest->CursorEnterCallback(window, entered);
 }
 
 static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
@@ -59,9 +58,6 @@ static void mouseButtonCallback(GLFWwindow* window, int button, int action, int 
 			switch (item.first)
 			{
 			case GLFW_MOUSE_BUTTON_1:
-				// Close Window
-				glfwSetWindowShouldClose(window, GLFW_TRUE);
-
 				// Only Single Press Thanks
 				m_Mousepresses[button] = false;
 				break;
@@ -107,7 +103,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	}
 
 	// Object Input
-	m_TriangleTest->Input(window, key, scancode, action, mods);	
+	m_SquareTest->Input(window, key, scancode, action, mods);	
 }
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -128,42 +124,31 @@ static void scrollCallback(GLFWwindow* window, double xOffset, double yOffset)
 
 int main()
 {
+	InitGLFW();
+	GUI::InitImGUI(m_RenderWindow);
 	// MAIN START
 	Start();
 
 	while (!glfwWindowShouldClose(m_RenderWindow))
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
+		GUI::StartImGUIFrame();
 		//
 		// MAIN UPDATE
 		Update();
 		//
+		GUI::EndImGUIFrame();
 		glfwSwapBuffers(m_RenderWindow);
 		glfwPollEvents();
 	}
 
-	// CLEANUP
-	glfwDestroyWindow(m_RenderWindow);
-	glfwTerminate();
-	exit(EXIT_SUCCESS);
-	CleanupAllPointers();
-	return NULL;
-}
-
-void InitCursor()
-{
-	unsigned char pixels[16 * 16 * 4];
-	memset(pixels, 0xff, sizeof(pixels));
-	GLFWimage image;
-	image.width = 16;
-	image.height = 16;
-	image.pixels = pixels;
-	GLFWcursor* cursor = glfwCreateCursor(&image, 0, 0);
-	glfwSetCursor(m_RenderWindow, cursor);
+	// CLEANUP AND EXIT
+	return Cleanup();
 }
 
 void InitGLFW()
 {
+	// Error Callback
 	glfwSetErrorCallback(error_callback);
 
 	// Check if glfw Initalises correctly
@@ -172,10 +157,12 @@ void InitGLFW()
 		std::cout << "Failed to Initalise GLFW" << std::endl;
 	}
 
+	// Setting Version And Profile ; 460 : CORE
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+	// Create Render Window
 	m_RenderWindow = glfwCreateWindow(m_WindowWidth, m_WindowHeight, "My Title", NULL, NULL);
 
 	if (!m_RenderWindow)
@@ -184,6 +171,7 @@ void InitGLFW()
 		exit(EXIT_FAILURE);
 	}
 
+	// Frame Buffer
 	glfwGetFramebufferSize(m_RenderWindow, &m_WindowWidth, &m_WindowHeight);
 
 	// Context
@@ -195,6 +183,14 @@ void InitGLFW()
 	}
 
 	// Callbacks
+	InitGLFWCallbacks();
+
+	// Input Mode
+	InitInputMode();
+}
+
+void InitGLFWCallbacks()
+{
 	glfwSetFramebufferSizeCallback(m_RenderWindow, framebuffer_size_callback);
 	glfwSetKeyCallback(m_RenderWindow, key_callback);
 	glfwSetWindowContentScaleCallback(m_RenderWindow, window_content_scale_callback);
@@ -202,59 +198,40 @@ void InitGLFW()
 	glfwSetCursorEnterCallback(m_RenderWindow, cursorEnterCallback);
 	glfwSetMouseButtonCallback(m_RenderWindow, mouseButtonCallback);
 	glfwSetScrollCallback(m_RenderWindow, scrollCallback);
-
-	// Input Mode
-	glfwSetInputMode(m_RenderWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	// Sticky Buffers Input Until The End OF Frame To Avoid Missed Ones
-	glfwSetInputMode(m_RenderWindow, GLFW_STICKY_MOUSE_BUTTONS, 1);
-	glfwSetInputMode(m_RenderWindow, GLFW_STICKY_KEYS, 1);
-	
-	// View Port Nonsense
-	glViewport(0.0f, 0.0f, m_WindowWidth, m_WindowHeight); // specifies the part of the window to which OpenGL will draw (in pixels), convert from normalised to pixels
-	glMatrixMode(GL_PROJECTION); // projection matrix defines the properties of the camera that views the objects in the world coordinate frame. Here you typically set the zoom factor, aspect ratio and the near and far clipping planes
-	glLoadIdentity(); // replace the current matrix with the identity matrix and starts us a fresh because matrix transforms such as glOrpho and glRotate cumulate, basically puts us at (0, 0, 0)
-	glOrtho(0, m_WindowWidth, 0, m_WindowHeight, 0, 1000); // essentially set coordinate system
-	glMatrixMode(GL_MODELVIEW); // (default matrix mode) modelview matrix defines how your objects are transformed (meaning translation, rotation and scaling) in your world
-	glLoadIdentity(); // same as above comment
-
-	//glfwSetWindowAspectRatio(m_RenderWindow, 16, 9);
-	//glfwSwapInterval(0.1f);
 }
 
-void InitImGUI()
+void InitInputMode()
 {
-	// Setup Dear ImGui context
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
-	// Setup Platform/Renderer bindings
-	ImGui_ImplGlfw_InitForOpenGL(m_RenderWindow, true);
-	ImGui_ImplOpenGL3_Init("4.6");
-	// Setup Dear ImGui style
-	ImGui::StyleColorsDark();
+	glfwSetInputMode(m_RenderWindow, GLFW_STICKY_MOUSE_BUTTONS, 1);
+	glfwSetInputMode(m_RenderWindow, GLFW_STICKY_KEYS, 1);
 }
 
 void Start()
 {
-	InitGLFW();
-	InitCursor();
-
-	if (!m_TriangleTest)
-		m_TriangleTest = new CTriangle(m_Keypresses);
-	m_TriangleTest->Start();
+	if (!m_SquareTest)
+		m_SquareTest = new CSquare(m_Keypresses);
+	m_SquareTest->Start();
 }
 
 void Update()
 {
-
 	CalculateDeltaTime(); 
+	m_SquareTest->Update(deltaTime);
+	m_SquareTest->ImGuiHandler();
+}
 
-	m_TriangleTest->Update(deltaTime);
+int Cleanup()
+{
+	GUI::CleanupImGUI();
+	CleanupGLFW();
+	CleanupAllPointers();
+
+	return NULL;
 }
 
 void CleanupAllPointers()
 {
-	NumptyBehavior::CleanupPointer(m_TriangleTest);
+	NumptyBehavior::CleanupPointer(m_SquareTest);
 	m_Mousepresses.clear();
 	m_Keypresses.clear();
 	NumptyBehavior::CleanupPointer(m_RenderWindow);
@@ -265,4 +242,11 @@ void CalculateDeltaTime()
 	float currentFrame = glfwGetTime();
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
+}
+
+void CleanupGLFW()
+{
+	glfwDestroyWindow(m_RenderWindow);
+	glfwTerminate();
+	exit(EXIT_SUCCESS);
 }

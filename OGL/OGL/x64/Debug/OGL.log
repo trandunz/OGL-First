@@ -1,34 +1,55 @@
-﻿  CTriangle.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(137,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(138,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(139,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+﻿  CSquare.cpp
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(76,21): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(77,21): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(78,21): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(43,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.h(61,82): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.h(61,62): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.h(61,42): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CShape.h(111,28): warning C4244: '=': conversion from 'GLfloat' to 'GLuint', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CShape.h(124,30): warning C4244: '=': conversion from 'GLfloat' to 'GLuint', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CSquare.cpp(86,9): warning C4244: '=': conversion from 'long double' to 'float', possible loss of data
   Main.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(137,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(138,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(139,21): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(76,21): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(77,21): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(78,21): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(43,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.h(61,82): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.h(61,62): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CTriangle.h(61,42): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(213,19): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(213,13): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(252,25): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(265,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(159,1): warning C4150: deletion of pointer to incomplete type 'GLFWwindow'; no destructor called
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CShape.h(111,28): warning C4244: '=': conversion from 'GLfloat' to 'GLuint', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CShape.h(124,30): warning C4244: '=': conversion from 'GLfloat' to 'GLuint', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(242,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(98,1): warning C4150: deletion of pointer to incomplete type 'GLFWwindow'; no destructor called
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\include\ImGui\imgui_impl_glfw.h(23): message : see declaration of 'GLFWwindow'
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(86): message : see reference to function template instantiation 'void NumptyBehavior::DeletePointer<T>(T *)' being compiled
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(25): message : see reference to function template instantiation 'void NumptyBehavior::DeletePointer<T>(T *)' being compiled
           with
           [
               T=GLFWwindow
           ]
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(260): message : see reference to function template instantiation 'void NumptyBehavior::CleanupPointer<GLFWwindow>(T *)' being compiled
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(237): message : see reference to function template instantiation 'void NumptyBehavior::CleanupPointer<GLFWwindow>(T *)' being compiled
           with
           [
               T=GLFWwindow
           ]
   Generating Code...
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   OGL.vcxproj -> C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Debug\OGL.exe
