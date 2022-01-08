@@ -1,8 +1,9 @@
 #include "CSquare.h"
 
-CSquare::CSquare(std::map<int, bool>& _keyMap)
+CSquare::CSquare(std::map<int, bool>& _keyMap, Camera& _camera)
 {
 	m_KeyPresses = &_keyMap;
+	m_Camera = &_camera;
 }
 
 CSquare::~CSquare()
@@ -12,7 +13,7 @@ CSquare::~CSquare()
 	CleanupPointer(m_VertexArray);
 	CleanupPointer(m_Texture);
 	CleanupPointer(m_Shader);
-
+	m_Camera = nullptr;
 	m_KeyPresses = nullptr;
 }
 

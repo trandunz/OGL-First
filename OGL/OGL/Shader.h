@@ -25,6 +25,7 @@ public:
     ~Shader()
     {
         glDeleteProgram(m_RendererID);
+        m_UniformLocationCache.clear();
     }
 
     void CompileShader()
@@ -102,17 +103,21 @@ public:
         return { ss[0].str(), ss[1].str() };
     }
 private:
-    int GetUniformLocation(const std::string& name)
+    GLint GetUniformLocation(const std::string& name) const
     {
-        int location = glGetUniformLocation(m_RendererID, name.c_str());
-        if (location == -1)
+        if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
+            return m_UniformLocationCache[name];
+
+        else
         {
-            std::cout << "Warning: Uniform '" << name << "' Doesent Exist!" << std::endl;
+            int location = glGetUniformLocation(m_RendererID, name.c_str());
+            m_UniformLocationCache[name] = location;
+            return location;
         }
-        return location;
     }
 
     unsigned int m_RendererID;
     std::string m_FilePath;
+    mutable std::unordered_map<std::string, GLint> m_UniformLocationCache;
 };
 

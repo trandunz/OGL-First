@@ -15,14 +15,15 @@ void Update();
 int Cleanup();
 void CleanupAllPointers();
 void CalculateDeltaTime();
-void CleanupImGUI();
 void CleanupGLFW();
-
-GLFWwindow* m_RenderWindow;
-CSquare* m_SquareTest;
 
 std::map<int, bool> m_Keypresses;
 std::map<int, bool> m_Mousepresses;
+
+GLFWwindow* m_RenderWindow;
+CSquare* m_SquareTest;
+Camera m_MainCamera(m_Keypresses);
+
 
 static void error_callback(int error, const char* description)
 {
@@ -31,6 +32,7 @@ static void error_callback(int error, const char* description)
 
 static void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos)
 {
+	m_MainCamera.ProcessMouseMovement(xPos, yPos);
 }
 
 static void cursorEnterCallback(GLFWwindow* window, int entered)
@@ -103,7 +105,8 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	}
 
 	// Object Input
-	m_SquareTest->Input(window, key, scancode, action, mods);	
+	m_MainCamera.Input(deltaTime);
+	//m_SquareTest->Input(window, key, scancode, action, mods);	
 }
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -120,6 +123,7 @@ static void window_content_scale_callback(GLFWwindow* window, float xscale, floa
 
 static void scrollCallback(GLFWwindow* window, double xOffset, double yOffset)
 {
+	m_MainCamera.ProcessMouseScroll(yOffset);
 }
 
 int main()
@@ -202,6 +206,7 @@ void InitGLFWCallbacks()
 
 void InitInputMode()
 {
+	//glfwSetInputMode(m_RenderWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetInputMode(m_RenderWindow, GLFW_STICKY_MOUSE_BUTTONS, 1);
 	glfwSetInputMode(m_RenderWindow, GLFW_STICKY_KEYS, 1);
 }
@@ -209,7 +214,7 @@ void InitInputMode()
 void Start()
 {
 	if (!m_SquareTest)
-		m_SquareTest = new CSquare(m_Keypresses);
+		m_SquareTest = new CSquare(m_Keypresses, m_MainCamera);
 	m_SquareTest->Start();
 }
 

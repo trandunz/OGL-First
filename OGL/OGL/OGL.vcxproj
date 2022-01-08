@@ -161,6 +161,7 @@
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CCamera.h" />
     <ClInclude Include="CShaderLoader.h" />
     <ClInclude Include="CShape.h" />
     <ClInclude Include="CSquare.h" />

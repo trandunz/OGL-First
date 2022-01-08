@@ -5,7 +5,7 @@
 class CSquare : public CShape
 {
 public:
-	CSquare(std::map<int,bool>& _keyMap);
+	CSquare(std::map<int,bool>& _keyMap, Camera& _camera);
     virtual ~CSquare();
     void Start();
 	void CursorEnterCallback(GLFWwindow* window, int entered);
@@ -46,6 +46,7 @@ public:
 	inline void SetMVPUniform()
 	{
 		model = glm::translate(glm::mat4(1.0f), m_Position);
+		view = m_Camera->GetViewMatrix();
 		glm::mat4 mvp = proj * view * model;
 		m_Shader->SetUniformMat4f("u_MVP", mvp);
 	}
@@ -65,7 +66,7 @@ protected:
 	bool m_DuplicateOnSwitch = false;
 
 	glm::mat4 proj = glm::perspective(45.0f, (float)1920.0f / (float)1080.0f, 0.0f, 4000.0f);
-	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -1));
+	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -2));
 	glm::mat4 model = glm::translate(glm::mat4(1.0f), m_Position);
 
 	std::map<int, bool>* m_KeyPresses = nullptr;

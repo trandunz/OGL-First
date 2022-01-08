@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "VertexBufferLayout.h"
 #include "Texture.h"
+#include "CCamera.h"
 
 class CShape :	public NumptyBehavior
 {
@@ -13,6 +14,8 @@ public:
 		CleanupPointer(m_VertBuffer);
 		CleanupPointer(m_IndexBuffer);
 		CleanupPointer(m_VertexArray);
+		m_Camera = nullptr;
+		m_Shader = nullptr;
     }
 
     virtual void Start() = 0;
@@ -35,8 +38,9 @@ public:
     }
 
 protected:
-    Shader* m_Shader;
+    Shader* m_Shader = nullptr;
     Renderer m_Renderer;
+	Camera* m_Camera = nullptr;
 
 	VertexBuffer* m_VertBuffer = nullptr;
 	IndexBuffer* m_IndexBuffer = nullptr;
