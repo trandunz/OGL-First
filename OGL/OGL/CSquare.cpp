@@ -22,7 +22,7 @@ void CSquare::Start()
 	SetType(SHAPETYPE::CUBE);
 	ShaderNonsense();
 
-	m_Copies["Cube"] = std::make_pair(m_RGBA,m_Position);
+	m_Copies["Cube"] = std::make_pair(m_RGBA_Copy,m_Position);
 }
 
 void CSquare::CursorEnterCallback(GLFWwindow* window, int entered)
@@ -47,22 +47,49 @@ void CSquare::Input(GLFWwindow* window, int key, int scancode, int action, int m
 	m_InputVec.y = 0.0f;
 	m_InputVec.z = 0.0f;
 
+
 	for (auto& item : (*m_KeyPresses))
 	{
 		if (item.second == true)
 		{
 			switch (item.first)
 			{
+			case GLFW_KEY_LEFT_SHIFT:
+			{
+				m_HoldingShift = true;
+				break;
+			}
+			case GLFW_KEY_LEFT_CONTROL:
+			{
+				m_GrabCube = !m_GrabCube;
+
+				(*m_KeyPresses)[item.first] = false;
+				break;
+			}
 			case GLFW_KEY_UP:
 			{
-				m_Position.y += 1.0f;
+				if (m_HoldingShift)
+				{
+					m_Position.z -= 1.0f;
+				}
+				else
+				{
+					m_Position.y += 1.0f;
+				}
 
 				(*m_KeyPresses)[item.first] = false;
 				break;
 			}
 			case GLFW_KEY_DOWN:
 			{
-				m_Position.y -= 1.0f;
+				if (m_HoldingShift)
+				{
+					m_Position.z += 1.0f;
+				}
+				else
+				{
+					m_Position.y -= 1.0f;
+				}
 
 				(* m_KeyPresses)[item.first] = false;
 				break;
@@ -79,6 +106,20 @@ void CSquare::Input(GLFWwindow* window, int key, int scancode, int action, int m
 				m_Position.x -= 1.0f;
 
 				(*m_KeyPresses)[item.first] = false;
+				break;
+			}
+
+			default:
+				break;
+			}
+		}
+		else if (item.second == false)
+		{
+			switch (item.first)
+			{
+			case GLFW_KEY_LEFT_SHIFT:
+			{
+				m_HoldingShift = false;
 				break;
 			}
 			default:
@@ -111,6 +152,13 @@ void CSquare::Render()
 		m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
 	}
 
+}
+
+void CSquare::CreateCopy()
+{
+	m_NumOfCopies++;
+
+	m_Copies[std::to_string(m_NumOfCopies)] = std::make_pair(m_RGBA_Copy, m_Camera->Position + glm::vec3(m_Camera->Front.x * 5, m_Camera->Front.y * 5, m_Camera->Front.z * 5));
 }
 
 void CSquare::ShaderNonsense()

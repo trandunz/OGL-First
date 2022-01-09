@@ -225,6 +225,7 @@ void Start()
 	if (!m_SquareTest)
 		m_SquareTest = new CSquare(m_Keypresses, m_MainCamera);
 	m_SquareTest->Start();
+
 }
 
 void Update()

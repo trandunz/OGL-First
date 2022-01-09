@@ -14,23 +14,48 @@ public:
     void Render();
 	void ImGuiHandler()
 	{
-		if (ImGui::Button("WireFrame Mode"))
+		ImGui::BeginMenuBar();
+		if (ImGui::BeginMenu("File"))
 		{
-			m_WireFrameMode = !m_WireFrameMode;
-			ShaderNonsense();
+			if (ImGui::MenuItem("Close", "Ctrl+W")) { m_ToolActive = false; }
+			ImGui::EndMenu();
 		}
-		if (ImGui::Button("Red"))
+		if (ImGui::BeginMenu("Tools"))
 		{
-			SetColour(1, 0, 0, 1);
+			if (ImGui::MenuItem("WireFrame Mode"))
+			{
+				m_WireFrameMode = !m_WireFrameMode;
+				ShaderNonsense();
+			}
+			ImGui::EndMenu();
 		}
-		if (ImGui::Button("Blue"))
+		if (ImGui::BeginMenu("Copy"))
 		{
-			SetColour(0, 0, 1, 1);
+			if (ImGui::MenuItem("Red", " : Create Copy Of Color"))
+			{
+				SetCopyColour(1, 0, 0, 1);
+				CreateCopy();
+			}
+			if (ImGui::MenuItem("Blue", " : Create Copy Of Color"))
+			{
+				SetCopyColour(0, 0, 1, 1);
+				CreateCopy();
+			}
+			if (ImGui::MenuItem("Green", " : Create Copy Of Color"))
+			{
+				SetCopyColour(0, 1, 0, 1);
+				CreateCopy();
+			}
+			if (ImGui::MenuItem("Current", " : Create Copy Of Color"))
+			{
+				SetCopyColour(m_Color[0], m_Color[1], m_Color[2], m_Color[3]);
+				CreateCopy();
+			}
+			ImGui::EndMenu();
 		}
-		if (ImGui::Button("Green"))
-		{
-			SetColour(0, 1, 0, 1);
-		}
+		ImGui::EndMenuBar();
+
+		ImGui::Text("Set Shape (Broken)");
 		if (ImGui::Button("Square"))
 		{
 			SetType(SHAPETYPE::SQUARE);
@@ -46,11 +71,15 @@ public:
 			SetType(SHAPETYPE::TRIANGLE);
 			ShaderNonsense();
 		}
-		if (ImGui::Button("CreateCopy"))
-		{
-			m_NumOfCopies++;
-			m_Copies[std::to_string(m_NumOfCopies)] = std::make_pair(m_RGBA, m_Camera->Position);
-		}
+		ImGui::Text("Set Color Of 'cube'");
+		ImGui::ColorEdit4("color", m_Color);
+
+		// Display contents in a scrolling region
+		ImGui::TextColored(ImVec4(1, 1, 0, 1), "Console Output");
+		ImGui::BeginChild("Scrolling");
+		for (int n = 0; n < 50; n++)
+			ImGui::Text("%04d: Niggers", n);
+		ImGui::EndChild();
 	}
 
 	inline void SetMVPUniform(glm::vec3 _position)
@@ -71,13 +100,15 @@ public:
 		m_Shader->SetUniformMat4f("u_MVP", mvp);
 	}
 
-	inline void SetColour(float _r, float _g, float _b, float _a)
+	inline void SetCopyColour(float _r, float _g, float _b, float _a)
 	{
-		m_RGBA.w = _a;
-		m_RGBA.x = _r;  // R
-		m_RGBA.y = _g;  // G
-		m_RGBA.z = _b;  // B
+		m_RGBA_Copy.w = _a;
+		m_RGBA_Copy.x = _r;  // R
+		m_RGBA_Copy.y = _g;  // G
+		m_RGBA_Copy.z = _b;  // B
 	}
+
+	void CreateCopy();
 
 	bool GetWireFrameMode()
 	{
@@ -97,17 +128,21 @@ protected:
 
 	float m_dt = 0.0f;
 
-	glm::vec3 m_Position = { 0, 0, 0 };
+	glm::vec3 m_Position = { 0, 0, -10 };
 	float m_MovementSpeed = 2.0f;
-	glm::vec4 m_RGBA = {1,0,0,1};
+	glm::vec4 m_RGBA_Copy = {1,0,0,1};
+	float m_Color[4] = { 1,0,0,1 };
 
 	unsigned int m_NumOfCopies = 0;
+
+	bool m_HoldingShift = false;
+	bool m_GrabCube = false;
 
 	void Movement(float _dt)
 	{
 		UpdatePosition(m_InputVec.x * m_MovementSpeed * _dt, m_InputVec.y * m_MovementSpeed * _dt, m_InputVec.z * m_MovementSpeed * _dt);
-		
-		m_Copies["Cube"] = std::make_pair(glm::vec4(1,0,0,1), m_Position);
+
+		m_Copies["Cube"] = std::make_pair(glm::vec4({ m_Color[0], m_Color[1], m_Color[2], m_Color[3] }), m_Camera->Position + glm::vec3(m_Camera->Front.x * 5, m_Camera->Front.y * 5, m_Camera->Front.z * 5));
 	}
 
 	void ShaderNonsense();

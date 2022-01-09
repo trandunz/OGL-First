@@ -3,10 +3,14 @@
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_glfw.h"
 #include "ImGui/imgui_impl_opengl3.h"
+static bool m_ToolActive = true;
+
 class GUI :
     public NumptyBehavior
 {
 public:
+	GUI() { m_ToolActive = true; }
+	
     static void InitImGUI(GLFWwindow* _window)
     {
 		IMGUI_CHECKVERSION();
@@ -21,8 +25,7 @@ public:
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-
-		ImGui::Begin("Tools V0.01");
+		ImGui::Begin("Tools V0.01", &m_ToolActive, ImGuiWindowFlags_MenuBar);
 	}
 	static void EndImGUIFrame()
 	{
@@ -42,5 +45,7 @@ public:
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
 	}
+
+
 };
 

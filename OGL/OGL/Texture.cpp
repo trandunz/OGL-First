@@ -1,29 +1,67 @@
-#include "Texture.h"
+#define STB_IMAGE_IMPLEMENTATION
 
-#define STB_IMAGE_IMPLEMENTATION  
+#include"Texture.h"
 
-#include <stb-master/stb_image.h>
-
-Texture::Texture(const std::string& path)
-    : m_RendererID(0), m_FilePath(path), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0)
+Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType)
 {
-    stbi_set_flip_vertically_on_load(0);
-    m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_BPP, 4);
+	// Assigns the type of the texture ot the texture object
+	type = texType;
 
-    glGenTextures(1, &m_RendererID);
-    glBindBuffer(GL_TEXTURE_2D, m_RendererID);
+	// Stores the width, height, and the number of color channels of the image
+	int widthImg, heightImg, numColCh;
+	// Flips the image so it appears right side up
+	stbi_set_flip_vertically_on_load(true);
+	// Reads the image from a file and stores it in bytes
+	unsigned char* bytes = stbi_load(image, &widthImg, &heightImg, &numColCh, 0);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // Stops it going out of bounds
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // tilling
+	// Generates an OpenGL texture object
+	glGenTextures(1, &ID);
+	// Assigns the texture to a Texture Unit
+	glActiveTexture(slot);
+	glBindTexture(texType, ID);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer); // RGBA 8 for 8 bits
-    glBindTexture(GL_TEXTURE_2D, 0);
+	// Configures the type of algorithm that is used to make the image smaller or bigger
+	glTexParameteri(texType, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(texType, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    // Free The Buffer
-    if (m_LocalBuffer)
-    {
-        stbi_image_free(m_LocalBuffer);
-    }
+	// Configures the way the texture repeats (if it does at all)
+	glTexParameteri(texType, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(texType, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	// Extra lines in case you choose to use GL_CLAMP_TO_BORDER
+	// float flatColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
+	// glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, flatColor);
+
+	// Assigns the image to the OpenGL Texture object
+	glTexImage2D(texType, 0, GL_RGBA, widthImg, heightImg, 0, format, pixelType, bytes);
+	// Generates MipMaps
+	glGenerateMipmap(texType);
+
+	// Deletes the image data as it is already in the OpenGL Texture object
+	stbi_image_free(bytes);
+
+	// Unbinds the OpenGL Texture object so that it can't accidentally be modified
+	glBindTexture(texType, 0);
+}
+
+void Texture::texUnit(Shader& shader, const char* uniform, GLuint unit)
+{
+	shader.Bind();
+	// Sets the value of the uniform
+	shader.SetUniform1i(uniform, unit);
+}
+
+void Texture::Bind()
+{
+	glBindTexture(type, ID);
+}
+
+void Texture::Unbind()
+{
+	glBindTexture(type, 0);
+}
+
+void Texture::Delete()
+{
+	glDeleteTextures(1, &ID);
 }
