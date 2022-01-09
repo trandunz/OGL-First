@@ -11,7 +11,9 @@ void InitGLFWCallbacks();
 void InitInputMode();
 void Start();
 void Update();
-
+void HandleMouseVisible();
+void InputActions();
+bool CleanupObjects();
 int Cleanup();
 void CleanupAllPointers();
 void CalculateDeltaTime();
@@ -22,8 +24,11 @@ std::map<int, bool> m_Mousepresses;
 
 GLFWwindow* m_RenderWindow;
 CSquare* m_SquareTest;
-Camera m_MainCamera(m_Keypresses);
+Camera m_MainCamera(m_Keypresses, glm::vec3(0.0f, 0.0f, 3.0f));
 
+bool firstMouse = true;
+bool m_ShowMouse = false;
+static float lastX = 0.0f, lastY = 0.0f;
 
 static void error_callback(int error, const char* description)
 {
@@ -32,12 +37,26 @@ static void error_callback(int error, const char* description)
 
 static void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos)
 {
-	m_MainCamera.ProcessMouseMovement(xPos, yPos);
+	if (firstMouse)
+	{
+		lastX = xPos;
+		lastY = yPos;
+		firstMouse = false;
+	}
+	auto xoffset = xPos - lastX;
+	lastX = xPos;
+
+	auto yoffset = lastY - yPos;
+	lastY = yPos;
+
+	if (!m_ShowMouse)
+		m_MainCamera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 static void cursorEnterCallback(GLFWwindow* window, int entered)
 {
-	m_SquareTest->CursorEnterCallback(window, entered);
+	if (m_SquareTest)
+		m_SquareTest->CursorEnterCallback(window, entered);
 }
 
 static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
@@ -83,30 +102,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		m_Keypresses[key] = false;
 	}
 
-	// General Input
-	for (auto& item : m_Keypresses)
-	{
-		if (item.second == true)
-		{
-			switch (item.first)
-			{
-			case GLFW_KEY_ESCAPE:
-				// Close Window
-				glfwSetWindowShouldClose(window, GLFW_TRUE);
-
-				// Only Single Press Thanks
-				m_Keypresses[key] = false;
-				break;
-
-			default:
-				break;
-			}
-		}
-	}
-
 	// Object Input
-	m_MainCamera.Input(deltaTime);
-	//m_SquareTest->Input(window, key, scancode, action, mods);	
+	m_MainCamera.ProcessKeyboard(deltaTime);
+	if (m_SquareTest)
+		m_SquareTest->Input(window, key, scancode, action, mods);
 }
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -136,6 +135,8 @@ int main()
 	while (!glfwWindowShouldClose(m_RenderWindow))
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glClearDepth(1);
 		GUI::StartImGUIFrame();
 		//
 		// MAIN UPDATE
@@ -144,6 +145,7 @@ int main()
 		GUI::EndImGUIFrame();
 		glfwSwapBuffers(m_RenderWindow);
 		glfwPollEvents();
+		CleanupObjects();
 	}
 
 	// CLEANUP AND EXIT
@@ -167,7 +169,7 @@ void InitGLFW()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Create Render Window
-	m_RenderWindow = glfwCreateWindow(m_WindowWidth, m_WindowHeight, "My Title", NULL, NULL);
+	m_RenderWindow = glfwCreateWindow(m_WindowWidth, m_WindowHeight, "Harmony v0.01", NULL, NULL);
 
 	if (!m_RenderWindow)
 	{
@@ -191,6 +193,14 @@ void InitGLFW()
 
 	// Input Mode
 	InitInputMode();
+
+	// Enables
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glDepthMask(GL_TRUE);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void InitGLFWCallbacks()
@@ -206,7 +216,6 @@ void InitGLFWCallbacks()
 
 void InitInputMode()
 {
-	//glfwSetInputMode(m_RenderWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetInputMode(m_RenderWindow, GLFW_STICKY_MOUSE_BUTTONS, 1);
 	glfwSetInputMode(m_RenderWindow, GLFW_STICKY_KEYS, 1);
 }
@@ -221,8 +230,85 @@ void Start()
 void Update()
 {
 	CalculateDeltaTime(); 
-	m_SquareTest->Update(deltaTime);
-	m_SquareTest->ImGuiHandler();
+	InputActions();
+	HandleMouseVisible();
+	m_MainCamera.Movement(deltaTime);
+	if (m_SquareTest)
+		m_SquareTest->Update(deltaTime);
+		m_SquareTest->ImGuiHandler();
+}
+
+void HandleMouseVisible()
+{
+	if (m_ShowMouse)
+		glfwSetInputMode(m_RenderWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	else
+		glfwSetInputMode(m_RenderWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void InputActions()
+{
+	// General Input
+	for (auto& item : m_Keypresses)
+	{
+		if (item.second == true)
+		{
+			switch (item.first)
+			{
+			case GLFW_KEY_ESCAPE:
+				// Close Window
+				glfwSetWindowShouldClose(m_RenderWindow, GLFW_TRUE);
+
+				// Only Single Press Thanks
+				m_Keypresses[item.first] = false;
+				break;
+			case GLFW_KEY_TAB:
+			{
+				m_ShowMouse = !m_ShowMouse;
+
+				// Only Single Press Thanks
+				m_Keypresses[item.first] = false;
+				break;
+			}
+			case GLFW_KEY_K:
+			{
+				if (m_SquareTest)
+					m_SquareTest->MARKASDESTROY = true;
+
+				// Only Single Press Thanks
+				m_Keypresses[item.first] = false;
+				break;
+			}
+			case GLFW_KEY_L:
+			{
+				if (!m_SquareTest)
+					m_SquareTest = new CSquare(m_Keypresses, m_MainCamera);
+					m_SquareTest->Start();
+
+				// Only Single Press Thanks
+				m_Keypresses[item.first] = false;
+				break;
+			}
+			default:
+				break;
+			}
+		}
+	}
+}
+
+bool CleanupObjects()
+{
+	if (m_SquareTest)
+	{
+		if (m_SquareTest->MARKASDESTROY)
+		{
+			delete m_SquareTest;
+			m_SquareTest = nullptr;
+			return true;
+		}
+	}
+		
+	return false;
 }
 
 int Cleanup()

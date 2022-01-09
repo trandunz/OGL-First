@@ -6,6 +6,7 @@
 #include <glm/gtx/transform.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
+#include <GLM/gtc/quaternion.hpp>
 //#include <ImGui/imgui.h>
 
 #include <iostream>

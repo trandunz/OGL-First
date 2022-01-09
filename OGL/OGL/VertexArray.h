@@ -23,6 +23,7 @@ public:
     }
     ~VertexArray()
     {
+        UnBind();
         glDeleteVertexArrays(1, &m_RendererID);
     }
 

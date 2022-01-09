@@ -19,11 +19,10 @@ CSquare::~CSquare()
 
 void CSquare::Start()
 {
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	SetType(SHAPETYPE::SQUARE);
+	SetType(SHAPETYPE::CUBE);
 	ShaderNonsense();
+
+	m_Copies["Cube"] = std::make_pair(m_RGBA,m_Position);
 }
 
 void CSquare::CursorEnterCallback(GLFWwindow* window, int entered)
@@ -54,24 +53,33 @@ void CSquare::Input(GLFWwindow* window, int key, int scancode, int action, int m
 		{
 			switch (item.first)
 			{
-			case GLFW_KEY_D:
+			case GLFW_KEY_UP:
 			{
-				m_InputVec.x = 1;
+				m_Position.y += 1.0f;
+
+				(*m_KeyPresses)[item.first] = false;
 				break;
 			}
-			case GLFW_KEY_A:
+			case GLFW_KEY_DOWN:
 			{
-				m_InputVec.x = -1;
+				m_Position.y -= 1.0f;
+
+				(* m_KeyPresses)[item.first] = false;
 				break;
 			}
-			case GLFW_KEY_W:
+			case GLFW_KEY_RIGHT:
 			{
-				m_InputVec.y = 1;
+				m_Position.x += 1.0f;
+
+				(*m_KeyPresses)[item.first] = false;
 				break;
 			}
-			case GLFW_KEY_S:
+			case GLFW_KEY_LEFT:
 			{
-				m_InputVec.y = -1;
+				m_Position.x -= 1.0f;
+
+				(*m_KeyPresses)[item.first] = false;
+				break;
 			}
 			default:
 				break;
@@ -92,13 +100,17 @@ void CSquare::Update(long double& _dt)
 
 void CSquare::Render()
 {
-	// Make Material For Other Uniforms
-	m_Shader->Bind();
-	m_Shader->SetUniform4f("u_Color", m_RGBA.x, m_RGBA.y, m_RGBA.z, m_RGBA.w);
-	SetMVPUniform();
+	for (auto& item : m_Copies)
+	{
+		// Make Material For Other Uniforms
+		m_Shader->Bind();
+		m_Shader->SetUniform4f("u_Color", item.second.first.x, item.second.first.y, item.second.first.z, item.second.first.w);
+		SetMVPUniform(item.second.second);
 
-	// Draw
-	m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
+		// Draw
+		m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
+	}
+
 }
 
 void CSquare::ShaderNonsense()
@@ -117,7 +129,7 @@ void CSquare::ShaderNonsense()
 	m_VertexArray = new VertexArray();
 
 	VertexBufferLayout layout;
-	layout.Push<float>(2);
+	layout.Push<float>(3);
 	layout.Push<float>(2);
 	m_VertexArray->AddBuffer(*m_VertBuffer, layout);
 

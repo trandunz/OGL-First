@@ -22,7 +22,7 @@ public:
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		ImGui::Begin("Harmony V0.01");
+		ImGui::Begin("Tools V0.01");
 	}
 	static void EndImGUIFrame()
 	{

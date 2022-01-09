@@ -10,12 +10,12 @@ class CShape :	public NumptyBehavior
 public:
     virtual ~CShape()
     {
-        CleanupPointer(m_Shader);
-		CleanupPointer(m_VertBuffer);
-		CleanupPointer(m_IndexBuffer);
-		CleanupPointer(m_VertexArray);
 		m_Camera = nullptr;
 		m_Shader = nullptr;
+		m_VertBuffer = nullptr;
+		m_IndexBuffer = nullptr;
+		m_VertexArray = nullptr;
+
     }
 
     virtual void Start() = 0;
@@ -29,13 +29,16 @@ public:
 
         SQUARE,
         TRIANGLE,
-        CIRCLE
+        CIRCLE,
+		CUBE
     };
 
     void SetType(SHAPETYPE _type)
     {
         ShapeType = _type;
     }
+
+	bool MARKASDESTROY = false;
 
 protected:
     Shader* m_Shader = nullptr;
@@ -47,10 +50,10 @@ protected:
 	VertexArray* m_VertexArray = nullptr;
 
     // Vertices coordinates
-    GLfloat m_Vertices[32]{};
+    GLfloat m_Vertices[128]{};
 
     // Indices for vertices order
-    GLuint m_Indices[32]{};
+    GLuint m_Indices[128]{};
 
 	SHAPETYPE ShapeType;
 
@@ -71,14 +74,26 @@ protected:
 					 0.5f,  0.5f,	1.0f, 1.0f,
 					-0.5f,  0.5f,	0.0f, 1.0f
 			};
-			for (int i = 0; i < 16; i++)
-			{
-				m_Vertices[i] = square[i];
-			}
-			m_VertBuffer = new VertexBuffer(m_Vertices, 4 * 4 * sizeof(float)); // 4 x 4 vertices
+			m_VertBuffer = new VertexBuffer(square, 4 * 4 * sizeof(float)); // 4 x 4 vertices
 			break;
 		}
+		case SHAPETYPE::CUBE:
+		{
 
+			GLfloat cube[40]{
+					-0.5f, -0.5f,  0.5f,		0.0f, 0.0f,
+					 0.5f, -0.5f,  0.5f,		1.0f, 0.0f,
+					 0.5f,  0.5f,  0.5f,		1.0f, 1.0f,
+					-0.5f,  0.5f,  0.5f,		0.0f, 1.0f,
+
+					-0.5f, -0.5f,  0.0f,		0.0f, 0.0f,
+					 0.5f, -0.5f,  0.0f,		1.0f, 0.0f,
+					 0.5f,  0.5f,  0.0f,		1.0f, 1.0f,
+					-0.5f,  0.5f,  0.0f,		0.0f, 1.0f
+			};
+			m_VertBuffer = new VertexBuffer(cube, 5 * 8 * sizeof(float)); // 5 x 4 vertices
+			break;
+		}
 		case SHAPETYPE::TRIANGLE:
 		{
 			GLfloat triangle[12]{
@@ -86,11 +101,7 @@ protected:
 							 0.5f, -0.5f,	1.0f, 0.0f,
 							-0.5f, -0.5f,	1.0f, 1.0f,
 			};
-			for (int i = 0; i < 12; i++)
-			{
-				m_Vertices[i] = triangle[i];
-			}
-			m_VertBuffer = new VertexBuffer(m_Vertices, 3 * 4 * sizeof(float)); // 4 x 4 vertices
+			m_VertBuffer = new VertexBuffer(triangle, 3 * 4 * sizeof(float)); // 4 x 4 vertices
 			break;
 		}
 
@@ -106,28 +117,45 @@ protected:
 		{
 		case SHAPETYPE::SQUARE:
 		{
-			GLfloat square[6]{
+			GLuint square[6]{
 				0, 1, 2, // Lower left triangle
 				2, 3, 0, // Lower right triangle
 			};
-			for (int i = 0; i < 6; i++)
-			{
-				m_Indices[i] = square[i];
-			}
-			m_IndexBuffer = new IndexBuffer(m_Indices, 6);
+			m_IndexBuffer = new IndexBuffer(square, 6);
+			break;
+		}
+
+		case SHAPETYPE::CUBE:
+		{
+			GLuint cube[36]{
+				0, 1, 2, // Lower left triangle
+				2, 3, 0, // Lower right triangle
+
+				0, 4, 5, // Lower left triangle
+				5, 1, 0,
+
+				5, 1, 2, // Lower left triangle
+				2, 6, 5,
+
+				6, 2, 3, // Lower left triangle
+				3, 7, 6,
+
+				5, 6, 7, // Lower left triangle
+				7, 4, 5,
+
+				7, 3, 0, // Lower left triangle
+				0, 4, 7,
+			};
+			m_IndexBuffer = new IndexBuffer(cube, 36);
 			break;
 		}
 
 		case SHAPETYPE::TRIANGLE:
 		{
-			GLfloat triangle[3]{
+			GLuint triangle[3]{
 				0, 1, 2, // Lower left triangle
 			};
-			for (int i = 0; i < 3; i++)
-			{
-				m_Indices[i] = triangle[i];
-			}
-			m_IndexBuffer = new IndexBuffer(m_Indices, 3);
+			m_IndexBuffer = new IndexBuffer(triangle, 3);
 			break;
 		}
 

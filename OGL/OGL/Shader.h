@@ -25,7 +25,6 @@ public:
     ~Shader()
     {
         glDeleteProgram(m_RendererID);
-        m_UniformLocationCache.clear();
     }
 
     void CompileShader()

@@ -18,6 +18,7 @@ public:
     }
     ~VertexBuffer()
     {
+        UnBind();
         glDeleteBuffers(1, &m_RendererID);
     }
 
