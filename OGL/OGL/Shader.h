@@ -47,6 +47,18 @@ public:
         glUniform4f(location, v0, v1, v2, v3);
     }
 
+    void SetUniform3f(const std::string& name, float v0, float v1, float v2)
+    {
+        GLint location = GetUniformLocation(name);
+        glUniform3f(location, v0, v1, v2);
+    }
+
+    void SetUniformVec3f(const std::string& name, glm::vec3& vector3)
+    {
+        GLint location = GetUniformLocation(name);
+        glUniform3f(location, vector3.x, vector3.y, vector3.z);
+    }
+
     void SetUniformMat4f(const std::string& name, const glm::mat4& matrix)
     {
         GLint location = GetUniformLocation(name);

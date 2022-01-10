@@ -35,7 +35,8 @@ public:
 
     unsigned int GetCount() const { return m_IndexCount; }
 
-private:
     unsigned int m_RendererID = 0;
+private:
+
     unsigned int m_IndexCount = 0;
 };

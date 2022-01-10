@@ -106,8 +106,11 @@ public:
         GLuint program = glCreateProgram();
 
         // Shaders
+
         GLuint vertShader = CompileVertShader(readFile(_vertexShader));
-        GLuint geoShader = CompileGeoShader(readFile(_geoShader));
+        GLuint geoShader;
+        if (_geoShader != "")
+            geoShader = CompileGeoShader(readFile(_geoShader));
         GLuint fragShader = CompileFragShader(readFile(_fragmentShader));
 
         if (m_bDebug)
@@ -115,7 +118,8 @@ public:
             std::cout << "Attaching Shaders" << std::endl;
         }
         glAttachShader(program, vertShader);
-        glAttachShader(program, geoShader);
+        if (_geoShader != "")
+            glAttachShader(program, geoShader);
         glAttachShader(program, fragShader);
 
         if (m_bDebug)
@@ -130,7 +134,8 @@ public:
             std::cout << "Deleting Shaders" << std::endl;
         }
         glDeleteShader(vertShader);
-        glDeleteShader(geoShader);
+        if (_geoShader != "")
+            glDeleteShader(geoShader);
         glDeleteShader(fragShader);
 
         return program;

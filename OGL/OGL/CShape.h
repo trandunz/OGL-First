@@ -30,18 +30,50 @@ public:
         SQUARE,
         TRIANGLE,
         CIRCLE,
-		CUBE
+		CUBE,
+		SPHERE,
     };
 
     void SetType(SHAPETYPE _type)
     {
         ShapeType = _type;
     }
+	inline void SetMVPUniform(glm::vec3 _position)
+	{
+		proj = glm::perspective(glm::radians(m_Camera->Zoom), 1920.0f / 1080.0f, 0.1f, 100.0f);
+		model = glm::translate(glm::mat4(1.0f), _position);
+		view = m_Camera->GetViewMatrix();
+		glm::mat4 mvp = proj * view * model;
+		m_Shader->SetUniformMat4f("u_MVP", mvp);
+	}
+	inline void SetMVPUniform()
+	{
+		proj = glm::perspective(glm::radians(m_Camera->Zoom), 1920.0f / 1080.0f, 0.1f, 100.0f);
+		model = glm::translate(glm::mat4(1.0f), m_Position);
+		view = m_Camera->GetViewMatrix();
+		glm::mat4 mvp = proj * view * model;
+		m_Shader->SetUniformMat4f("u_MVP", mvp);
+	}
+	inline void SetMVPUniform(Shader* _shader)
+	{
+		proj = glm::perspective(glm::radians(m_Camera->Zoom), 1920.0f / 1080.0f, 0.1f, 100.0f);
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+		view = m_Camera->GetViewMatrix();
+		_shader->SetUniformMat4f("projection", proj);
+		_shader->SetUniformMat4f("model", model);
+		_shader->SetUniformMat4f("view", view);
+	}
 
 	bool MARKASDESTROY = false;
 
+	VertexBuffer* GetVertexBuffer()
+	{
+		return m_VertBuffer;
+	}
+
 protected:
     Shader* m_Shader = nullptr;
+	Shader* m_LightingShader = nullptr;
     Renderer m_Renderer;
 	Camera* m_Camera = nullptr;
 
@@ -49,11 +81,17 @@ protected:
 	IndexBuffer* m_IndexBuffer = nullptr;
 	VertexArray* m_VertexArray = nullptr;
 
+	glm::mat4 proj = glm::perspective(45.0f, (float)1920.0f / (float)1080.0f, 0.0f, 4000.0f);
+	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -2));
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), m_Position);
+
+	glm::vec3 m_Position = { 0, 0, -10 };
+
     // Vertices coordinates
-    GLfloat m_Vertices[128]{};
+    GLfloat m_Vertices[256]{};
 
     // Indices for vertices order
-    GLuint m_Indices[128]{};
+    GLuint m_Indices[256]{};
 
 	SHAPETYPE ShapeType;
 
@@ -61,7 +99,12 @@ protected:
 
     glm::vec3 m_InputVec;
 
-    void CreateVBBasedOnType()
+	glm::vec4 m_RGBA_Copy = { 1,0,0,1 };
+	float m_Color[4] = { 1,0,0,1 };
+
+	float m_dt = 0.0f;
+
+	void CreateVBBasedOnType()
     {
 		CleanupPointer(m_VertBuffer);
 		switch (ShapeType)
@@ -80,18 +123,99 @@ protected:
 		case SHAPETYPE::CUBE:
 		{
 
-			GLfloat cube[40]{
-					-0.5f, -0.5f,  0.5f,		0.0f, 0.0f,
-					 0.5f, -0.5f,  0.5f,		1.0f, 0.0f,
-					 0.5f,  0.5f,  0.5f,		1.0f, 1.0f,
-					-0.5f,  0.5f,  0.5f,		0.0f, 1.0f,
+			float cube[] = {
+				-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+				 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+				 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+				 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+				-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-					-0.5f, -0.5f,  -0.5f,		0.0f, 0.0f,
-					 0.5f, -0.5f,  -0.5f,		1.0f, 0.0f,
-					 0.5f,  0.5f,  -0.5f,		1.0f, 1.0f,
-					-0.5f,  0.5f,  -0.5f,		0.0f, 1.0f
+				-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+				 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+				 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+				 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+				-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+
+				-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+				-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+				-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+				-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+				-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+				-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+				 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+				 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+				 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+				 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+				 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+				-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+				 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+				 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+				 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+				-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+				 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+				 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+				 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+				-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+				-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 			};
-			m_VertBuffer = new VertexBuffer(cube, 5 * 8 * sizeof(float)); // 5 x 4 vertices
+			m_VertBuffer = new VertexBuffer(cube, sizeof(cube)); // 4 x 4 vertices
+			break;
+		}
+		case SHAPETYPE::SPHERE:
+		{
+
+			float cube[] = {
+				-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+				 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+				 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+				 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+				-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+
+				-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+				 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+				 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+				 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+				-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+
+				-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+				-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+				-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+				-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+				-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+				-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+				 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+				 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+				 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+				 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+				 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+				-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+				 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+				 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+				 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+				-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+				 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+				 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+				 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+				-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+				-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+			};
+			m_VertBuffer = new VertexBuffer(cube, sizeof(cube)); // 4 x 4 vertices
 			break;
 		}
 		case SHAPETYPE::TRIANGLE:
@@ -101,7 +225,7 @@ protected:
 							 0.5f, -0.5f,	1.0f, 0.0f,
 							-0.5f, -0.5f,	1.0f, 1.0f,
 			};
-			m_VertBuffer = new VertexBuffer(triangle, 3 * 4 * sizeof(float)); // 4 x 4 vertices
+			m_VertBuffer = new VertexBuffer(triangle, sizeof(triangle)); // 4 x 4 vertices
 			break;
 		}
 
@@ -163,5 +287,7 @@ protected:
 			break;
 		}
 	}
+
+
 };
 

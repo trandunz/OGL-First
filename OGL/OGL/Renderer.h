@@ -11,8 +11,15 @@ public:
 	{
 		shader.Bind();
 		va.Bind();
-		ib.Bind();
-		glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr);
+		if (&ib != nullptr)
+		{
+			ib.Bind();
+			glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr);
+		}
+		else
+		{
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 	}
 };
 

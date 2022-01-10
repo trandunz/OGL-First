@@ -185,6 +185,8 @@
     <ClInclude Include="VertexBufferLayout.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="basic_lighting.fs" />
+    <None Include="basic_lighting.vs" />
     <None Include="Resources\Shaders\TestShader.fs" />
     <None Include="Resources\Shaders\TestShader_FILL.gs" />
     <None Include="Resources\Shaders\TestShader_WF.gs" />

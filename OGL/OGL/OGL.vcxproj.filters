@@ -148,5 +148,11 @@
     <None Include="Resources\Shaders\TestShader.vs">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="basic_lighting.vs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="basic_lighting.fs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
