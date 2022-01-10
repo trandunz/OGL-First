@@ -1,12 +1,12 @@
 #include "CSquare.h"
-CSquare::CSquare()
-{
-}
+using namespace Shape;
 
 CSquare::CSquare(std::map<int, bool>& _keyMap, Camera& _camera)
 {
 	m_KeyPresses = &_keyMap;
 	m_Camera = &_camera;
+
+	Start();
 }
 
 CSquare::~CSquare()
@@ -24,10 +24,10 @@ CSquare::~CSquare()
 
 void CSquare::Start()
 {
-	SetType(SHAPETYPE::CUBE);
+	SetType(TYPE::CUBE);
 	ShaderNonsense();
 
-	m_Copies[std::to_string(m_NumOfCopies)] = std::make_pair(m_RGBA_Copy,m_Position);
+	m_Copies[std::to_string(m_NumOfCopies)] = std::make_pair(m_RGBA_Copy, transform.position);
 }
 
 void CSquare::CursorEnterCallback(GLFWwindow* window, int entered)
@@ -75,11 +75,11 @@ void CSquare::Input(GLFWwindow* window, int key, int scancode, int action, int m
 			{
 				if (m_HoldingShift)
 				{
-					m_Position.z -= 1.0f;
+					transform.position.z -= 1.0f;
 				}
 				else
 				{
-					m_Position.y += 1.0f;
+					transform.position.y += 1.0f;
 				}
 
 				(*m_KeyPresses)[item.first] = false;
@@ -89,11 +89,11 @@ void CSquare::Input(GLFWwindow* window, int key, int scancode, int action, int m
 			{
 				if (m_HoldingShift)
 				{
-					m_Position.z += 1.0f;
+					transform.position.z += 1.0f;
 				}
 				else
 				{
-					m_Position.y -= 1.0f;
+					transform.position.y -= 1.0f;
 				}
 
 				(* m_KeyPresses)[item.first] = false;
@@ -101,14 +101,14 @@ void CSquare::Input(GLFWwindow* window, int key, int scancode, int action, int m
 			}
 			case GLFW_KEY_RIGHT:
 			{
-				m_Position.x += 1.0f;
+				transform.position.x += 1.0f;
 
 				(*m_KeyPresses)[item.first] = false;
 				break;
 			}
 			case GLFW_KEY_LEFT:
 			{
-				m_Position.x -= 1.0f;
+				transform.position.x -= 1.0f;
 
 				(*m_KeyPresses)[item.first] = false;
 				break;
@@ -142,10 +142,13 @@ void CSquare::Update(long double& _dt)
 	Movement(m_dt);
 
 	Render();
+
+	ImGuiHandler();
 }
 
 void CSquare::Render()
 {
+	int i = 0;
 	for (auto& item : m_Copies)
 	{
 		m_LightingShader->Bind();
@@ -153,10 +156,9 @@ void CSquare::Render()
 		m_LightingShader->SetUniform3f("lightColor", item.second.first.x, item.second.first.y, item.second.first.z);
 		m_LightingShader->SetUniformVec3f("lightPos", item.second.second);
 		m_LightingShader->SetUniformVec3f("viewPos", m_Camera->Position);
-		std::cout << item.first << std::endl;
-		std::string Uniform_pos = "m_PointLights[" + std::to_string(0) + "].position";
+		std::string Uniform_pos = "m_PointLights[" + std::to_string(i) + "].position";
 		m_LightingShader->SetUniformVec3f(Uniform_pos, item.second.second);
-		std::string Uniform_const = "m_PointLights[" + std::to_string(0) + "].constant";
+		std::string Uniform_const = "m_PointLights[" + std::to_string(i) + "].constant";
 		m_LightingShader->SetUniform1f(Uniform_const, 1.0f);
 		SetMVPUniform(m_LightingShader);
 		m_Renderer.Draw(*m_LightCubeVAO, *m_IndexBuffer, *m_LightingShader);
@@ -166,7 +168,86 @@ void CSquare::Render()
 		m_Shader->SetUniform4f("u_Color", item.second.first.x, item.second.first.y, item.second.first.z, item.second.first.w);
 		SetMVPUniform(item.second.second);
 		m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
+
 	}
+}
+
+void Shape::CSquare::ImGuiHandler()
+{
+	ImGui::BeginMenuBar();
+	if (ImGui::BeginMenu("File"))
+	{
+		if (ImGui::MenuItem("Close", "Ctrl+W")) { m_ToolActive = false; }
+		ImGui::EndMenu();
+	}
+	if (ImGui::BeginMenu("Tools"))
+	{
+		if (ImGui::MenuItem("WireFrame Mode"))
+		{
+			m_WireFrameMode = !m_WireFrameMode;
+			ShaderNonsense();
+		}
+		ImGui::EndMenu();
+	}
+	if (ImGui::BeginMenu("Copy"))
+	{
+		if (ImGui::MenuItem("Red", " : Create Copy Of Color"))
+		{
+			SetCopyColour(1, 0, 0, 1);
+			CreateCopy();
+		}
+		if (ImGui::MenuItem("Blue", " : Create Copy Of Color"))
+		{
+			SetCopyColour(0, 0, 1, 1);
+			CreateCopy();
+		}
+		if (ImGui::MenuItem("Green", " : Create Copy Of Color"))
+		{
+			SetCopyColour(0, 1, 0, 1);
+			CreateCopy();
+		}
+		if (ImGui::MenuItem("Current", " : Create Copy Of Color"))
+		{
+			SetCopyColour(m_Color[0], m_Color[1], m_Color[2], m_Color[3]);
+			CreateCopy();
+		}
+		ImGui::EndMenu();
+	}
+	ImGui::EndMenuBar();
+
+	ImGui::Text("Set Shape (Broken)");
+	if (ImGui::Button("Square"))
+	{
+		SetType(TYPE::SQUARE);
+		ShaderNonsense();
+	}
+	if (ImGui::Button("Cube"))
+	{
+		SetType(TYPE::CUBE);
+		ShaderNonsense();
+	}
+	if (ImGui::Button("Triangle"))
+	{
+		SetType(TYPE::TRIANGLE);
+		ShaderNonsense();
+	}
+	ImGui::Text("Set Color Of 'cube'");
+	ImGui::ColorEdit4("color", m_Color);
+
+	// Display contents in a scrolling region
+	ImGui::TextColored(ImVec4(1, 1, 0, 1), "Console Output");
+	ImGui::BeginChild("Scrolling");
+	for (int n = 0; n < 50; n++)
+		ImGui::Text("%04d: Niggers", n);
+	ImGui::EndChild();
+}
+
+inline void Shape::CSquare::SetCopyColour(float _r, float _g, float _b, float _a)
+{
+	m_RGBA_Copy.w = _a;
+	m_RGBA_Copy.x = _r;  // R
+	m_RGBA_Copy.y = _g;  // G
+	m_RGBA_Copy.z = _b;  // B
 }
 
 void CSquare::CreateCopy()
@@ -174,6 +255,13 @@ void CSquare::CreateCopy()
 	m_NumOfCopies++;
 
 	m_Copies[std::to_string(m_NumOfCopies)] = std::make_pair(m_RGBA_Copy, m_Camera->Position + glm::vec3(m_Camera->Front.x * 5, m_Camera->Front.y * 5, m_Camera->Front.z * 5));
+}
+
+void Shape::CSquare::Movement(float _dt)
+{
+	UpdatePosition(m_InputVec.x * m_MovementSpeed * _dt, m_InputVec.y * m_MovementSpeed * _dt, m_InputVec.z * m_MovementSpeed * _dt);
+
+	m_Copies["0"] = std::make_pair(glm::vec4({ m_Color[0], m_Color[1], m_Color[2], m_Color[3] }), transform.position);
 }
 
 void CSquare::ShaderNonsense()
@@ -213,24 +301,3 @@ void CSquare::ShaderNonsense()
 	//CreateIBBasedOnType();
 }
 
-bool CSquare::UpdatePosition(float _x, float _y, float _z)
-{
-	bool moved = false;
-	if (_x >= 0.000000001 || _x <= -0.000000001)
-	{
-		m_Position.x += _x;
-		moved = true;
-	}
-	if (_y >= 0.000000001 || _y <= -0.000000001)
-	{
-		m_Position.y += _y;
-		moved = true;
-	}
-	if (_z >= 0.000000001 || _z <= -0.000000001)
-	{
-		m_Position.z += _z;
-		moved = true;
-	}
-
-	return moved;
-}

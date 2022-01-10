@@ -23,7 +23,7 @@ std::map<int, bool> m_Keypresses;
 std::map<int, bool> m_Mousepresses;
 
 GLFWwindow* m_RenderWindow;
-CSquare* m_SquareTest;
+Shape::CSquare* m_SquareTest;
 Camera m_MainCamera(m_Keypresses, glm::vec3(0.0f, 0.0f, 3.0f));
 
 bool firstMouse = true;
@@ -223,10 +223,9 @@ void InitInputMode()
 void Start()
 {
 	if (!m_SquareTest)
-		m_SquareTest = new CSquare(m_Keypresses, m_MainCamera);
-		m_SquareTest->Start();
-
-
+	{
+		m_SquareTest = new Shape::CSquare(m_Keypresses, m_MainCamera);
+	}
 }
 
 void Update()
@@ -237,7 +236,6 @@ void Update()
 	m_MainCamera.Movement(deltaTime);
 	if (m_SquareTest)
 		m_SquareTest->Update(deltaTime);
-		m_SquareTest->ImGuiHandler();
 }
 
 void HandleMouseVisible()
@@ -284,8 +282,7 @@ void InputActions()
 			case GLFW_KEY_L:
 			{
 				if (!m_SquareTest)
-					m_SquareTest = new CSquare(m_Keypresses, m_MainCamera);
-					m_SquareTest->Start();
+					m_SquareTest = new Shape::CSquare(m_Keypresses, m_MainCamera);
 
 				// Only Single Press Thanks
 				m_Keypresses[item.first] = false;

@@ -1,23 +1,7 @@
 ﻿  CSquare.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(78,21): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
-          with
-          [
-              T=float
-          ]
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(79,21): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
-          with
-          [
-              T=float
-          ]
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(80,21): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
-          with
-          [
-              T=float
-          ]
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(44,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.h(122,125): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.h(122,89): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.h(122,53): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CSquare.cpp(141,9): warning C4244: '=': conversion from 'long double' to 'float', possible loss of data
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   OGL.vcxproj -> C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Debug\OGL.exe
