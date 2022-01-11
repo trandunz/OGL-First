@@ -43,13 +43,6 @@ Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, 
 	glBindTexture(texType, 0);
 }
 
-void Texture::texUnit(Shader& shader, const char* uniform, GLuint unit)
-{
-	shader.Bind();
-	// Sets the value of the uniform
-	shader.SetUniform1i(uniform, unit);
-}
-
 void Texture::Bind()
 {
 	glBindTexture(type, ID);

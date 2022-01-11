@@ -1,4 +1,5 @@
 #include "CSquare.h"
+#include "MousePicker.h"
 
 static int m_WindowWidth = 1600;
 static int m_WindowHeight = 900;
@@ -9,6 +10,7 @@ static long double lastFrame = 0.0; // Time of last frame
 void InitGLFW();
 void InitGLFWCallbacks();
 void InitInputMode();
+void HandleImGuiMenuBar();
 void Start();
 void Update();
 void HandleMouseVisible();
@@ -25,6 +27,7 @@ std::map<int, bool> m_Mousepresses;
 GLFWwindow* m_RenderWindow;
 Shape::CSquare* m_SquareTest;
 Camera m_MainCamera(m_Keypresses, glm::vec3(0.0f, 0.0f, 3.0f));
+MousePicker m_MousePicker(&m_MainCamera, m_MainCamera.projectionMatrix);
 
 bool firstMouse = true;
 bool m_ShowMouse = false;
@@ -37,6 +40,7 @@ static void error_callback(int error, const char* description)
 
 static void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos)
 {
+	m_MousePicker.GrabMousePosition(xPos, yPos);
 	if (firstMouse)
 	{
 		lastX = xPos;
@@ -50,7 +54,7 @@ static void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos)
 	lastY = yPos;
 
 	if (!m_ShowMouse)
-		m_MainCamera.ProcessMouseMovement(xoffset, yoffset);
+		m_MainCamera.ProcessMouse(xoffset, yoffset);
 }
 
 static void cursorEnterCallback(GLFWwindow* window, int entered)
@@ -103,7 +107,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	}
 
 	// Object Input
-	m_MainCamera.ProcessKeyboard(deltaTime);
+	m_MainCamera.Input(deltaTime);
 	if (m_SquareTest)
 		m_SquareTest->Input(window, key, scancode, action, mods);
 }
@@ -122,7 +126,7 @@ static void window_content_scale_callback(GLFWwindow* window, float xscale, floa
 
 static void scrollCallback(GLFWwindow* window, double xOffset, double yOffset)
 {
-	m_MainCamera.ProcessMouseScroll(yOffset);
+	m_MainCamera.ProcessScroll(yOffset);
 }
 
 int main()
@@ -220,6 +224,38 @@ void InitInputMode()
 	glfwSetInputMode(m_RenderWindow, GLFW_STICKY_KEYS, 1);
 }
 
+void HandleImGuiMenuBar()
+{
+	ImGui::BeginMenuBar();
+	if (ImGui::BeginMenu("File"))
+	{
+		if (ImGui::MenuItem("Close", "Ctrl+W")) { m_ToolActive = false; }
+		ImGui::EndMenu();
+	}
+	ImGui::EndMenuBar();
+
+	ImGui::Columns(2);
+	ImGui::SetColumnOffset(1, 300);
+
+	ImGuiStyle* style = &ImGui::GetStyle();
+	style->WindowTitleAlign = ImVec2(0.5f, 0.5f);
+	style->WindowMinSize = ImVec2(900, 480);
+
+	style->FramePadding = ImVec2(8, 6);
+
+	style->Colors[ImGuiCol_TitleBg] = ImColor(255, 101, 53, 255);
+	style->Colors[ImGuiCol_TitleBgActive] = ImColor(255, 101, 53, 255);
+	style->Colors[ImGuiCol_TitleBgCollapsed] = ImColor(0, 0, 0, 255);
+
+	style->Colors[ImGuiCol_Button] = ImColor(31, 30, 31, 255);
+	style->Colors[ImGuiCol_ButtonActive] = ImColor(31, 30, 31, 255);
+	style->Colors[ImGuiCol_ButtonHovered] = ImColor(41, 40, 41, 255);
+
+	style->Colors[ImGuiCol_Separator] = ImColor(70, 70, 70, 255);
+	style->Colors[ImGuiCol_SeparatorActive] = ImColor(70, 70, 70, 255);
+	style->Colors[ImGuiCol_SeparatorHovered] = ImColor(76, 76, 76, 255);
+}
+
 void Start()
 {
 	if (!m_SquareTest)
@@ -230,12 +266,56 @@ void Start()
 
 void Update()
 {
+	HandleImGuiMenuBar();
+	m_MousePicker.Update();
 	CalculateDeltaTime(); 
 	InputActions();
 	HandleMouseVisible();
 	m_MainCamera.Movement(deltaTime);
 	if (m_SquareTest)
 		m_SquareTest->Update(deltaTime);
+
+	// 'Mouse Position(x,y,z) = {~,~,~}'
+	std::string mousePosZ = std::to_string(m_MousePicker.GetCurrentRay().z);
+	std::string mousePosY = std::to_string(m_MousePicker.GetCurrentRay().y);
+	std::string mousePos = "Mouse Position(i^,j^,k^) = {";
+	mousePos +=	std::to_string(m_MousePicker.GetCurrentRay().x);
+	mousePos += ",";
+	mousePos += mousePosY.c_str();
+	mousePos += ",";
+	mousePos += mousePosZ.c_str();
+	mousePos += "}";
+
+	// Camera Position(x,y,z)
+	std::string camPosZ = std::to_string(m_MainCamera.Position.z);
+	std::string camPosY = std::to_string(m_MainCamera.Position.y);
+	std::string camPos = "Main Camera Position(x,y,z) = {";
+	camPos += std::to_string(m_MainCamera.Position.x);
+	camPos += ",";
+	camPos += camPosY.c_str();
+	camPos += ",";
+	camPos += camPosZ.c_str();
+	camPos += "}";
+
+	// Camera Front(x,y,z)
+	std::string camFrontZ = std::to_string(m_MainCamera.Front.z);
+	std::string camFrontY = std::to_string(m_MainCamera.Front.y);
+	std::string camFront = "Main Camera Front(i^,j^,k^) = {";
+	camFront += std::to_string(m_MainCamera.Front.x);
+	camFront += ",";
+	camFront += camFrontY.c_str();
+	camFront += ",";
+	camFront += camFrontZ.c_str();
+	camFront += "}";
+
+	ImGui::NextColumn();
+	// Display contents in a scrolling region
+	ImGui::TextColored(ImVec4(1, 1, 0, 1), "Console Output");
+	ImGui::BeginChild("Scrolling");
+	ImGui::Text(mousePos.c_str());
+	ImGui::Text(camPos.c_str());
+	ImGui::Text(camFront.c_str());
+	ImGui::EndChild();
 }
 
 void HandleMouseVisible()

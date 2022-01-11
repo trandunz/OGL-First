@@ -2,8 +2,6 @@
 
 using namespace Shape;
 
-
-
 void CShape::SetMVPUniform(Transform _transform)
 {
 	proj = glm::perspective(glm::radians(m_Camera->Zoom), 1920.0f / 1080.0f, 0.1f, 100.0f);

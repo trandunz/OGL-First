@@ -49,7 +49,6 @@ namespace Shape
 			{
 				_model = glm::rotate(_model, _transform.rotation.z, _transform.rotation);
 			}
-			
 			_model = glm::scale(_model, _transform.scale);
 			return _model;
 		}

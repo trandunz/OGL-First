@@ -1,4 +1,5 @@
 #include "CSquare.h"
+#include <windows.h>
 using namespace Shape;
 
 CSquare::CSquare(std::map<int, bool>& _keyMap, Camera& _camera)
@@ -28,7 +29,7 @@ void CSquare::Start()
 {
 
 	SetType(TYPE::CUBE);
-	ShaderNonsense();
+	InitRender();
 
 	m_Copies[std::to_string(m_NumOfCopies)] = std::make_pair(m_RGBA_Copy, transform);
 }
@@ -174,7 +175,7 @@ void CSquare::Render()
 		glActiveTexture(m_Texture->ID);
 		m_Shader->SetUniform1i("LightTexture", m_Texture->ID);
 		m_Shader->SetUniform4f("u_Color", item.second.first.x, item.second.first.y, item.second.first.z, item.second.first.w);
-		SetMVPUniform();
+		SetMVPUniform(item.second.second);
 		// Draw Light (No Shading)
 		m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
 		m_Shader->UnBind();
@@ -183,66 +184,34 @@ void CSquare::Render()
 
 void Shape::CSquare::ImGuiHandler()
 {
-	ImGui::BeginMenuBar();
-	if (ImGui::BeginMenu("File"))
+	if (ImGui::CollapsingHeader("Transform"))
 	{
-		if (ImGui::MenuItem("Close", "Ctrl+W")) { m_ToolActive = false; }
-		ImGui::EndMenu();
+		ImGui::Text("Rotation");
+		{
+			ProcessRotationSlider();
+		}
+		ImGui::Text("");
+		ImGui::Text("Transform");
+		{
+			ImGui::SliderFloat(":X Transform", &transform.position.x, -100, 100);
+			ImGui::SliderFloat(":Y Transform", &transform.position.y, -100, 100);
+			ImGui::SliderFloat(":Z Transform", &transform.position.z, -100, 100);
+		}
+
+		ImGui::Text("");
+		ImGui::Text("Scale");
+		{
+			ImGui::SliderFloat(":X Scale", &transform.scale.x, 0, 100);
+			ImGui::SliderFloat(":Y Scale", &transform.scale.y, 0, 100);
+			ImGui::SliderFloat(":Z Scale", &transform.scale.z, 0, 100);
+		}
 	}
-	if (ImGui::BeginMenu("Tools"))
+
+	if (ImGui::CollapsingHeader("Renderer"))
 	{
-		if (ImGui::MenuItem("WireFrame Mode"))
-		{
-			m_WireFrameMode = !m_WireFrameMode;
-			ShaderNonsense();
-		}
-		ImGui::EndMenu();
+		ImGui::Text("Set Color Of 'cube'");
+		ImGui::ColorEdit4("color", m_Color);
 	}
-	if (ImGui::BeginMenu("Copy"))
-	{
-		if (ImGui::MenuItem("Red", " : Create Copy Of Color"))
-		{
-			SetCopyColour(1, 0, 0, 1);
-			CreateCopy();
-		}
-		if (ImGui::MenuItem("Blue", " : Create Copy Of Color"))
-		{
-			SetCopyColour(0, 0, 1, 1);
-			CreateCopy();
-		}
-		if (ImGui::MenuItem("Green", " : Create Copy Of Color"))
-		{
-			SetCopyColour(0, 1, 0, 1);
-			CreateCopy();
-		}
-		if (ImGui::MenuItem("Current", " : Create Copy Of Color"))
-		{
-			SetCopyColour(m_Color[0], m_Color[1], m_Color[2], m_Color[3]);
-			CreateCopy();
-		}
-		ImGui::EndMenu();
-	}
-	ImGui::EndMenuBar();
-
-	ProcessRotationSlider();
-
-	ImGui::SliderFloat(": X Position", &transform.position.x, -100, 100);
-	ImGui::SliderFloat(": Y Position", &transform.position.y, -100, 100);
-	ImGui::SliderFloat(": Z Position", &transform.position.z, -100, 100);
-
-	ImGui::SliderFloat(": X Scale", &transform.scale.x, -100, 100);
-	ImGui::SliderFloat(": Y Scale", &transform.scale.y, -100, 100);
-	ImGui::SliderFloat(": Z Scale", &transform.scale.z, -100, 100);
-
-	ImGui::Text("Set Color Of 'cube'");
-	ImGui::ColorEdit4("color", m_Color);
-
-	// Display contents in a scrolling region
-	ImGui::TextColored(ImVec4(1, 1, 0, 1), "Console Output");
-	ImGui::BeginChild("Scrolling");
-	for (int n = 0; n < 50; n++)
-		ImGui::Text("%04d: Niggers", n);
-	ImGui::EndChild();
 }
 
 inline void Shape::CSquare::SetCopyColour(float _r, float _g, float _b, float _a)
@@ -273,33 +242,35 @@ void Shape::CSquare::ProcessRotationSlider()
 	float rotY(glm::degrees(transform.rotation.y));
 	float rotZ(glm::degrees(transform.rotation.z));
 
-	ImGui::SliderFloat(": X Rotation", &rotX, 0, 359);
-	ImGui::SliderFloat(": Y Rotation", &rotY, 0, 359);
-	ImGui::SliderFloat(": Z Rotation", &rotZ, 0, 359);
+	ImGui::SliderFloat(":X Rotation", &rotX, 0, 359);
+	ImGui::SliderFloat(":Y Rotation", &rotY, 0, 359);
+	ImGui::SliderFloat(":Z Rotation", &rotZ, 0, 359);
 
 	transform.rotation.x = glm::radians(rotX);
 	transform.rotation.y = glm::radians(rotY);
 	transform.rotation.z = glm::radians(rotZ);
 }
 
-void CSquare::ShaderNonsense()
+void CSquare::InitRender(const char* _vsAddress, const char* _gsAddress, 
+	const char* _fsAddress, const char* _texAddress, 
+	VertexBufferLayout _vbLayouts)
 {
 	CleanupPointer(m_Shader);
 	if (m_WireFrameMode)
 	{
 		m_Shader = new Shader("Resources/Shaders/TestShader.vs", "", "Resources/Shaders/TestShader.fs");
-		m_LightingShader = new Shader("Resources/Shaders/basic_lighting.vs", "", "Resources/Shaders/basic_lighting.fs");
+		m_LightingShader = new Shader(_vsAddress, _gsAddress, _fsAddress);
 	}
 	else
 	{
 		m_Shader = new Shader("Resources/Shaders/TestShader.vs", "", "Resources/Shaders/TestShader.fs");
-		m_LightingShader = new Shader("Resources/Shaders/basic_lighting.vs", "", "Resources/Shaders/basic_lighting.fs");
+		m_LightingShader = new Shader(_vsAddress, _gsAddress, _fsAddress);
 	}
 
 	CleanupPointer(m_Texture);
 	if (m_Texture == nullptr)
 	{
-		m_Texture = new Texture("Resources/Textures/1.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+		m_Texture = new Texture(_texAddress, GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
 	}
 
 	m_LightingShader->Bind();
@@ -308,11 +279,10 @@ void CSquare::ShaderNonsense()
 	CleanupPointer(m_LightCubeVAO);
 	m_LightCubeVAO = new VertexArray();
 	{
-		VertexBufferLayout layout;
-		layout.Push<float>(3);
-		layout.Push<float>(3);
-		layout.Push<float>(2);
-		m_LightCubeVAO->AddBuffer(*m_VertBuffer, layout);
+		_vbLayouts.Push<float>(3);
+		_vbLayouts.Push<float>(3);
+		_vbLayouts.Push<float>(2);
+		m_LightCubeVAO->AddBuffer(*m_VertBuffer, _vbLayouts);
 	}
 
 	m_Shader->Bind();

@@ -151,6 +151,7 @@
   <ItemGroup>
     <ClCompile Include="CShape.cpp" />
     <ClCompile Include="CSquare.cpp" />
+    <ClCompile Include="Cubemap.cpp" />
     <ClCompile Include="include\ImGui\imgui.cpp" />
     <ClCompile Include="include\ImGui\imgui_demo.cpp" />
     <ClCompile Include="include\ImGui\imgui_draw.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="CShaderLoader.h" />
     <ClInclude Include="CShape.h" />
     <ClInclude Include="CSquare.h" />
+    <ClInclude Include="Cubemap.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="include\ImGui\imconfig.h" />
     <ClInclude Include="include\ImGui\imgui.h" />
@@ -177,6 +179,7 @@
     <ClInclude Include="include\ImGui\imstb_textedit.h" />
     <ClInclude Include="include\ImGui\imstb_truetype.h" />
     <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="MousePicker.h" />
     <ClInclude Include="NumptyBehavior.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
@@ -189,6 +192,8 @@
   <ItemGroup>
     <None Include="basic_lighting.fs" />
     <None Include="basic_lighting.vs" />
+    <None Include="Resources\Shaders\skybox.fs" />
+    <None Include="Resources\Shaders\skybox.vs" />
     <None Include="Resources\Shaders\TestShader.fs" />
     <None Include="Resources\Shaders\TestShader_FILL.gs" />
     <None Include="Resources\Shaders\TestShader_WF.gs" />

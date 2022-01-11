@@ -37,6 +37,9 @@
     <Filter Include="Header Files\Components">
       <UniqueIdentifier>{e2e3dea0-c24c-48e2-be2a-b866a174bee2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Helpers">
+      <UniqueIdentifier>{c97915a5-9309-4bd8-b156-8e9aa2450d46}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -72,11 +75,11 @@
     <ClCompile Include="CShape.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Cubemap.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="NumptyBehavior.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\ImGui\imconfig.h">
       <Filter>Resource Files\Vendor</Filter>
     </ClInclude>
@@ -103,9 +106,6 @@
     </ClInclude>
     <ClInclude Include="include\ImGui\imgui_impl_opengl3_loader.h">
       <Filter>Resource Files\Vendor</Filter>
-    </ClInclude>
-    <ClInclude Include="CShaderLoader.h">
-      <Filter>Header Files\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Header Files\Shaders</Filter>
@@ -134,14 +134,26 @@
     <ClInclude Include="CShape.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="GUI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CCamera.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Objects</Filter>
     </ClInclude>
     <ClInclude Include="SHAPEARRAYS.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="NumptyBehavior.h">
+      <Filter>Header Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI.h">
+      <Filter>Header Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="CShaderLoader.h">
+      <Filter>Header Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Cubemap.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="MousePicker.h">
+      <Filter>Header Files\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +173,12 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="basic_lighting.fs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Resources\Shaders\skybox.fs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Resources\Shaders\skybox.vs">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

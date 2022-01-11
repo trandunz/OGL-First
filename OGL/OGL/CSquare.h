@@ -31,7 +31,9 @@ namespace Shape
 		bool m_RotateZ = false;
 
 		void Start();
-		void ShaderNonsense();
+		void InitRender(const char* _vsAddress = "Resources/Shaders/basic_lighting.vs", const char* _gsAddress = "",
+			const char* _fsAddress = "Resources/Shaders/basic_lighting.fs", const char* _texAddress = "Resources/Textures/3.jpg",
+			VertexBufferLayout _vbLayouts = VertexBufferLayout());
 		void Render();
 		void ImGuiHandler();
 
@@ -41,7 +43,6 @@ namespace Shape
 		void Movement(float _dt);
 
 		void ProcessRotationSlider();
-		
 	};
 }
 

@@ -8,14 +8,8 @@ public:
     IndexBuffer(const unsigned int* data, unsigned int indexCount)
         : m_IndexCount(indexCount)
     {
-
-        // Generate Buffer
         glGenBuffers(1, &m_RendererID);
-
-        // Bind the VBO specifying it's a GL_ARRAY_BUFFER
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
-
-        // Introduce the vertices into the VBO
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), data, GL_DYNAMIC_DRAW);
     }
     ~IndexBuffer()
@@ -25,7 +19,6 @@ public:
 
     void Bind() const
     {
-        // Bind the VBO specifying it's a GL_ARRAY_BUFFER
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
     }
     void UnBind() const
@@ -35,8 +28,7 @@ public:
 
     unsigned int GetCount() const { return m_IndexCount; }
 
-    unsigned int m_RendererID = 0;
 private:
-
+    unsigned int m_RendererID = 0;
     unsigned int m_IndexCount = 0;
 };
