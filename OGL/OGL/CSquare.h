@@ -18,7 +18,7 @@ namespace Shape
 		VertexArray* m_LightCubeVAO = nullptr;
 
 		std::map<int, bool>* m_KeyPresses = nullptr;
-		std::map<std::string, std::pair<glm::vec4, glm::vec3>> m_Copies;
+		std::map<std::string, std::pair<glm::vec4, Transform>> m_Copies;
 
 		unsigned int m_NumOfCopies = 0;
 
@@ -26,6 +26,9 @@ namespace Shape
 
 		bool m_HoldingShift = false;
 		bool m_GrabCube = false;
+		bool m_RotateX = false;
+		bool m_RotateY = false;
+		bool m_RotateZ = false;
 
 		void Start();
 		void ShaderNonsense();
@@ -36,6 +39,9 @@ namespace Shape
 		void CreateCopy();
 
 		void Movement(float _dt);
+
+		void ProcessRotationSlider();
+		
 	};
 }
 

@@ -14,6 +14,8 @@ CSquare::~CSquare()
 	CleanupPointer(m_VertBuffer);
 	CleanupPointer(m_IndexBuffer);
 	CleanupPointer(m_VertexArray);
+	if (m_Texture)
+		m_Texture->Delete();
 	CleanupPointer(m_Texture);
 	CleanupPointer(m_LightingShader);
 	CleanupPointer(m_Shader);
@@ -24,10 +26,11 @@ CSquare::~CSquare()
 
 void CSquare::Start()
 {
+
 	SetType(TYPE::CUBE);
 	ShaderNonsense();
 
-	m_Copies[std::to_string(m_NumOfCopies)] = std::make_pair(m_RGBA_Copy, transform.position);
+	m_Copies[std::to_string(m_NumOfCopies)] = std::make_pair(m_RGBA_Copy, transform);
 }
 
 void CSquare::CursorEnterCallback(GLFWwindow* window, int entered)
@@ -148,27 +151,33 @@ void CSquare::Update(long double& _dt)
 
 void CSquare::Render()
 {
-	int i = 0;
 	for (auto& item : m_Copies)
 	{
 		m_LightingShader->Bind();
+		// Shaded Box Color
 		m_LightingShader->SetUniform3f("objectColor", 1.0f, 1.0f, 1.0f);
+		// Light (Abstract)
 		m_LightingShader->SetUniform3f("lightColor", item.second.first.x, item.second.first.y, item.second.first.z);
-		m_LightingShader->SetUniformVec3f("lightPos", item.second.second);
+		m_LightingShader->SetUniformVec3f("lightPos", item.second.second.position);
+		// View Position Of Shaded Box
 		m_LightingShader->SetUniformVec3f("viewPos", m_Camera->Position);
-		std::string Uniform_pos = "m_PointLights[" + std::to_string(i) + "].position";
-		m_LightingShader->SetUniformVec3f(Uniform_pos, item.second.second);
-		std::string Uniform_const = "m_PointLights[" + std::to_string(i) + "].constant";
-		m_LightingShader->SetUniform1f(Uniform_const, 1.0f);
-		SetMVPUniform(m_LightingShader);
+		// Position Of Shaded Box
+		SetMVPUniform(m_LightingShader, Transform{ glm::vec3(1,1,1), glm::vec3(0,0,0), glm::vec3(1,1,1) });
+		// Draw Shaded Box
 		m_Renderer.Draw(*m_LightCubeVAO, *m_IndexBuffer, *m_LightingShader);
+		m_LightingShader->UnBind();
 
-		// Make Material For Other Uniforms
+		// Light (Body)
 		m_Shader->Bind();
+		// Light Texture
+		m_Texture->Bind();
+		glActiveTexture(m_Texture->ID);
+		m_Shader->SetUniform1i("LightTexture", m_Texture->ID);
 		m_Shader->SetUniform4f("u_Color", item.second.first.x, item.second.first.y, item.second.first.z, item.second.first.w);
-		SetMVPUniform(item.second.second);
+		SetMVPUniform();
+		// Draw Light (No Shading)
 		m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
-
+		m_Shader->UnBind();
 	}
 }
 
@@ -215,22 +224,16 @@ void Shape::CSquare::ImGuiHandler()
 	}
 	ImGui::EndMenuBar();
 
-	ImGui::Text("Set Shape (Broken)");
-	if (ImGui::Button("Square"))
-	{
-		SetType(TYPE::SQUARE);
-		ShaderNonsense();
-	}
-	if (ImGui::Button("Cube"))
-	{
-		SetType(TYPE::CUBE);
-		ShaderNonsense();
-	}
-	if (ImGui::Button("Triangle"))
-	{
-		SetType(TYPE::TRIANGLE);
-		ShaderNonsense();
-	}
+	ProcessRotationSlider();
+
+	ImGui::SliderFloat(": X Position", &transform.position.x, -100, 100);
+	ImGui::SliderFloat(": Y Position", &transform.position.y, -100, 100);
+	ImGui::SliderFloat(": Z Position", &transform.position.z, -100, 100);
+
+	ImGui::SliderFloat(": X Scale", &transform.scale.x, -100, 100);
+	ImGui::SliderFloat(": Y Scale", &transform.scale.y, -100, 100);
+	ImGui::SliderFloat(": Z Scale", &transform.scale.z, -100, 100);
+
 	ImGui::Text("Set Color Of 'cube'");
 	ImGui::ColorEdit4("color", m_Color);
 
@@ -253,15 +256,30 @@ inline void Shape::CSquare::SetCopyColour(float _r, float _g, float _b, float _a
 void CSquare::CreateCopy()
 {
 	m_NumOfCopies++;
-
-	m_Copies[std::to_string(m_NumOfCopies)] = std::make_pair(m_RGBA_Copy, m_Camera->Position + glm::vec3(m_Camera->Front.x * 5, m_Camera->Front.y * 5, m_Camera->Front.z * 5));
+	
+	m_Copies[std::to_string(m_NumOfCopies)] = std::make_pair(m_RGBA_Copy, Transform{ m_Camera->Position + glm::vec3(m_Camera->Front.x * 5, m_Camera->Front.y * 5, m_Camera->Front.z * 5), glm::vec3(0,0,0), glm::vec3(1,1,1) });
 }
 
 void Shape::CSquare::Movement(float _dt)
 {
 	UpdatePosition(m_InputVec.x * m_MovementSpeed * _dt, m_InputVec.y * m_MovementSpeed * _dt, m_InputVec.z * m_MovementSpeed * _dt);
 
-	m_Copies["0"] = std::make_pair(glm::vec4({ m_Color[0], m_Color[1], m_Color[2], m_Color[3] }), transform.position);
+	m_Copies["0"] = std::make_pair(glm::vec4({ m_Color[0], m_Color[1], m_Color[2], m_Color[3] }), transform);
+}
+
+void Shape::CSquare::ProcessRotationSlider()
+{
+	float rotX(glm::degrees(transform.rotation.x));
+	float rotY(glm::degrees(transform.rotation.y));
+	float rotZ(glm::degrees(transform.rotation.z));
+
+	ImGui::SliderFloat(": X Rotation", &rotX, 0, 359);
+	ImGui::SliderFloat(": Y Rotation", &rotY, 0, 359);
+	ImGui::SliderFloat(": Z Rotation", &rotZ, 0, 359);
+
+	transform.rotation.x = glm::radians(rotX);
+	transform.rotation.y = glm::radians(rotY);
+	transform.rotation.z = glm::radians(rotZ);
 }
 
 void CSquare::ShaderNonsense()
@@ -273,8 +291,16 @@ void CSquare::ShaderNonsense()
 		m_LightingShader = new Shader("Resources/Shaders/basic_lighting.vs", "", "Resources/Shaders/basic_lighting.fs");
 	}
 	else
+	{
 		m_Shader = new Shader("Resources/Shaders/TestShader.vs", "", "Resources/Shaders/TestShader.fs");
 		m_LightingShader = new Shader("Resources/Shaders/basic_lighting.vs", "", "Resources/Shaders/basic_lighting.fs");
+	}
+
+	CleanupPointer(m_Texture);
+	if (m_Texture == nullptr)
+	{
+		m_Texture = new Texture("Resources/Textures/1.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+	}
 
 	m_LightingShader->Bind();
 	CreateVBBasedOnType();
@@ -285,17 +311,18 @@ void CSquare::ShaderNonsense()
 		VertexBufferLayout layout;
 		layout.Push<float>(3);
 		layout.Push<float>(3);
+		layout.Push<float>(2);
 		m_LightCubeVAO->AddBuffer(*m_VertBuffer, layout);
 	}
 
 	m_Shader->Bind();
-	
 	CleanupPointer(m_VertexArray);
 	m_VertexArray = new VertexArray();
 	{
 		VertexBufferLayout layout;
 		layout.Push<float>(3);
 		layout.Push<float>(3);
+		layout.Push<float>(2);
 		m_VertexArray->AddBuffer(*m_VertBuffer, layout);
 	}
 	//CreateIBBasedOnType();

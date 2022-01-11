@@ -18,9 +18,22 @@
 #include <unordered_map>
 
 struct Transform {
+	glm::vec3 position{0,0,0};
+	glm::vec3 rotation{ 0,0,0 };
+	glm::vec3 scale{ 1.0f,1.0f,1.0f };
+	float rotation_amount = 0.0f;
+};
+
+struct PointLight {
 	glm::vec3 position;
-	glm::vec3 rotation;
-	glm::vec3 scale;
+
+	float constant;
+	float linear;
+	float quadratic;
+
+	glm::vec3 ambient;
+	glm::vec3 diffuse;
+	glm::vec3 specular;
 };
 
 class NumptyBehavior

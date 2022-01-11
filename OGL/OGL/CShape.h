@@ -34,13 +34,33 @@ namespace Shape
 			m_VertexArray = nullptr;
 		}
 
+		glm::mat4 CalculateModelTransformations(glm::mat4& _model, Transform _transform)
+		{
+			_model = glm::translate(glm::mat4(1.0f), _transform.position);
+			if (_transform.rotation.x != 0.0f)
+			{
+				_model = glm::rotate(_model, _transform.rotation.x, _transform.rotation);
+			}
+			if (_transform.rotation.y != 0.0f)
+			{
+				_model = glm::rotate(_model, _transform.rotation.y, _transform.rotation);
+			}
+			if (_transform.rotation.z != 0.0f)
+			{
+				_model = glm::rotate(_model, _transform.rotation.z, _transform.rotation);
+			}
+			
+			_model = glm::scale(_model, _transform.scale);
+			return _model;
+		}
 		void SetMVPUniform();
-		void SetMVPUniform(glm::vec3 _position);
-		void SetMVPUniform(Shader* _shader);
+		void SetMVPUniform(Transform _transform);
+		void SetMVPUniform(Shader* _shader, Transform _transform);
 		bool UpdatePosition(float _x = 0.0f, float _y = 0.0f, float _z = 0.0f);
 
 		bool MARKASDESTROY = false;
-		Transform transform{glm::vec3(0,0,0),glm::vec3(0,0,0) ,glm::vec3(1,1,1) };
+		Transform transform;
+
 	protected:
 		Shader* m_Shader = nullptr;
 		Shader* m_LightingShader = nullptr;
@@ -56,7 +76,7 @@ namespace Shape
 
 		glm::mat4 proj = glm::perspective(45.0f, (float)1920.0f / (float)1080.0f, 0.0f, 4000.0f);
 		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -2));
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), transform.position) * glm::rotate(45.0f, transform.rotation) * glm::scale(glm::mat4(1.0f), transform.scale);
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), transform.position);
 
 		// Indices for vertices order
 		GLuint m_Indices[256]{};

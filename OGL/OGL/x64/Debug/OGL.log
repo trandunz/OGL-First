@@ -3,5 +3,5 @@ C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(44,1): warning C
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.h(122,125): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.h(122,89): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.h(122,53): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CSquare.cpp(141,9): warning C4244: '=': conversion from 'long double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CSquare.cpp(144,9): warning C4244: '=': conversion from 'long double' to 'float', possible loss of data
   OGL.vcxproj -> C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Debug\OGL.exe
