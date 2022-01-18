@@ -185,6 +185,7 @@
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="MousePicker.h" />
     <ClInclude Include="NumptyBehavior.h" />
+    <ClInclude Include="Physics.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SHAPEARRAYS.h" />

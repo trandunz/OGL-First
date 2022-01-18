@@ -1,6 +1,7 @@
 #pragma once
 #include "CShape.h"
 #include "GUI.h"
+#include "Physics.h"
 
 namespace Shape
 {

@@ -1,7 +1,6 @@
 ﻿  CSquare.cpp
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(28,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CSquare.cpp(147,9): warning C4244: '=': conversion from 'long double' to 'float', possible loss of data
-  Cubemap.cpp
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CSquare.cpp(155,9): warning C4244: '=': conversion from 'long double' to 'float', possible loss of data
   Main.cpp
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(28,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(47,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
@@ -10,24 +9,23 @@ C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(52,10): warning C4244
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(55,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(58,38): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(58,29): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(130,29): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(413,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(44,1): warning C4150: deletion of pointer to incomplete type 'GLFWwindow'; no destructor called
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(120,29): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(399,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(289,1): warning C4150: deletion of pointer to incomplete type 'GLFWwindow'; no destructor called
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\include\ImGui\imgui_impl_glfw.h(23): message : see declaration of 'GLFWwindow'
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(34): message : see reference to function template instantiation 'void NumptyBehavior::DeletePointer<T>(T *)' being compiled
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(279): message : see reference to function template instantiation 'void NumptyBehavior::DeletePointer<T>(T *)' being compiled
           with
           [
               T=GLFWwindow
           ]
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(408): message : see reference to function template instantiation 'void NumptyBehavior::CleanupPointer<GLFWwindow>(T *)' being compiled
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(394): message : see reference to function template instantiation 'void NumptyBehavior::CleanupPointer<GLFWwindow>(T *)' being compiled
           with
           [
               T=GLFWwindow
           ]
-  Texture.cpp
   Generating code
-  3 of 2466 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+  2 of 2495 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    37 functions had inline decision re-evaluated but remain unchanged
+    39 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   OGL.vcxproj -> C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Release\OGL.exe

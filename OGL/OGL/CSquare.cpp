@@ -119,6 +119,14 @@ void CSquare::Input(GLFWwindow* _window, int _key, int _scancode, int _action, i
 				(*m_KeyPresses)[item.first] = false;
 				break;
 			}
+			case GLFW_KEY_P:
+			{
+				Physics::TestCubeCollision(STransform{ glm::vec3(), glm::vec3(), glm::vec3(2.0f,2.0f,2.0f), 0.0f },
+					glm::vec3(1,1,1));
+
+				(*m_KeyPresses)[item.first] = false;
+				break;
+			}
 
 			default:
 				break;
