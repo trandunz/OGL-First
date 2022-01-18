@@ -4,7 +4,7 @@
 class CShaderLoader : public NumptyBehavior
 {
 public:
-    static const bool m_bDebug = false;
+    static const bool IsDebug = false;
 
     inline static GLuint CompileVertShader(std::string _source)
     {
@@ -14,7 +14,7 @@ public:
         glShaderSource(vertShader, 1, &src, nullptr);
 
         // Compile vertex shader
-        if (m_bDebug)
+        if (IsDebug)
         {
             std::cout << "Compiling vertex shader." << std::endl;
         }
@@ -45,7 +45,7 @@ public:
         glShaderSource(fragShader, 1, &src, nullptr);
 
         // Compile Frag shader
-        if (m_bDebug)
+        if (IsDebug)
         {
             std::cout << "Compiling fragment shader." << std::endl;
         }
@@ -76,7 +76,7 @@ public:
         glShaderSource(geoShader, 1, &src, nullptr);
 
         // Compile Frag shader
-        if (m_bDebug)
+        if (IsDebug)
         {
             std::cout << "Compiling Geometry shader." << std::endl;
         }
@@ -108,12 +108,12 @@ public:
         // Shaders
 
         GLuint vertShader = CompileVertShader(readFile(_vertexShader));
-        GLuint geoShader;
+        GLuint geoShader = 0;
         if (_geoShader != "")
             geoShader = CompileGeoShader(readFile(_geoShader));
         GLuint fragShader = CompileFragShader(readFile(_fragmentShader));
 
-        if (m_bDebug)
+        if (IsDebug)
         {
             std::cout << "Attaching Shaders" << std::endl;
         }
@@ -122,14 +122,14 @@ public:
             glAttachShader(program, geoShader);
         glAttachShader(program, fragShader);
 
-        if (m_bDebug)
+        if (IsDebug)
         {
             std::cout << "Linking program" << std::endl;
         }
         glLinkProgram(program);
         glValidateProgram(program);
 
-        if (m_bDebug)
+        if (IsDebug)
         {
             std::cout << "Deleting Shaders" << std::endl;
         }

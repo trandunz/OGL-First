@@ -2025,7 +2025,7 @@ GLFWAPI GLFWerrorfun glfwSetErrorCallback(GLFWerrorfun callback);
  *
  *  @ingroup monitor
  */
-GLFWAPI GLFWmonitor** glfwGetMonitors(int* count);
+GLFWAPI GLFWmonitor** glfwGetMonitors(int* Count);
 
 /*! @brief Returns the primary monitor.
  *
@@ -2311,7 +2311,7 @@ GLFWAPI GLFWmonitorfun glfwSetMonitorCallback(GLFWmonitorfun callback);
  *
  *  @ingroup monitor
  */
-GLFWAPI const GLFWvidmode* glfwGetVideoModes(GLFWmonitor* monitor, int* count);
+GLFWAPI const GLFWvidmode* glfwGetVideoModes(GLFWmonitor* monitor, int* Count);
 
 /*! @brief Returns the current mode of the specified monitor.
  *
@@ -2832,7 +2832,7 @@ GLFWAPI void glfwSetWindowTitle(GLFWwindow* window, const char* title);
  *
  *  @ingroup window
  */
-GLFWAPI void glfwSetWindowIcon(GLFWwindow* window, int count, const GLFWimage* images);
+GLFWAPI void glfwSetWindowIcon(GLFWwindow* window, int Count, const GLFWimage* images);
 
 /*! @brief Retrieves the position of the content area of the specified window.
  *
@@ -4892,7 +4892,7 @@ GLFWAPI int glfwJoystickPresent(int jid);
  *
  *  @ingroup input
  */
-GLFWAPI const float* glfwGetJoystickAxes(int jid, int* count);
+GLFWAPI const float* glfwGetJoystickAxes(int jid, int* Count);
 
 /*! @brief Returns the state of all buttons of the specified joystick.
  *
@@ -4933,7 +4933,7 @@ GLFWAPI const float* glfwGetJoystickAxes(int jid, int* count);
  *
  *  @ingroup input
  */
-GLFWAPI const unsigned char* glfwGetJoystickButtons(int jid, int* count);
+GLFWAPI const unsigned char* glfwGetJoystickButtons(int jid, int* Count);
 
 /*! @brief Returns the state of all hats of the specified joystick.
  *
@@ -4990,7 +4990,7 @@ GLFWAPI const unsigned char* glfwGetJoystickButtons(int jid, int* count);
  *
  *  @ingroup input
  */
-GLFWAPI const unsigned char* glfwGetJoystickHats(int jid, int* count);
+GLFWAPI const unsigned char* glfwGetJoystickHats(int jid, int* Count);
 
 /*! @brief Returns the name of the specified joystick.
  *
@@ -5727,7 +5727,7 @@ GLFWAPI int glfwVulkanSupported(void);
  *
  *  @ingroup vulkan
  */
-GLFWAPI const char** glfwGetRequiredInstanceExtensions(uint32_t* count);
+GLFWAPI const char** glfwGetRequiredInstanceExtensions(uint32_t* Count);
 
 #if defined(VK_VERSION_1_0)
 

@@ -149,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CCamera.cpp" />
     <ClCompile Include="CShape.cpp" />
     <ClCompile Include="CSquare.cpp" />
     <ClCompile Include="Cubemap.cpp" />
@@ -163,12 +164,15 @@
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseComponent.h" />
+    <ClInclude Include="BaseSystem.h" />
     <ClInclude Include="CCamera.h" />
     <ClInclude Include="CShaderLoader.h" />
     <ClInclude Include="CShape.h" />
     <ClInclude Include="CSquare.h" />
     <ClInclude Include="Cubemap.h" />
     <ClInclude Include="GUI.h" />
+    <ClInclude Include="ICompList.h" />
     <ClInclude Include="include\ImGui\imconfig.h" />
     <ClInclude Include="include\ImGui\imgui.h" />
     <ClInclude Include="include\ImGui\imgui_impl_glfw.h" />
@@ -185,13 +189,16 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SHAPEARRAYS.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Types.h" />
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexBufferLayout.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="basic_lighting.fs" />
-    <None Include="basic_lighting.vs" />
+    <None Include="Resources\Shaders\basic_lighting.fs" />
+    <None Include="Resources\Shaders\basic_lighting.vs" />
+    <None Include="Resources\Shaders\basic_lighting_2.fs" />
+    <None Include="Resources\Shaders\basic_lighting_2.vs" />
     <None Include="Resources\Shaders\skybox.fs" />
     <None Include="Resources\Shaders\skybox.vs" />
     <None Include="Resources\Shaders\TestShader.fs" />

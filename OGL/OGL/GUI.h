@@ -4,13 +4,13 @@
 #include "ImGui/imgui_impl_glfw.h"
 #include "ImGui/imgui_impl_opengl3.h"
 
-static bool m_ToolActive = true;
+static bool ISTOOLACTIVE = true;
 
 class GUI :
     public NumptyBehavior
 {
 public:
-	GUI() { m_ToolActive = true; }
+	GUI() { ISTOOLACTIVE = true; }
 	
     static void InitImGUI(GLFWwindow* _window)
     {
@@ -26,13 +26,11 @@ public:
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		ImGui::Begin("Tools V0.01", &m_ToolActive, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar);
+		ImGui::Begin("Tools V0.01", &ISTOOLACTIVE, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar);
 	}
 	static void EndImGUIFrame()
 	{
 		ImGui::End();
-
-		// Render
 		ImGuiRender();
 	}
 	static void ImGuiRender()

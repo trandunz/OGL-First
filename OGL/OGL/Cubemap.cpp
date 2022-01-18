@@ -3,15 +3,15 @@
 
 #include "Cubemap.h"
 
-Cubemap::Cubemap(std::vector<std::string> faces)
+Cubemap::Cubemap(std::vector<std::string> _faces)
 {
     glGenTextures(1, &ID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, ID);
 
     int width, height, nrChannels;
-    for (unsigned int i = 0; i < faces.size(); i++)
+    for (unsigned int i = 0; i < _faces.size(); i++)
     {
-        unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
+        unsigned char* data = stbi_load(_faces[i].c_str(), &width, &height, &nrChannels, 0);
         if (data)
         {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
@@ -21,7 +21,7 @@ Cubemap::Cubemap(std::vector<std::string> faces)
         }
         else
         {
-            std::cout << "Cubemap tex failed to load at path: " << faces[i] << std::endl;
+            std::cout << "Cubemap tex failed to load at path: " << _faces[i] << std::endl;
             stbi_image_free(data);
         }
     }
@@ -34,12 +34,12 @@ Cubemap::Cubemap(std::vector<std::string> faces)
 
 void Cubemap::Bind()
 {
-	glBindTexture(type, ID);
+	glBindTexture(Type, ID);
 }
 
 void Cubemap::Unbind()
 {
-	glBindTexture(type, 0);
+	glBindTexture(Type, 0);
 }
 
 void Cubemap::Delete()

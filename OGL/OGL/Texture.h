@@ -15,6 +15,6 @@ public:
 	void Delete();
 
 	GLuint ID;
-	GLenum type;
+	GLenum Type;
 };
 #endif

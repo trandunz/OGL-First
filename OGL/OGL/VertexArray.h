@@ -2,13 +2,12 @@
 #include "NumptyBehavior.h"
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
-class VertexArray :
-    public NumptyBehavior
+class VertexArray : public NumptyBehavior
 {
 public:
     VertexArray()
     {
-        glGenVertexArrays(1, &m_RendererID);
+        glCreateVertexArrays(1, &m_RendererID);
         glBindVertexArray(m_RendererID);
     }
     ~VertexArray()
@@ -26,11 +25,10 @@ public:
         {
             const VertexBufferElement& element = elements[i];
             glEnableVertexAttribArray(i);
-            glVertexAttribPointer(i, element.count, element.type, element.normalized, layout.GetStride(), (const void*)offset);
-            offset += element.count * VertexBufferElement::GetSizeOfType(element.type);
+            glVertexAttribPointer(i, element.Count, element.Type, element.Normalized, layout.GetStride(), (const void*)offset);
+            offset += element.Count * VertexBufferElement::GetSizeOfType(element.Type);
         }
     }
-
     inline void Bind() const
     {
         glBindVertexArray(m_RendererID);
@@ -41,6 +39,6 @@ public:
     }
 
 private:
-    unsigned int m_RendererID;
+    unsigned int m_RendererID = 0;
 };
 

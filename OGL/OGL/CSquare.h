@@ -18,7 +18,7 @@ namespace Shape
 		VertexArray* m_LightCubeVAO = nullptr;
 
 		std::map<int, bool>* m_KeyPresses = nullptr;
-		std::map<std::string, std::pair<glm::vec4, Transform>> m_Copies;
+		std::map<std::string, std::pair<glm::vec4, STransform>> m_Copies;
 
 		unsigned int m_NumOfCopies = 0;
 

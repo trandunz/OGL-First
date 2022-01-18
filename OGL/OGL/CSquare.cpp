@@ -1,5 +1,5 @@
 #include "CSquare.h"
-#include <windows.h>
+
 using namespace Shape;
 
 CSquare::CSquare(std::map<int, bool>& _keyMap, Camera& _camera)
@@ -31,12 +31,15 @@ void CSquare::Start()
 	SetType(TYPE::CUBE);
 	InitRender();
 
-	m_Copies[std::to_string(m_NumOfCopies)] = std::make_pair(m_RGBA_Copy, transform);
+	m_Copies[std::to_string(m_NumOfCopies)] = std::make_pair(m_RGBA_Copy, Transform);
+	CreateCopy();
+	CreateCopy();
+	CreateCopy();
 }
 
-void CSquare::CursorEnterCallback(GLFWwindow* window, int entered)
+void CSquare::CursorEnterCallback(GLFWwindow* _window, int _entered)
 {
-	if (entered)
+	if (_entered)
 	{
 		m_InputVec.x = 0;
 		m_InputVec.y = 0;
@@ -50,12 +53,11 @@ void CSquare::CursorEnterCallback(GLFWwindow* window, int entered)
 	}
 }
 
-void CSquare::Input(GLFWwindow* window, int key, int scancode, int action, int mods)
+void CSquare::Input(GLFWwindow* _window, int _key, int _scancode, int _action, int _mods)
 {
 	m_InputVec.x = 0.0f;
 	m_InputVec.y = 0.0f;
 	m_InputVec.z = 0.0f;
-
 
 	for (auto& item : (*m_KeyPresses))
 	{
@@ -79,11 +81,11 @@ void CSquare::Input(GLFWwindow* window, int key, int scancode, int action, int m
 			{
 				if (m_HoldingShift)
 				{
-					transform.position.z -= 1.0f;
+					Transform.position.z -= 1.0f;
 				}
 				else
 				{
-					transform.position.y += 1.0f;
+					Transform.position.y += 1.0f;
 				}
 
 				(*m_KeyPresses)[item.first] = false;
@@ -93,11 +95,11 @@ void CSquare::Input(GLFWwindow* window, int key, int scancode, int action, int m
 			{
 				if (m_HoldingShift)
 				{
-					transform.position.z += 1.0f;
+					Transform.position.z += 1.0f;
 				}
 				else
 				{
-					transform.position.y -= 1.0f;
+					Transform.position.y -= 1.0f;
 				}
 
 				(* m_KeyPresses)[item.first] = false;
@@ -105,14 +107,14 @@ void CSquare::Input(GLFWwindow* window, int key, int scancode, int action, int m
 			}
 			case GLFW_KEY_RIGHT:
 			{
-				transform.position.x += 1.0f;
+				Transform.position.x += 1.0f;
 
 				(*m_KeyPresses)[item.first] = false;
 				break;
 			}
 			case GLFW_KEY_LEFT:
 			{
-				transform.position.x -= 1.0f;
+				Transform.position.x -= 1.0f;
 
 				(*m_KeyPresses)[item.first] = false;
 				break;
@@ -155,15 +157,44 @@ void CSquare::Render()
 	for (auto& item : m_Copies)
 	{
 		m_LightingShader->Bind();
-		// Shaded Box Color
-		m_LightingShader->SetUniform3f("objectColor", 1.0f, 1.0f, 1.0f);
-		// Light (Abstract)
-		m_LightingShader->SetUniform3f("lightColor", item.second.first.x, item.second.first.y, item.second.first.z);
-		m_LightingShader->SetUniformVec3f("lightPos", item.second.second.position);
-		// View Position Of Shaded Box
+
 		m_LightingShader->SetUniformVec3f("viewPos", m_Camera->Position);
+		m_LightingShader->SetUniform1f("material.shininess", 32.0f);
+		// directional light
+		m_LightingShader->SetUniform3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
+		m_LightingShader->SetUniform3f("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+		m_LightingShader->SetUniform3f("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+		m_LightingShader->SetUniform3f("dirLight.specular", 0.5f, 0.5f, 0.5f);
+		// point lights
+		m_LightingShader->SetUniformVec3f("pointLights[" + item.first + "].position", item.second.second.position);
+		m_LightingShader->SetUniform3f("pointLights[" + item.first + "].ambient", 0.05f, 0.05f, 0.05f);
+		m_LightingShader->SetUniform3f("pointLights[" + item.first + "].diffuse", abs(item.second.first.x - 0.2f), abs(item.second.first.y - 0.2f), abs(item.second.first.z - 0.2f));
+		m_LightingShader->SetUniform3f("pointLights[" + item.first + "].specular", item.second.first.x, item.second.first.y, item.second.first.z);
+		m_LightingShader->SetUniform1f("pointLights[" + item.first + "].constant", 1.0f);
+		m_LightingShader->SetUniform1f("pointLights[" + item.first + "].linear", 0.09f);
+		m_LightingShader->SetUniform1f("pointLights[" + item.first + "].quadratic", 0.032f);
+		//
+		// ....
+	}
+
+	// spotLights (just camera atm)
+	m_LightingShader->SetUniformVec3f("spotLight.position", m_Camera->Position);
+	m_LightingShader->SetUniformVec3f("spotLight.direction", m_Camera->Front);
+	m_LightingShader->SetUniform3f("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+	m_LightingShader->SetUniform3f("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+	m_LightingShader->SetUniform3f("spotLight.specular", 1.0f, 1.0f, 1.0f);
+	m_LightingShader->SetUniform1f("spotLight.constant", 1.0f);
+	m_LightingShader->SetUniform1f("spotLight.linear", 0.09f);
+	m_LightingShader->SetUniform1f("spotLight.quadratic", 0.032f);
+	m_LightingShader->SetUniform1f("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+	m_LightingShader->SetUniform1f("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+
+	for (auto& item : m_Copies)
+	{
+		// ....
+		// 
 		// Position Of Shaded Box
-		SetMVPUniform(m_LightingShader, Transform{ glm::vec3(1,1,1), glm::vec3(0,0,0), glm::vec3(1,1,1) });
+		SetMVPUniform(m_LightingShader, STransform{ glm::vec3(1,1,1), glm::vec3(0,0,0), glm::vec3(1,1,1) });
 		// Draw Shaded Box
 		m_Renderer.Draw(*m_LightCubeVAO, *m_IndexBuffer, *m_LightingShader);
 		m_LightingShader->UnBind();
@@ -182,7 +213,7 @@ void CSquare::Render()
 	}
 }
 
-void Shape::CSquare::ImGuiHandler()
+void CSquare::ImGuiHandler()
 {
 	if (ImGui::CollapsingHeader("Transform"))
 	{
@@ -193,17 +224,17 @@ void Shape::CSquare::ImGuiHandler()
 		ImGui::Text("");
 		ImGui::Text("Transform");
 		{
-			ImGui::SliderFloat(":X Transform", &transform.position.x, -100, 100);
-			ImGui::SliderFloat(":Y Transform", &transform.position.y, -100, 100);
-			ImGui::SliderFloat(":Z Transform", &transform.position.z, -100, 100);
+			ImGui::SliderFloat(":X Transform", &Transform.position.x, -100, 100);
+			ImGui::SliderFloat(":Y Transform", &Transform.position.y, -100, 100);
+			ImGui::SliderFloat(":Z Transform", &Transform.position.z, -100, 100);
 		}
 
 		ImGui::Text("");
 		ImGui::Text("Scale");
 		{
-			ImGui::SliderFloat(":X Scale", &transform.scale.x, 0, 100);
-			ImGui::SliderFloat(":Y Scale", &transform.scale.y, 0, 100);
-			ImGui::SliderFloat(":Z Scale", &transform.scale.z, 0, 100);
+			ImGui::SliderFloat(":X Scale", &Transform.scale.x, 0, 100);
+			ImGui::SliderFloat(":Y Scale", &Transform.scale.y, 0, 100);
+			ImGui::SliderFloat(":Z Scale", &Transform.scale.z, 0, 100);
 		}
 	}
 
@@ -214,7 +245,7 @@ void Shape::CSquare::ImGuiHandler()
 	}
 }
 
-inline void Shape::CSquare::SetCopyColour(float _r, float _g, float _b, float _a)
+void CSquare::SetCopyColour(float _r, float _g, float _b, float _a)
 {
 	m_RGBA_Copy.w = _a;
 	m_RGBA_Copy.x = _r;  // R
@@ -226,29 +257,29 @@ void CSquare::CreateCopy()
 {
 	m_NumOfCopies++;
 	
-	m_Copies[std::to_string(m_NumOfCopies)] = std::make_pair(m_RGBA_Copy, Transform{ m_Camera->Position + glm::vec3(m_Camera->Front.x * 5, m_Camera->Front.y * 5, m_Camera->Front.z * 5), glm::vec3(0,0,0), glm::vec3(1,1,1) });
+	m_Copies[std::to_string(m_NumOfCopies)] = std::make_pair(m_RGBA_Copy, STransform{ m_Camera->Position + glm::vec3(m_Camera->Front.x * 5, m_Camera->Front.y * 5, m_Camera->Front.z * 5), glm::vec3(0,0,0), glm::vec3(1,1,1) });
 }
 
 void Shape::CSquare::Movement(float _dt)
 {
 	UpdatePosition(m_InputVec.x * m_MovementSpeed * _dt, m_InputVec.y * m_MovementSpeed * _dt, m_InputVec.z * m_MovementSpeed * _dt);
 
-	m_Copies["0"] = std::make_pair(glm::vec4({ m_Color[0], m_Color[1], m_Color[2], m_Color[3] }), transform);
+	m_Copies["1"] = std::make_pair(glm::vec4({ m_Color[0], m_Color[1], m_Color[2], m_Color[3] }), Transform);
 }
 
 void Shape::CSquare::ProcessRotationSlider()
 {
-	float rotX(glm::degrees(transform.rotation.x));
-	float rotY(glm::degrees(transform.rotation.y));
-	float rotZ(glm::degrees(transform.rotation.z));
+	float rotX(glm::degrees(Transform.rotation.x));
+	float rotY(glm::degrees(Transform.rotation.y));
+	float rotZ(glm::degrees(Transform.rotation.z));
 
 	ImGui::SliderFloat(":X Rotation", &rotX, 0, 359);
 	ImGui::SliderFloat(":Y Rotation", &rotY, 0, 359);
 	ImGui::SliderFloat(":Z Rotation", &rotZ, 0, 359);
 
-	transform.rotation.x = glm::radians(rotX);
-	transform.rotation.y = glm::radians(rotY);
-	transform.rotation.z = glm::radians(rotZ);
+	Transform.rotation.x = glm::radians(rotX);
+	Transform.rotation.y = glm::radians(rotY);
+	Transform.rotation.z = glm::radians(rotZ);
 }
 
 void CSquare::InitRender(const char* _vsAddress, const char* _gsAddress, 

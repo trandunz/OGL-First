@@ -11,25 +11,17 @@ struct ShaderProgramSource
     std::string FragmentSource;
 };
 
-class Shader :
-    public NumptyBehavior
+class Shader : public NumptyBehavior
 {
 public:
     Shader(const std::string& _vertShader, const std::string& _geoShader, const std::string& _fragShader)
         : m_RendererID(0)
     {
-       /* ShaderProgramSource source = ParseShader(filepath);*/
-        //m_RendererID = CShaderLoader::CreateShader("Resources/Shaders/TriangleShader.vs", "Resources/Shaders/TriangleShader.fs");
         m_RendererID = CShaderLoader::CreateShader(_vertShader, _geoShader, _fragShader);
     }
     ~Shader()
     {
         glDeleteProgram(m_RendererID);
-    }
-
-    void CompileShader()
-    {
-
     }
 
     void Bind() const
@@ -77,6 +69,18 @@ public:
         glUniform1i(location, v0);
     }
 
+    void SetUniform1iv(const std::string& name,GLsizei size, GLint v0)
+    {
+        GLint location = GetUniformLocation(name);
+        glUniform1iv(location, size, &v0);
+    }
+
+    void SetUniform3fv(const std::string& name, GLsizei size, float* v0)
+    {
+        GLint location = GetUniformLocation(name);
+        glUniform3fv(location, size, v0);
+    }
+
     void SetUniformBool(const std::string& name, int v0)
     {
         GLint location = GetUniformLocation(name);
@@ -96,19 +100,19 @@ public:
 
         std::string line;
         std::stringstream ss[2];
-        ShaderType type = ShaderType::NONE;
+        ShaderType Type = ShaderType::NONE;
         while (std::getline(stream, line))
         {
             if (line.find("#shader") != std::string::npos)
             {
                 if (line.find("#vertex") != std::string::npos)
-                    type = ShaderType::VERTEX;
+                    Type = ShaderType::VERTEX;
                 else if (line.find("#fragment") != std::string::npos)
-                    type = ShaderType::FRAGMENT;
+                    Type = ShaderType::FRAGMENT;
             }
             else
             {
-                ss[(int)type] << line << '\n';
+                ss[(int)Type] << line << '\n';
             }
         }
         return { ss[0].str(), ss[1].str() };

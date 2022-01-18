@@ -1,5 +1,6 @@
 #include "CSquare.h"
 #include "MousePicker.h"
+#include "ICompList.h"
 
 static int m_WindowWidth = 1600;
 static int m_WindowHeight = 900;
@@ -27,7 +28,7 @@ std::map<int, bool> m_Mousepresses;
 GLFWwindow* m_RenderWindow;
 Shape::CSquare* m_SquareTest;
 Camera m_MainCamera(m_Keypresses, glm::vec3(0.0f, 0.0f, 3.0f));
-MousePicker m_MousePicker(&m_MainCamera, m_MainCamera.projectionMatrix);
+MousePicker m_MousePicker(&m_MainCamera, m_MainCamera.ProjectionMatrix);
 
 bool firstMouse = true;
 bool m_ShowMouse = false;
@@ -67,13 +68,9 @@ static void mouseButtonCallback(GLFWwindow* window, int button, int action, int 
 {
 	// Collect Input
 	if (action == GLFW_PRESS)
-	{
 		m_Mousepresses[button] = true;
-	}
 	else if (action == GLFW_RELEASE)
-	{
 		m_Mousepresses[button] = false;
-	}
 
 	// General Input
 	for (auto& item : m_Mousepresses)
@@ -98,24 +95,18 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 {
 	// Collect Input
 	if (action == GLFW_PRESS)
-	{
 		m_Keypresses[key] = true;
-	}
 	else if (action == GLFW_RELEASE)
-	{
 		m_Keypresses[key] = false;
-	}
 
 	// Object Input
-	m_MainCamera.Input(deltaTime);
+	m_MainCamera.Input();
 	if (m_SquareTest)
 		m_SquareTest->Input(window, key, scancode, action, mods);
 }
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-	// make sure the viewport matches the new window dimensions; note that width and 
-	// height will be significantly larger than specified on retina displays.
 	float aspect = (float)width / (float)height;
 	glViewport(0, 0, width, height);
 }
@@ -138,6 +129,7 @@ int main()
 
 	while (!glfwWindowShouldClose(m_RenderWindow))
 	{
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearDepth(1);
 		GUI::StartImGUIFrame();
@@ -187,9 +179,7 @@ void InitGLFW()
 	glfwMakeContextCurrent(m_RenderWindow);
 
 	if (glewInit() != GLEW_OK)
-	{
 		std::cout << "Failed to Initalise GLEW" << std::endl;
-	}
 
 	// Callbacks
 	InitGLFWCallbacks();
@@ -228,7 +218,7 @@ void HandleImGuiMenuBar()
 	ImGui::BeginMenuBar();
 	if (ImGui::BeginMenu("File"))
 	{
-		if (ImGui::MenuItem("Close", "Ctrl+W")) { m_ToolActive = false; }
+		if (ImGui::MenuItem("Close", "Ctrl+W")) { ISTOOLACTIVE = false; }
 		ImGui::EndMenu();
 	}
 	ImGui::EndMenuBar();
@@ -258,9 +248,7 @@ void HandleImGuiMenuBar()
 void Start()
 {
 	if (!m_SquareTest)
-	{
 		m_SquareTest = new Shape::CSquare(m_Keypresses, m_MainCamera);
-	}
 }
 
 void Update()
@@ -352,7 +340,7 @@ void InputActions()
 			case GLFW_KEY_K:
 			{
 				if (m_SquareTest)
-					m_SquareTest->MARKASDESTROY = true;
+					m_SquareTest->MarkAsDestroy = true;
 
 				// Only Single Press Thanks
 				m_Keypresses[item.first] = false;
@@ -378,7 +366,7 @@ bool CleanupObjects()
 {
 	if (m_SquareTest)
 	{
-		if (m_SquareTest->MARKASDESTROY)
+		if (m_SquareTest->MarkAsDestroy)
 		{
 			delete m_SquareTest;
 			m_SquareTest = nullptr;

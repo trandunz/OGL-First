@@ -3,13 +3,9 @@
 
 struct VertexBufferElement
 {
-	unsigned int type;
-	unsigned int count;
-	bool normalized;
-
-	static unsigned int GetSizeOfType(unsigned int type)
+	static unsigned int GetSizeOfType(unsigned int Type)
 	{
-		switch (type)
+		switch (Type)
 		{
 		case GL_FLOAT: return 4;
 		case GL_UNSIGNED_INT: return 4;
@@ -17,6 +13,10 @@ struct VertexBufferElement
 		}
 		return 0;
 	}
+
+	unsigned int Type;
+	unsigned int Count;
+	bool Normalized;
 };
 
 class VertexBufferLayout
@@ -28,20 +28,20 @@ public:
 	}
 
 	template <typename T>
-	void Push(int count)
+	void Push(int Count)
 	{
 		static_assert(false);
 	}
 
 	template <>
-	void Push<float>(int count)
+	void Push<float>(int Count)
 	{
 		VertexBufferElement element;
-		element.type = GL_FLOAT;
-		element.count = count;
-		element.normalized = GL_FALSE;
+		element.Type = GL_FLOAT;
+		element.Count = Count;
+		element.Normalized = GL_FALSE;
 		m_Elements.push_back(element);
-		m_Stride += count * VertexBufferElement::GetSizeOfType(GL_FLOAT);
+		m_Stride += Count * VertexBufferElement::GetSizeOfType(GL_FLOAT);
 	}
 
 	inline GLuint GetStride() const { return m_Stride; }

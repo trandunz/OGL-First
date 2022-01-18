@@ -1,8 +1,7 @@
 #pragma once
 #include "NumptyBehavior.h"
 #include "CCamera.h"
-class MousePicker :
-    public NumptyBehavior
+class MousePicker : public NumptyBehavior
 {
 public:
     MousePicker(Camera* _camera, glm::mat4& _projMat)
@@ -12,10 +11,10 @@ public:
         m_ViewMatrix = m_Camera->GetViewMatrix();
     }
 
-    void GrabMousePosition(double xPos, double yPos)
+    void GrabMousePosition(double _xPos, double _yPos)
     {
-        m_MouseX = xPos;
-        m_MouseY = yPos;
+        m_MouseX = _xPos;
+        m_MouseY = _yPos;
     }
 
     void Update()
@@ -35,7 +34,7 @@ public:
 
     void ProcessMovement(glm::vec3 _movePerFrame)
     {
-        transform.position = _movePerFrame;
+        Transform.position = _movePerFrame;
     }
 
     glm::vec3 GetCurrentRay()
@@ -43,12 +42,13 @@ public:
         return m_CurrentRay;
     }
 
-    glm::vec3 GetCurrentTerrainPoint() {
+    glm::vec3 GetCurrentTerrainPoint() 
+    {
         return m_CurrentTerrainPoint;
     }
 
-    float range = 10.0f;
-    Transform transform;
+    float Range = 10.0f;
+    STransform Transform;
 private:
 
     glm::vec3 m_CurrentTerrainPoint;
@@ -60,50 +60,51 @@ private:
     double m_MouseX = 0.0;
     double m_MouseY = 0.0;
 
-    glm::vec3 CalculateMouseRay(double xPos, double yPos)
+    glm::vec3 CalculateMouseRay(double _xPos, double _yPos)
     {
-        glm::vec2 mousePos = GetNormalizedDeviceCoords(xPos, yPos);
+        glm::vec2 mousePos = GetNormalizedDeviceCoords(_xPos, _yPos);
         glm::vec4 clipCoords = glm::vec4(mousePos.x, mousePos.y, -1, 1);
         glm::vec4 eyeCoords = ToEyeCoords(clipCoords);
         glm::vec3 wordRay = ToWorldCoords(eyeCoords);
         return wordRay;
     }
 
-    glm::vec3 ToWorldCoords(glm::vec4 clipCoords)
+    glm::vec3 ToWorldCoords(glm::vec4 _clipCoords)
     {
         glm::mat4 invertView = glm::inverse(m_ViewMatrix);
-        glm::vec4 rayWorld = clipCoords * m_ViewMatrix;
+        glm::vec4 rayWorld = _clipCoords * m_ViewMatrix;
         glm::vec3 mouseRay{ rayWorld .x,rayWorld .y,rayWorld .z};
         mouseRay = glm::normalize(mouseRay);
         return glm::vec3(mouseRay.x, mouseRay.y, mouseRay.z);
     }
 
-    glm::vec4 ToEyeCoords(glm::vec4 clipCoords)
+    glm::vec4 ToEyeCoords(glm::vec4 _clipCoords)
     {
         glm::mat4 invertProj = glm::inverse(m_ProjectionMatrix);
-        glm::vec4 eyeCoords = clipCoords * invertProj;
+        glm::vec4 eyeCoords = _clipCoords * invertProj;
         return glm::vec4(eyeCoords.x, eyeCoords.y, -1, 0);
     }
 
-    glm::vec2 GetNormalizedDeviceCoords(double xPos, double yPos)
+    glm::vec2 GetNormalizedDeviceCoords(double _xPos, double _yPos)
     {
-        double x = ((2.0f * xPos) / 1920) - 1;
-        double y = ((2.0f * yPos) / 1080) - 1;
+        double x = ((2.0f * _xPos) / 1920) - 1;
+        double y = ((2.0f * _yPos) / 1080) - 1;
         return glm::vec2(x, y);
     }
 
-    glm::vec3 GetPointOnRay(glm::vec3 ray, float distance) 
+    glm::vec3 GetPointOnRay(glm::vec3 _ray, float _distance) 
     {
         glm::vec3 camPos = m_Camera->Position;
         glm::vec3 start = glm::vec3(camPos.x, camPos.y, camPos.z);
-        glm::vec3 scaledRay = glm::vec3(ray.x * distance, ray.y * distance, ray.z * distance);
+        glm::vec3 scaledRay = glm::vec3(_ray.x * _distance, _ray.y * _distance, _ray.z * _distance);
         return scaledRay + start;
     }
-    glm::vec3 BinarySearch(int count, float start, float finish, glm::vec3 ray) {
-        float half = start + ((finish - start) / 2.f);
-        if (count >= 10) 
+    glm::vec3 BinarySearch(int _count, float _start, float _finish, glm::vec3 _ray) 
+    {
+        float half = _start + ((_finish - _start) / 2.f);
+        if (_count >= 10)
         {
-            glm::vec3 endPoint = GetPointOnRay(ray, half);
+            glm::vec3 endPoint = GetPointOnRay(_ray, half);
             // Check Intersection
             if (true)
             {
@@ -114,19 +115,19 @@ private:
                 return glm::vec3(0);
             }
         }
-        if (IntersectionInRange(start, half, ray)) 
+        if (IntersectionInRange(_start, half, _ray))
         {
-            return BinarySearch(count + 1, start, half, ray);
+            return BinarySearch(_count + 1, _start, half, _ray);
         }
         else 
         {
-            return BinarySearch(count + 1, half, finish, ray);
+            return BinarySearch(_count + 1, half, _finish, _ray);
         }
     }
-    bool IntersectionInRange(float start, float finish, glm::vec3 ray) 
+    bool IntersectionInRange(float _start, float _finish, glm::vec3 _ray) 
     {
-        glm::vec3 startPoint = GetPointOnRay(ray, start);
-        glm::vec3 endPoint = GetPointOnRay(ray, finish);
+        glm::vec3 startPoint = GetPointOnRay(_ray, _start);
+        glm::vec3 endPoint = GetPointOnRay(_ray, _finish);
         if (!IsUnderGround(startPoint) && IsUnderGround(endPoint)) 
         {
             return true;
@@ -136,19 +137,18 @@ private:
             return false;
         }
     }
-    bool IsUnderGround(glm::vec3 testPoint) 
+    bool IsUnderGround(glm::vec3 _testPoint) 
     {
-        /*Terrain terrain = getTerrain(testPoint.getX(), testPoint.getZ());*/
         float height = 0;
-        /*if (terrain != null) {
-            height = terrain.getHeightOfTerrain(testPoint.getX(), testPoint.getZ());
+        /*Terrain terrain = getTerrain(_testPoint.getX(), _testPoint.getZ());*/
+        /*if (terrain != null) 
+        {
+            height = terrain.getHeightOfTerrain(_testPoint.Transform.Position.x, _testPoint.Transform.Position.z);
         }*/
-        if (testPoint.y < height) {
+        if (_testPoint.y < height) 
             return true;
-        }
-        else {
+        else
             return false;
-        }
     }
 };
 
