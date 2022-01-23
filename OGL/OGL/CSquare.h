@@ -12,7 +12,7 @@ namespace Shape
 		virtual ~CSquare();
 
 		void CursorEnterCallback(GLFWwindow* window, int entered);
-		void Input(GLFWwindow* window, int key, int scancode, int action, int mods);
+		void Input(glm::vec3 _mouseRay, GLFWwindow* window, int key, int scancode, int action, int mods);
 		void Update(long double& _dt);
 	protected:
 		Texture* m_Texture = nullptr;

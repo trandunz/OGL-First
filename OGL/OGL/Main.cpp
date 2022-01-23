@@ -1,6 +1,7 @@
 #include "CSquare.h"
 #include "MousePicker.h"
 #include "ICompList.h"
+#include "Cubemap.h"
 
 static int m_WindowWidth = 1600;
 static int m_WindowHeight = 900;
@@ -12,6 +13,7 @@ void InitGLFW();
 void InitGLFWCallbacks();
 void InitInputMode();
 void HandleImGuiMenuBar();
+void HandleImGuiDebugInfo();
 void Start();
 void Update();
 void HandleMouseVisible();
@@ -25,10 +27,11 @@ void CleanupGLFW();
 std::map<int, bool> m_Keypresses;
 std::map<int, bool> m_Mousepresses;
 
-GLFWwindow* m_RenderWindow;
-Shape::CSquare* m_SquareTest;
+GLFWwindow* m_RenderWindow = nullptr;
+Shape::CSquare* m_SquareTest = nullptr;
+Cubemap* skybox = nullptr;
 Camera m_MainCamera(m_Keypresses, glm::vec3(0.0f, 0.0f, 3.0f));
-MousePicker m_MousePicker(&m_MainCamera, m_MainCamera.ProjectionMatrix);
+MousePicker m_MousePicker(&m_MainCamera);
 
 bool firstMouse = true;
 bool m_ShowMouse = false;
@@ -102,7 +105,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	// Object Input
 	m_MainCamera.Input();
 	if (m_SquareTest)
-		m_SquareTest->Input(window, key, scancode, action, mods);
+		m_SquareTest->Input(m_MousePicker.GetCurrentRay(), window, key, scancode, action, mods);
 }
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -245,28 +248,17 @@ void HandleImGuiMenuBar()
 	style->Colors[ImGuiCol_SeparatorHovered] = ImColor(76, 76, 76, 255);
 }
 
-void Start()
+void HandleImGuiDebugInfo()
 {
-	if (!m_SquareTest)
-		m_SquareTest = new Shape::CSquare(m_Keypresses, m_MainCamera);
-}
+	std::string frameTime = "Frame Time (seconds) = {";
+	frameTime += std::to_string(deltaTime);
+	frameTime += "}";
 
-void Update()
-{
-	HandleImGuiMenuBar();
-	m_MousePicker.Update();
-	CalculateDeltaTime(); 
-	InputActions();
-	HandleMouseVisible();
-	m_MainCamera.Movement(deltaTime);
-	if (m_SquareTest)
-		m_SquareTest->Update(deltaTime);
-
-	// 'Mouse Position(x,y,z) = {~,~,~}'
+	std::string mousePosX = std::to_string(m_MousePicker.GetCurrentRay().x);
 	std::string mousePosZ = std::to_string(m_MousePicker.GetCurrentRay().z);
 	std::string mousePosY = std::to_string(m_MousePicker.GetCurrentRay().y);
 	std::string mousePos = "Mouse Position(i^,j^,k^) = {";
-	mousePos +=	std::to_string(m_MousePicker.GetCurrentRay().x);
+	mousePos += mousePosX.c_str();
 	mousePos += ",";
 	mousePos += mousePosY.c_str();
 	mousePos += ",";
@@ -299,10 +291,41 @@ void Update()
 	// Display contents in a scrolling region
 	ImGui::TextColored(ImVec4(1, 1, 0, 1), "Console Output");
 	ImGui::BeginChild("Scrolling");
+	// Toggle Camera Light
+	ImGui::Text("Camera Spotlight");
+	GUI::ToggleButton("CamLight", &m_MainCamera.m_CamLightEnabled);
+	ImGui::Text(frameTime.c_str());
 	ImGui::Text(mousePos.c_str());
 	ImGui::Text(camPos.c_str());
 	ImGui::Text(camFront.c_str());
 	ImGui::EndChild();
+}
+
+void Start()
+{
+	if (!m_SquareTest)
+		m_SquareTest = new Shape::CSquare(m_Keypresses, m_MainCamera);
+
+	if (!skybox)
+		skybox = new Cubemap(m_MainCamera);
+}
+
+void Update()
+{
+	m_MousePicker.Update();
+	HandleImGuiMenuBar();
+	CalculateDeltaTime(); 
+	InputActions();
+	HandleMouseVisible();
+	m_MainCamera.Movement(deltaTime);
+
+	if (m_SquareTest)
+		m_SquareTest->Update(deltaTime);
+
+	if (skybox)
+		skybox->Render();
+
+	HandleImGuiDebugInfo();
 }
 
 void HandleMouseVisible()
@@ -389,6 +412,7 @@ int Cleanup()
 void CleanupAllPointers()
 {
 	NumptyBehavior::CleanupPointer(m_SquareTest);
+	NumptyBehavior::CleanupPointer(skybox);
 	m_Mousepresses.clear();
 	m_Keypresses.clear();
 	NumptyBehavior::CleanupPointer(m_RenderWindow);

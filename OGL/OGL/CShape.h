@@ -39,16 +39,20 @@ namespace Shape
 
 	protected:
 		Shader* m_Shader = nullptr;
+		Shader* m_InstanceShader = nullptr;
 		Shader* m_LightingShader = nullptr;
 		Renderer m_Renderer;
 		Camera* m_Camera = nullptr;
 
 		VertexBuffer* m_VertBuffer = nullptr;
+		VertexBuffer* m_InstanceBuffer = nullptr;
 		IndexBuffer* m_IndexBuffer = nullptr;
 		VertexArray* m_VertexArray = nullptr;
 
 		TYPE m_ShapeType;
 		SHAPEARRAYS m_ShapeArrays;
+		std::vector<glm::mat4> m_InstanceMatrix;
+		unsigned int m_InstanceCount = 0;
 
 		glm::mat4 m_ProjectionMat = glm::perspective(45.0f, (float)1920.0f / (float)1080.0f, 0.0f, 4000.0f);
 		glm::mat4 m_ViewMat = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -2));
@@ -73,6 +77,7 @@ namespace Shape
 
 		bool m_WireFrameMode = false;
 
+		void CreateInstance(STransform _transform);
 		void CreateVBBasedOnType();
 		void CreateIBBasedOnType();
 	};

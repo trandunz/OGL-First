@@ -186,43 +186,41 @@ public:
 		model = glm::scale(model, _transform.scale);
 
 		// Apply / Calculate its Transformation Matrix
-		{
-			testCube.sqaureOne.triOne.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureOne.triOne.vertOne, 1.0));
-			testCube.sqaureOne.triOne.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureOne.triOne.vertTwo, 1.0));
-			testCube.sqaureOne.triTwo.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureOne.triTwo.vertOne, 1.0));
-			testCube.sqaureOne.triTwo.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureOne.triTwo.vertTwo, 1.0));
+		testCube.sqaureOne.triOne.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureOne.triOne.vertOne, 1.0));
+		testCube.sqaureOne.triOne.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureOne.triOne.vertTwo, 1.0));
+		testCube.sqaureOne.triTwo.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureOne.triTwo.vertOne, 1.0));
+		testCube.sqaureOne.triTwo.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureOne.triTwo.vertTwo, 1.0));
 
-			testCube.sqaureTwo.triOne.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureTwo.triOne.vertOne, 1.0));
-			testCube.sqaureTwo.triOne.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureTwo.triOne.vertTwo, 1.0));
-			testCube.sqaureTwo.triTwo.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureTwo.triTwo.vertOne, 1.0));
-			testCube.sqaureTwo.triTwo.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureTwo.triTwo.vertTwo, 1.0));
+		testCube.sqaureTwo.triOne.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureTwo.triOne.vertOne, 1.0));
+		testCube.sqaureTwo.triOne.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureTwo.triOne.vertTwo, 1.0));
+		testCube.sqaureTwo.triTwo.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureTwo.triTwo.vertOne, 1.0));
+		testCube.sqaureTwo.triTwo.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureTwo.triTwo.vertTwo, 1.0));
 
-			testCube.sqaureThree.triOne.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureThree.triOne.vertOne, 1.0));
-			testCube.sqaureThree.triOne.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureThree.triOne.vertTwo, 1.0));
-			testCube.sqaureThree.triTwo.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureThree.triTwo.vertOne, 1.0));
-			testCube.sqaureThree.triTwo.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureThree.triTwo.vertTwo, 1.0));
+		testCube.sqaureThree.triOne.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureThree.triOne.vertOne, 1.0));
+		testCube.sqaureThree.triOne.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureThree.triOne.vertTwo, 1.0));
+		testCube.sqaureThree.triTwo.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureThree.triTwo.vertOne, 1.0));
+		testCube.sqaureThree.triTwo.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureThree.triTwo.vertTwo, 1.0));
 
-			testCube.sqaureFour.triOne.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureFour.triOne.vertOne, 1.0));
-			testCube.sqaureFour.triOne.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureFour.triOne.vertTwo, 1.0));
-			testCube.sqaureFour.triTwo.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureFour.triTwo.vertOne, 1.0));
-			testCube.sqaureFour.triTwo.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureFour.triTwo.vertTwo, 1.0));
+		testCube.sqaureFour.triOne.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureFour.triOne.vertOne, 1.0));
+		testCube.sqaureFour.triOne.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureFour.triOne.vertTwo, 1.0));
+		testCube.sqaureFour.triTwo.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureFour.triTwo.vertOne, 1.0));
+		testCube.sqaureFour.triTwo.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureFour.triTwo.vertTwo, 1.0));
 
-			testCube.sqaureFive.triOne.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureFive.triOne.vertOne, 1.0));
-			testCube.sqaureFive.triOne.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureFive.triOne.vertTwo, 1.0));
-			testCube.sqaureFive.triTwo.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureFive.triTwo.vertOne, 1.0));
-			testCube.sqaureFive.triTwo.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureFive.triTwo.vertTwo, 1.0));
+		testCube.sqaureFive.triOne.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureFive.triOne.vertOne, 1.0));
+		testCube.sqaureFive.triOne.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureFive.triOne.vertTwo, 1.0));
+		testCube.sqaureFive.triTwo.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureFive.triTwo.vertOne, 1.0));
+		testCube.sqaureFive.triTwo.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureFive.triTwo.vertTwo, 1.0));
 
-			testCube.sqaureSix.triOne.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureSix.triOne.vertOne, 1.0));
-			testCube.sqaureSix.triOne.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureSix.triOne.vertTwo, 1.0));
-			testCube.sqaureSix.triTwo.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureSix.triTwo.vertOne, 1.0));
-			testCube.sqaureSix.triTwo.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureSix.triTwo.vertTwo, 1.0));
-		}
+		testCube.sqaureSix.triOne.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureSix.triOne.vertOne, 1.0));
+		testCube.sqaureSix.triOne.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureSix.triOne.vertTwo, 1.0));
+		testCube.sqaureSix.triTwo.vertOne = glm::vec3(model * glm::vec4(testCube.sqaureSix.triTwo.vertOne, 1.0));
+		testCube.sqaureSix.triTwo.vertTwo = glm::vec3(model * glm::vec4(testCube.sqaureSix.triTwo.vertTwo, 1.0));
 		
 		// Test For Its Collision
 		if (_point == glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX))
 			std::cout << IsPointInCube(testCube, glm::vec3(0.5, 0.5, 0.5)) << "= Test Collision Value" << std::endl;
 		else
-			std::cout << IsPointInCube(testCube, _point) << "= Test Collision Value" << std::endl;
+			std::cout << IsPointInCube(testCube, _point) << "= Test Collision Value (custom)" << std::endl;
 	}
 
 	static bool IsPointInCube(sCube _cube, glm::vec3 _point)
@@ -239,7 +237,6 @@ public:
 
 	static bool IsPointInTri(sTriangle _triangle, glm::vec2 _point)
 	{
-
 		// get the area of the triangle
 		float areaOrig = abs((_triangle.vertTwo.x - _triangle.vertOne.x) * (_triangle.vertThree.y - _triangle.vertOne.y) - (_triangle.vertThree.x - _triangle.vertOne.x) * (_triangle.vertTwo.y - _triangle.vertOne.y));
 

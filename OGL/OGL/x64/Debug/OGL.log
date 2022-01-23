@@ -1,51 +1,35 @@
 ﻿  CShape.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(29,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.h(63,125): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.h(63,89): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.h(63,53): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(28,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(37,70): warning C4244: 'argument': conversion from 'GLsizeiptr' to 'GLsizei', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\IndexBuffer.h(17,1): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
   CSquare.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(29,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.h(63,125): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.h(63,89): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.h(63,53): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\include\GLFW\glfw3.h(123): message : see previous definition of 'APIENTRY'
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CSquare.cpp(145,9): warning C4244: '=': conversion from 'long double' to 'float', possible loss of data
-  Cubemap.cpp
-  imgui.cpp
-  imgui_demo.cpp
-  imgui_draw.cpp
-  imgui_impl_glfw.cpp
-  imgui_impl_opengl3.cpp
-  imgui_tables.cpp
-  imgui_widgets.cpp
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(28,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(37,70): warning C4244: 'argument': conversion from 'GLsizeiptr' to 'GLsizei', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\IndexBuffer.h(17,1): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CSquare.cpp(164,9): warning C4244: '=': conversion from 'long double' to 'float', possible loss of data
   Main.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(29,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.h(63,125): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.h(63,89): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.h(63,53): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(46,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(47,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(51,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(54,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(57,38): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(57,29): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(110,21): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(129,29): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(412,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(55,1): warning C4150: deletion of pointer to incomplete type 'GLFWwindow'; no destructor called
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(28,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(37,70): warning C4244: 'argument': conversion from 'GLsizeiptr' to 'GLsizei', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\IndexBuffer.h(17,1): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(50,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(51,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(55,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(58,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(61,38): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(61,29): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(123,29): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(423,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(290,1): warning C4150: deletion of pointer to incomplete type 'GLFWwindow'; no destructor called
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\include\ImGui\imgui_impl_glfw.h(23): message : see declaration of 'GLFWwindow'
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(45): message : see reference to function template instantiation 'void NumptyBehavior::DeletePointer<T>(T *)' being compiled
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(280): message : see reference to function template instantiation 'void NumptyBehavior::DeletePointer<T>(T *)' being compiled
           with
           [
               T=GLFWwindow
           ]
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(407): message : see reference to function template instantiation 'void NumptyBehavior::CleanupPointer<GLFWwindow>(T *)' being compiled
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(418): message : see reference to function template instantiation 'void NumptyBehavior::CleanupPointer<GLFWwindow>(T *)' being compiled
           with
           [
               T=GLFWwindow
           ]
-  Texture.cpp
   Generating Code...
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   OGL.vcxproj -> C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Debug\OGL.exe

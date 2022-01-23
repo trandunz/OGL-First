@@ -8,7 +8,16 @@
 class Texture
 {
 public:
+	Texture(const char* image, const char* type,GLenum texType, GLenum slot, GLenum format, GLenum pixelType);
 	Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType);
+
+	~Texture();
+
+	void texUnit(Shader& shader, const char* uniform, GLuint unit)
+	{
+		shader.Bind();
+		shader.SetUniform1i(uniform, unit);
+	}
 
 	void Bind();
 	void Unbind();
@@ -16,5 +25,6 @@ public:
 
 	GLuint ID;
 	GLenum Type;
+	const char* type;
 };
 #endif

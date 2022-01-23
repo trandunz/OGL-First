@@ -10,7 +10,14 @@ public:
     {
         glGenBuffers(1, &m_RendererID);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), data, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), data, GL_STATIC_DRAW);
+    }
+    IndexBuffer(std::vector<GLuint>& indices)
+        : m_IndexCount(indices.size())
+    {
+        glGenBuffers(1, &m_RendererID);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof (GLuint) * indices.size(), indices.data(), GL_STATIC_DRAW);
     }
     ~IndexBuffer()
     {

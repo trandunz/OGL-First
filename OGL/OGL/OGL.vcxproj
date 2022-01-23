@@ -165,6 +165,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseComponent.h" />
+    <ClInclude Include="BaseObject.h" />
     <ClInclude Include="BaseSystem.h" />
     <ClInclude Include="CCamera.h" />
     <ClInclude Include="CShaderLoader.h" />
@@ -196,6 +197,7 @@
     <ClInclude Include="VertexBufferLayout.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="instance.vert" />
     <None Include="Resources\Shaders\basic_lighting.fs" />
     <None Include="Resources\Shaders\basic_lighting.vs" />
     <None Include="Resources\Shaders\basic_lighting_2.fs" />

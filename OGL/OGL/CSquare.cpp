@@ -15,12 +15,12 @@ CSquare::~CSquare()
 	CleanupPointer(m_VertBuffer);
 	CleanupPointer(m_IndexBuffer);
 	CleanupPointer(m_VertexArray);
-	if (m_Texture)
-		m_Texture->Delete();
 	CleanupPointer(m_Texture);
 	CleanupPointer(m_LightingShader);
 	CleanupPointer(m_Shader);
 	CleanupPointer(m_LightCubeVAO);
+	CleanupPointer(m_InstanceBuffer);
+	CleanupPointer(m_InstanceShader);
 	m_Camera = nullptr;
 	m_KeyPresses = nullptr;
 }
@@ -29,8 +29,16 @@ void CSquare::Start()
 {
 
 	SetType(TYPE::CUBE);
+	CreateInstance(Transform);
+	CreateInstance({ { m_Camera->Position + glm::vec3(m_Camera->Front.x * 5, m_Camera->Front.y * 5, m_Camera->Front.z * 5) }, { glm::vec3(0,0,0) }, { glm::vec3(1,1,1) } });
+	CreateInstance({ {2,2,2},{0,0,0},{1,1,1},0 });
+	CreateInstance({ {-2,2,2},{0,0,0},{1,1,1},0 });
+
+
 	InitRender();
 
+	
+	// Light positions and colours
 	m_Copies[std::to_string(m_NumOfCopies)] = std::make_pair(m_RGBA_Copy, Transform);
 	CreateCopy();
 	CreateCopy();
@@ -53,7 +61,7 @@ void CSquare::CursorEnterCallback(GLFWwindow* _window, int _entered)
 	}
 }
 
-void CSquare::Input(GLFWwindow* _window, int _key, int _scancode, int _action, int _mods)
+void CSquare::Input(glm::vec3 _mouseRay, GLFWwindow* _window, int _key, int _scancode, int _action, int _mods)
 {
 	m_InputVec.x = 0.0f;
 	m_InputVec.y = 0.0f;
@@ -121,8 +129,9 @@ void CSquare::Input(GLFWwindow* _window, int _key, int _scancode, int _action, i
 			}
 			case GLFW_KEY_P:
 			{
-				Physics::TestCubeCollision(STransform{ glm::vec3(), glm::vec3(), glm::vec3(2.0f,2.0f,2.0f), 0.0f },
-					glm::vec3(1,1,1));
+				//std::cout << _mouseRay.x << "," << _mouseRay.y << "," << _mouseRay.z << std::endl;
+				//Physics::TestCubeCollision(Transform,
+				//	_mouseRay);
 
 				(*m_KeyPresses)[item.first] = false;
 				break;
@@ -162,18 +171,43 @@ void CSquare::Update(long double& _dt)
 
 void CSquare::Render()
 {
+	m_LightingShader->Bind();
+
+	// SpotLight Uniforms
+	m_LightingShader->SetUniformVec3f("spotLight.position", m_Camera->Position);
+	m_LightingShader->SetUniformVec3f("spotLight.direction", m_Camera->Front);
+	m_LightingShader->SetUniform3f("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+	if (m_Camera->m_CamLightEnabled)
+	{
+		m_LightingShader->SetUniform3f("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+		m_LightingShader->SetUniform3f("spotLight.specular", 1.0f, 1.0f, 1.0f);
+	}
+	else
+	{
+		m_LightingShader->SetUniform3f("spotLight.diffuse", 0.0f, 0.0f, 0.0f);
+		m_LightingShader->SetUniform3f("spotLight.specular", 0.0f, 0.0f, 0.0f);
+	}
+	m_LightingShader->SetUniform1f("spotLight.constant", 1.0f);
+	m_LightingShader->SetUniform1f("spotLight.linear", 0.09f);
+	m_LightingShader->SetUniform1f("spotLight.quadratic", 0.032f);
+	m_LightingShader->SetUniform1f("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+	m_LightingShader->SetUniform1f("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+
+	// View Position Uniform
+	m_LightingShader->SetUniformVec3f("viewPos", m_Camera->Position);
+
+	//  'Shininess'
+	m_LightingShader->SetUniform1f("material.shininess", 32.0f);
+
+	// Directional light Uniforms
+	m_LightingShader->SetUniform3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
+	m_LightingShader->SetUniform3f("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+	m_LightingShader->SetUniform3f("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+	m_LightingShader->SetUniform3f("dirLight.specular", 0.5f, 0.5f, 0.5f);
+
+	// Point Light Uniforms
 	for (auto& item : m_Copies)
 	{
-		m_LightingShader->Bind();
-
-		m_LightingShader->SetUniformVec3f("viewPos", m_Camera->Position);
-		m_LightingShader->SetUniform1f("material.shininess", 32.0f);
-		// directional light
-		m_LightingShader->SetUniform3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
-		m_LightingShader->SetUniform3f("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-		m_LightingShader->SetUniform3f("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-		m_LightingShader->SetUniform3f("dirLight.specular", 0.5f, 0.5f, 0.5f);
-		// point lights
 		m_LightingShader->SetUniformVec3f("pointLights[" + item.first + "].position", item.second.second.position);
 		m_LightingShader->SetUniform3f("pointLights[" + item.first + "].ambient", 0.05f, 0.05f, 0.05f);
 		m_LightingShader->SetUniform3f("pointLights[" + item.first + "].diffuse", abs(item.second.first.x - 0.2f), abs(item.second.first.y - 0.2f), abs(item.second.first.z - 0.2f));
@@ -181,44 +215,32 @@ void CSquare::Render()
 		m_LightingShader->SetUniform1f("pointLights[" + item.first + "].constant", 1.0f);
 		m_LightingShader->SetUniform1f("pointLights[" + item.first + "].linear", 0.09f);
 		m_LightingShader->SetUniform1f("pointLights[" + item.first + "].quadratic", 0.032f);
-		//
-		// ....
 	}
 
-	// spotLights (just camera atm)
-	m_LightingShader->SetUniformVec3f("spotLight.position", m_Camera->Position);
-	m_LightingShader->SetUniformVec3f("spotLight.direction", m_Camera->Front);
-	m_LightingShader->SetUniform3f("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-	m_LightingShader->SetUniform3f("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-	m_LightingShader->SetUniform3f("spotLight.specular", 1.0f, 1.0f, 1.0f);
-	m_LightingShader->SetUniform1f("spotLight.constant", 1.0f);
-	m_LightingShader->SetUniform1f("spotLight.linear", 0.09f);
-	m_LightingShader->SetUniform1f("spotLight.quadratic", 0.032f);
-	m_LightingShader->SetUniform1f("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-	m_LightingShader->SetUniform1f("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+	// Position Of Shaded Box
+	SetMVPUniform(m_LightingShader, STransform{ glm::vec3(1,1,1), glm::vec3(0,0,0), glm::vec3(1,1,1) });
 
-	for (auto& item : m_Copies)
-	{
-		// ....
-		// 
-		// Position Of Shaded Box
-		SetMVPUniform(m_LightingShader, STransform{ glm::vec3(1,1,1), glm::vec3(0,0,0), glm::vec3(1,1,1) });
-		// Draw Shaded Box
-		m_Renderer.Draw(*m_LightCubeVAO, *m_IndexBuffer, *m_LightingShader);
-		m_LightingShader->UnBind();
+	// Draw Shaded Box
+	m_Renderer.Draw(*m_LightCubeVAO, *m_IndexBuffer, *m_LightingShader);
+	m_LightingShader->UnBind();
 
-		// Light (Body)
-		m_Shader->Bind();
-		// Light Texture
-		m_Texture->Bind();
-		glActiveTexture(m_Texture->ID);
-		m_Shader->SetUniform1i("LightTexture", m_Texture->ID);
-		m_Shader->SetUniform4f("u_Color", item.second.first.x, item.second.first.y, item.second.first.z, item.second.first.w);
-		SetMVPUniform(item.second.second);
-		// Draw Light (No Shading)
-		m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
-		m_Shader->UnBind();
-	}
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// Light (Body)
+	m_Shader->Bind();
+
+	// Light Texture
+	m_Texture->Bind(); 
+	glActiveTexture(m_Texture->ID);
+
+	m_ProjectionMat = glm::perspective(glm::radians(m_Camera->Zoom), 1920.0f / 1080.0f, 0.1f, 100.0f);
+	m_ViewMat = m_Camera->GetViewMatrix();
+	m_Shader->SetUniform4f("u_Color", m_Color[0], m_Color[1], m_Color[2], m_Color[3]);
+	m_Shader->SetUniformMat4fv("projection", m_ProjectionMat);
+	m_Shader->SetUniformMat4fv("view", m_ViewMat);
+	m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader, m_InstanceCount);
+
+	m_Shader->UnBind();
 }
 
 void CSquare::ImGuiHandler()
@@ -295,22 +317,13 @@ void CSquare::InitRender(const char* _vsAddress, const char* _gsAddress,
 	VertexBufferLayout _vbLayouts)
 {
 	CleanupPointer(m_Shader);
-	if (m_WireFrameMode)
-	{
-		m_Shader = new Shader("Resources/Shaders/TestShader.vs", "", "Resources/Shaders/TestShader.fs");
-		m_LightingShader = new Shader(_vsAddress, _gsAddress, _fsAddress);
-	}
-	else
-	{
-		m_Shader = new Shader("Resources/Shaders/TestShader.vs", "", "Resources/Shaders/TestShader.fs");
-		m_LightingShader = new Shader(_vsAddress, _gsAddress, _fsAddress);
-	}
+	CleanupPointer(m_InstanceShader);
+	CleanupPointer(m_LightingShader);
+	m_Shader = new Shader("Resources/Shaders/TestShader.vs", "", "Resources/Shaders/TestShader.fs");
+	m_LightingShader = new Shader(_vsAddress, _gsAddress, _fsAddress);
 
 	CleanupPointer(m_Texture);
-	if (m_Texture == nullptr)
-	{
-		m_Texture = new Texture(_texAddress, GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
-	}
+	m_Texture = new Texture(_texAddress, GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
 
 	m_LightingShader->Bind();
 	CreateVBBasedOnType();
@@ -333,7 +346,24 @@ void CSquare::InitRender(const char* _vsAddress, const char* _gsAddress,
 		layout.Push<float>(3);
 		layout.Push<float>(2);
 		m_VertexArray->AddBuffer(*m_VertBuffer, layout);
+
+		CleanupPointer(m_InstanceBuffer);
+		if (m_InstanceCount != 1)
+		{
+			CleanupPointer(m_InstanceBuffer);
+			m_InstanceBuffer = new VertexBuffer(m_InstanceMatrix, m_InstanceCount);
+			m_InstanceBuffer->Bind();
+			m_VertexArray->LinkAttibute(*m_InstanceBuffer, 3, 4, GL_FLOAT, sizeof(glm::mat4), (void*)0);
+			m_VertexArray->LinkAttibute(*m_InstanceBuffer, 4, 4, GL_FLOAT, sizeof(glm::mat4), (void*)(1 * sizeof(glm::vec4)));
+			m_VertexArray->LinkAttibute(*m_InstanceBuffer, 5, 4, GL_FLOAT, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+			m_VertexArray->LinkAttibute(*m_InstanceBuffer, 6, 4, GL_FLOAT, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+
+			glVertexAttribDivisor(3, 1);
+			glVertexAttribDivisor(4, 1);
+			glVertexAttribDivisor(5, 1);
+			glVertexAttribDivisor(6, 1);
+		}
 	}
-	//CreateIBBasedOnType();
+	CreateIBBasedOnType();
 }
 

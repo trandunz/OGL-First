@@ -7,7 +7,7 @@ using namespace Shape;
 		CalculateModelTransformations(m_ModelMat, _transform);
 		m_ViewMat = m_Camera->GetViewMatrix();
 		glm::mat4 mvp = m_ProjectionMat * m_ViewMat * m_ModelMat;
-		m_Shader->SetUniformMat4f("u_MVP", mvp);
+		m_Shader->SetUniformMat4fv("u_MVP", mvp);
 	}
 
 	CShape::~CShape()
@@ -17,6 +17,8 @@ using namespace Shape;
 		m_VertBuffer = nullptr;
 		m_IndexBuffer = nullptr;
 		m_VertexArray = nullptr;
+		m_InstanceBuffer = nullptr;
+		m_InstanceShader = nullptr;
 	}
 
 	glm::mat4 CShape::CalculateModelTransformations(glm::mat4& _model, STransform _transform)
@@ -44,7 +46,7 @@ using namespace Shape;
 		CalculateModelTransformations(m_ModelMat, Transform);
 		m_ViewMat = m_Camera->GetViewMatrix();
 		glm::mat4 mvp = m_ProjectionMat * m_ViewMat * m_ModelMat;
-		m_Shader->SetUniformMat4f("u_MVP", mvp);
+		m_Shader->SetUniformMat4fv("u_MVP", mvp);
 	}
 
 	void CShape::SetMVPUniform(Shader* _shader, STransform _transform)
@@ -52,9 +54,9 @@ using namespace Shape;
 		m_ProjectionMat = glm::perspective(glm::radians(m_Camera->Zoom), 1920.0f / 1080.0f, 0.1f, 100.0f);
 		CalculateModelTransformations(m_ModelMat, _transform);
 		m_ViewMat = m_Camera->GetViewMatrix();
-		_shader->SetUniformMat4f("projection", m_ProjectionMat);
-		_shader->SetUniformMat4f("model", m_ModelMat);
-		_shader->SetUniformMat4f("view", m_ViewMat);
+		_shader->SetUniformMat4fv("projection", m_ProjectionMat);
+		_shader->SetUniformMat4fv("model", m_ModelMat);
+		_shader->SetUniformMat4fv("view", m_ViewMat);
 	}
 
 	bool CShape::UpdatePosition(float _x, float _y, float _z)
@@ -77,6 +79,14 @@ using namespace Shape;
 		}
 
 		return moved;
+	}
+
+	void CShape::CreateInstance(STransform _transform)
+	{
+		glm::mat4 tempMat;
+		CalculateModelTransformations(tempMat, _transform);
+		m_InstanceMatrix.push_back(tempMat);
+		m_InstanceCount++;
 	}
 
 	void CShape::CreateVBBasedOnType()

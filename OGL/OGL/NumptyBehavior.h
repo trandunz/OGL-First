@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
+#include <GLM/gtc/type_ptr.hpp>
 #include <glm/gtx/euler_angles.hpp>
 #include <GLM/gtc/quaternion.hpp>
 

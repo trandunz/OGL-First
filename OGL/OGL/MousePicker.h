@@ -4,11 +4,15 @@
 class MousePicker : public NumptyBehavior
 {
 public:
-    MousePicker(Camera* _camera, glm::mat4& _projMat)
+    MousePicker(Camera* _camera)
     {
         m_Camera = _camera;
-        m_ProjectionMatrix = _projMat;
+        //m_ProjectionMatrix = _projMat;
         m_ViewMatrix = m_Camera->GetViewMatrix();
+    }
+    ~MousePicker()
+    {
+        m_Camera = nullptr;
     }
 
     void GrabMousePosition(double _xPos, double _yPos)
@@ -21,15 +25,6 @@ public:
     {
         m_ViewMatrix = m_Camera->GetViewMatrix();
         m_CurrentRay = CalculateMouseRay(m_MouseX, m_MouseY);
-
-        if (IntersectionInRange(0, 100, m_CurrentRay)) 
-        {
-            m_CurrentTerrainPoint = BinarySearch(0, 0, 100, m_CurrentRay);
-        }
-        else 
-        {
-            m_CurrentTerrainPoint = glm::vec3(0);
-        }
     }
 
     void ProcessMovement(glm::vec3 _movePerFrame)
@@ -42,18 +37,18 @@ public:
         return m_CurrentRay;
     }
 
-    glm::vec3 GetCurrentTerrainPoint() 
+    /*glm::vec3 GetCurrentTerrainPoint() 
     {
         return m_CurrentTerrainPoint;
-    }
+    }*/
 
     float Range = 10.0f;
     STransform Transform;
 private:
 
-    glm::vec3 m_CurrentTerrainPoint;
-    glm::vec3 m_CurrentRay;
-    glm::mat4 m_ProjectionMatrix;
+    //glm::vec3 m_CurrentTerrainPoint;
+    glm::vec3 m_CurrentRay{0,0,0};
+    glm::mat4 m_ProjectionMatrix = glm::perspective(45.0f, (float)1920.0f / (float)1080.0f, 0.1f, 1000.0f);
     glm::mat4 m_ViewMatrix;
     Camera* m_Camera = nullptr;
     
@@ -62,7 +57,7 @@ private:
 
     glm::vec3 CalculateMouseRay(double _xPos, double _yPos)
     {
-        glm::vec2 mousePos = GetNormalizedDeviceCoords(_xPos, _yPos);
+        glm::vec2 mousePos = GetNormalizedDeviceCoords((float)_xPos, (float)_yPos);
         glm::vec4 clipCoords = glm::vec4(mousePos.x, mousePos.y, -1, 1);
         glm::vec4 eyeCoords = ToEyeCoords(clipCoords);
         glm::vec3 wordRay = ToWorldCoords(eyeCoords);

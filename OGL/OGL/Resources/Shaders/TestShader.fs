@@ -1,6 +1,5 @@
 #version 460 core
 
-in vec3 o_position;
 in vec3 o_normals;
 in vec2 o_texCoords;
 

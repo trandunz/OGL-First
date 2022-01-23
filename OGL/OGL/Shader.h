@@ -39,6 +39,12 @@ public:
         glUniform4f(location, v0, v1, v2, v3);
     }
 
+    void SetUniform4fv(const std::string& name, GLsizei size,const GLfloat* value )
+    {
+        GLint location = GetUniformLocation(name);
+        glUniform4fv(location, size, value);
+    }
+
     void SetUniform3f(const std::string& name, float v0, float v1, float v2)
     {
         GLint location = GetUniformLocation(name);
@@ -51,7 +57,7 @@ public:
         glUniform3f(location, vector3.x, vector3.y, vector3.z);
     }
 
-    void SetUniformMat4f(const std::string& name, const glm::mat4& matrix)
+    void SetUniformMat4fv(const std::string& name, const glm::mat4& matrix)
     {
         GLint location = GetUniformLocation(name);
         glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);

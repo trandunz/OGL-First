@@ -44,6 +44,17 @@ public:
 		m_Stride += Count * VertexBufferElement::GetSizeOfType(GL_FLOAT);
 	}
 
+	template <>
+	void Push<glm::vec4>(int Count)
+	{
+		VertexBufferElement element;
+		element.Type = GL_FLOAT;
+		element.Count = Count;
+		element.Normalized = GL_FALSE;
+		m_Elements.push_back(element);
+		m_Stride += Count * sizeof(glm::vec4);
+	}
+
 	inline GLuint GetStride() const { return m_Stride; }
 	inline const std::vector<VertexBufferElement>& GetElements() { return m_Elements; }
 private:

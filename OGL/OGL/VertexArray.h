@@ -28,6 +28,14 @@ public:
             glVertexAttribPointer(i, element.Count, element.Type, element.Normalized, layout.GetStride(), (const void*)offset);
             offset += element.Count * VertexBufferElement::GetSizeOfType(element.Type);
         }
+        vb.UnBind();
+    }
+    inline void LinkAttibute(const VertexBuffer& vb, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset)
+    {
+        vb.Bind();
+        glEnableVertexAttribArray(layout);
+        glVertexAttribPointer(layout, numComponents, type, GL_FALSE, stride, offset);
+        vb.UnBind();
     }
     inline void Bind() const
     {
