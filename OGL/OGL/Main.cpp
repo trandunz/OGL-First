@@ -2,6 +2,7 @@
 #include "MousePicker.h"
 #include "ICompList.h"
 #include "Cubemap.h"
+#include "MeshHandler.h"
 
 static int m_WindowWidth = 1600;
 static int m_WindowHeight = 900;
@@ -31,6 +32,7 @@ GLFWwindow* m_RenderWindow = nullptr;
 Shape::CSquare* m_SquareTest = nullptr;
 Cubemap* skybox = nullptr;
 Camera m_MainCamera(m_Keypresses, glm::vec3(0.0f, 0.0f, 3.0f));
+MeshHandler m_MeshHandler;
 MousePicker m_MousePicker(&m_MainCamera);
 
 bool firstMouse = true;
@@ -64,7 +66,9 @@ static void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos)
 static void cursorEnterCallback(GLFWwindow* window, int entered)
 {
 	if (m_SquareTest)
+	{
 		m_SquareTest->CursorEnterCallback(window, entered);
+	}
 }
 
 static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
@@ -105,7 +109,9 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	// Object Input
 	m_MainCamera.Input();
 	if (m_SquareTest)
+	{
 		m_SquareTest->Input(m_MousePicker.GetCurrentRay(), window, key, scancode, action, mods);
+	}
 }
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -192,7 +198,7 @@ void InitGLFW()
 
 	// Enables
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
+	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
 
 	glEnable(GL_BLEND);
@@ -294,6 +300,13 @@ void HandleImGuiDebugInfo()
 	// Toggle Camera Light
 	ImGui::Text("Camera Spotlight");
 	GUI::ToggleButton("CamLight", &m_MainCamera.m_CamLightEnabled);
+	ImGui::Text("Mesh Lighting");
+	GUI::ToggleButton("MeshLighting", &m_MeshHandler.MESHES[0]->m_LightingEnabled);
+	if (ImGui::Button("Recompile All Meshes"))
+	{
+		std::cout << m_MeshHandler.MESHES[0]->m_LightingEnabled << std::endl;
+		m_MeshHandler.RecompileMeshes();
+	}
 	ImGui::Text(frameTime.c_str());
 	ImGui::Text(mousePos.c_str());
 	ImGui::Text(camPos.c_str());
@@ -303,8 +316,11 @@ void HandleImGuiDebugInfo()
 
 void Start()
 {
-	if (!m_SquareTest)
-		m_SquareTest = new Shape::CSquare(m_Keypresses, m_MainCamera);
+	/*if (!m_SquareTest)
+		m_SquareTest = new Shape::CSquare(m_Keypresses, m_MainCamera);*/
+	
+	std::shared_ptr<Mesh> test(new Mesh(m_MainCamera));
+	m_MeshHandler.AddMesh(test);
 
 	if (!skybox)
 		skybox = new Cubemap(m_MainCamera);
@@ -319,11 +335,25 @@ void Update()
 	HandleMouseVisible();
 	m_MainCamera.Movement(deltaTime);
 
+	if (m_MeshHandler.MESHES.size() > 0)
+	{
+		if (m_MeshHandler.MESHES[0])
+		{
+			m_MeshHandler.MESHES[0]->ModifyInstance(1, { m_MainCamera.Position + glm::vec3(m_MainCamera.Front.x * 5, m_MainCamera.Front.y * 5, m_MainCamera.Front.z * 5) });
+		}
+	}
+
 	if (m_SquareTest)
+	{
 		m_SquareTest->Update(deltaTime);
+	}
+
+	m_MeshHandler.Draw();
 
 	if (skybox)
+	{
 		skybox->Render();
+	}
 
 	HandleImGuiDebugInfo();
 }

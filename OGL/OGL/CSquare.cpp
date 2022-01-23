@@ -341,11 +341,14 @@ void CSquare::InitRender(const char* _vsAddress, const char* _gsAddress,
 	CleanupPointer(m_VertexArray);
 	m_VertexArray = new VertexArray();
 	{
-		VertexBufferLayout layout;
+		/*VertexBufferLayout layout;
 		layout.Push<float>(3);
 		layout.Push<float>(3);
 		layout.Push<float>(2);
-		m_VertexArray->AddBuffer(*m_VertBuffer, layout);
+		m_VertexArray->AddBuffer(*m_VertBuffer, layout);*/
+		m_VertexArray->LinkAttibute(*m_VertBuffer, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
+		m_VertexArray->LinkAttibute(*m_VertBuffer, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(GLfloat)));
+		m_VertexArray->LinkAttibute(*m_VertBuffer, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(GLfloat)));
 
 		CleanupPointer(m_InstanceBuffer);
 		if (m_InstanceCount != 1)

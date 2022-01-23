@@ -1,12 +1,6 @@
 #pragma once
 #include "NumptyBehavior.h"
 #include <array>
-struct Vertex
-{
-	float Position[3];
-	float Normal[3];
-	float TexCoords[2];
-};
 
 namespace Shape
 {

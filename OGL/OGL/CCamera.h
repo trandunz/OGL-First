@@ -50,7 +50,7 @@ public:
     float MouseSensitivity;
     float Zoom;
 
-    bool m_CamLightEnabled = true;
+    bool m_CamLightEnabled = false;
 private:
     void UpdateCameraVectors();
 

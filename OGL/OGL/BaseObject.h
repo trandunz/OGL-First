@@ -1,11 +1,14 @@
 #pragma once
 #include "NumptyBehavior.h"
-#include "Shader.h"
+#include "Mesh.h"
 
 class BaseObject : public NumptyBehavior
 {
+public:
+	void AddMesh();
+	void RemoveMesh();
 private:
-	Shader* CustomShader;
-	Shader* Defaultshader;
+	Camera* m_Camera = nullptr;
+	Mesh* m_Mesh = nullptr;
 };
 
