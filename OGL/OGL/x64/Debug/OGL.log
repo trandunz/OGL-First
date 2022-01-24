@@ -1,5 +1,5 @@
 ﻿  Mesh.cpp
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(28,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\IndexBuffer.h(17,1): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(270,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(283,20): warning C4018: '<': signed/unsigned mismatch
   OGL.vcxproj -> C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Debug\OGL.exe

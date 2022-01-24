@@ -20,6 +20,7 @@ public:
 
 	void Compile();
 	void CompileShaders(const char* _vs, const char* _gs, const char* _fs);
+	void CompileSpecular(const char* _specularMap);
 	void CompileNormal(const char* _normalMap);
 	void CompileTexture(std::string _defuse);
 
@@ -39,6 +40,7 @@ private:
 	Renderer m_Renderer;
 	Texture* m_Texture = nullptr;
 	Texture* m_Normal = nullptr;
+	Texture* m_Specular = nullptr;
 	Shader* m_Shader = nullptr;
 	VertexBuffer* m_VertBuffer = nullptr;
 	VertexBuffer* m_InstanceBuffer = nullptr;

@@ -26,6 +26,7 @@ Mesh::~Mesh()
 	CleanupPointer(m_VertexArray);
 	CleanupPointer(m_Texture);
 	CleanupPointer(m_Normal);
+	CleanupPointer(m_Specular);
 	if (m_PointLights)
 	{
 		delete[] m_PointLights;
@@ -45,8 +46,9 @@ void Mesh::Compile()
 		CompileShaders("Resources/Shaders/TestShader.vs", "Resources/Shaders/TestShader_FILL.gs", "Resources/Shaders/TestShader.fs");
 	}
 	
-	CompileTexture("Resources/Textures/diffuse.png");
+	CompileTexture("Resources/Textures/planks.png");
 	CompileNormal("Resources/Textures/normal.png");
+	CompileSpecular("Resources/Textures/planksSpec.png");
 
 	CleanupPointer(m_VertBuffer);
 	m_VertBuffer = new VertexBuffer(VERT_CUBE, sizeof(VERT_CUBE));
@@ -96,6 +98,12 @@ void Mesh::CompileShaders(const char* _vs, const char* _gs, const char* _fs)
 {
 	CleanupPointer(m_Shader);
 	m_Shader = new Shader(_vs, _gs, _fs);
+}
+
+void Mesh::CompileSpecular(const char* _specularMap)
+{
+	CleanupPointer(m_Specular);
+	m_Specular = new Texture(_specularMap, GL_TEXTURE_2D, 2, GL_RED, GL_UNSIGNED_BYTE);
 }
 
 void Mesh::CompileNormal(const char* _normalMap)
@@ -253,27 +261,32 @@ void Mesh::HandleLightingUniforms()
 	m_Shader->SetUniform1i("material.specular", m_Texture->Unit);
 	m_Shader->SetUniform1i("material.diffuse", m_Texture->Unit);
 
+	m_Specular->Bind();
+	// Light Texture
+	m_Shader->SetUniform1i("material.specular", m_Specular->Unit);
+
 	m_Normal->Bind();
 	// Light Texture
 	m_Shader->SetUniform1i("material.normal", m_Texture->Unit);
 
 
 	//  'Shininess'
-	m_Shader->SetUniform1f("material.shininess", 32.0f);
+	m_Shader->SetUniform1f("material.shininess", 64);
 
 	// Directional light Uniforms
 	m_Shader->SetUniform3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
 	m_Shader->SetUniform3f("dirLight.ambient", 0.05f, 0.05f, 0.05f);
 	m_Shader->SetUniform3f("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
 	m_Shader->SetUniform3f("dirLight.specular", 0.5f, 0.5f, 0.5f);
+
 	// Point Light Uniforms
 	for (int i = 0; i < m_InstanceCount; i++)
 	{
-		glm::vec3 pos = glm::vec4(1, 1, 0, 1);
+		glm::vec3 pos = glm::vec4(i, 3, 1, 1);
 		m_Shader->SetUniformVec3f("pointLights[" + std::to_string(i) + "].position", pos);
 		m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].ambient", 0.05f, 0.05f, 0.05f);
-		m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].diffuse", abs(m_Color[0] - 0.2f), abs(m_Color[1] - 0.2f), abs(m_Color[2] - 0.2f));
-		m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].specular", m_Color[0], m_Color[1], m_Color[2]);
+		m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].specular", abs(m_Color[0] - 0.2f), abs(m_Color[1] - 0.2f), abs(m_Color[2] - 0.2f));
+		m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].diffuse", m_Color[0], m_Color[1], m_Color[2]);
 		m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].constant", 1.0f);
 		m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].linear", 0.09f);
 		m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].quadratic", 0.032f);
