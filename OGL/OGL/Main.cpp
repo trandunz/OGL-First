@@ -9,6 +9,7 @@ static int m_WindowHeight = 900;
 
 static long double deltaTime = 0.0;	// Time between current frame and last frame
 static long double lastFrame = 0.0; // Time of last frame
+static unsigned int frameCounter = 0;
 
 void InitGLFW();
 void InitGLFWCallbacks();
@@ -49,18 +50,18 @@ static void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos)
 	m_MousePicker.GrabMousePosition(xPos, yPos);
 	if (firstMouse)
 	{
-		lastX = xPos;
-		lastY = yPos;
+		lastX = (float)xPos;
+		lastY = (float)yPos;
 		firstMouse = false;
 	}
-	auto xoffset = xPos - lastX;
-	lastX = xPos;
+	auto xoffset = (float)xPos - lastX;
+	lastX = (float)xPos;
 
 	auto yoffset = lastY - yPos;
-	lastY = yPos;
+	lastY = (float)yPos;
 
 	if (!m_ShowMouse)
-		m_MainCamera.ProcessMouse(xoffset, yoffset);
+		m_MainCamera.ProcessMouse((float)xoffset, (float)yoffset);
 }
 
 static void cursorEnterCallback(GLFWwindow* window, int entered)
@@ -126,7 +127,7 @@ static void window_content_scale_callback(GLFWwindow* window, float xscale, floa
 
 static void scrollCallback(GLFWwindow* window, double xOffset, double yOffset)
 {
-	m_MainCamera.ProcessScroll(yOffset);
+	m_MainCamera.ProcessScroll((float)yOffset);
 }
 
 int main()
@@ -201,8 +202,14 @@ void InitGLFW()
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
 
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_FRONT);
+	//glFrontFace(GL_CCW);
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glfwSwapInterval(0);
 }
 
 void InitGLFWCallbacks()
@@ -230,6 +237,10 @@ void HandleImGuiMenuBar()
 		if (ImGui::MenuItem("Close", "Ctrl+W")) { ISTOOLACTIVE = false; }
 		ImGui::EndMenu();
 	}
+	if (m_MeshHandler.MESHES.size() > 0)
+	{
+		m_MeshHandler.MESHES[0]->ImGuiHandler();
+	}
 	ImGui::EndMenuBar();
 
 	ImGui::Columns(2);
@@ -256,9 +267,13 @@ void HandleImGuiMenuBar()
 
 void HandleImGuiDebugInfo()
 {
-	std::string frameTime = "Frame Time (seconds) = {";
-	frameTime += std::to_string(deltaTime);
+	std::string frameTime = "Fps = {";
+	frameTime += std::to_string((1 / deltaTime) * frameCounter);
+	frameTime += "}\n";
+	frameTime += "Frame Time (ms) = {";
+	frameTime += std::to_string((deltaTime * frameCounter) * 1000);
 	frameTime += "}";
+	frameCounter = 0;
 
 	std::string mousePosX = std::to_string(m_MousePicker.GetCurrentRay().x);
 	std::string mousePosZ = std::to_string(m_MousePicker.GetCurrentRay().z);
@@ -339,7 +354,7 @@ void Update()
 	{
 		if (m_MeshHandler.MESHES[0])
 		{
-			m_MeshHandler.MESHES[0]->ModifyInstance(1, { m_MainCamera.Position + glm::vec3(m_MainCamera.Front.x * 5, m_MainCamera.Front.y * 5, m_MainCamera.Front.z * 5) });
+			//m_MeshHandler.MESHES[0]->ModifyInstance(1, { m_MainCamera.Position + glm::vec3(m_MainCamera.Front.x * 5, m_MainCamera.Front.y * 5, m_MainCamera.Front.z * 5) });
 		}
 	}
 
@@ -450,9 +465,10 @@ void CleanupAllPointers()
 
 void CalculateDeltaTime()
 {
-	float currentFrame = glfwGetTime();
+	float currentFrame = (float)glfwGetTime();
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
+	frameCounter++;
 }
 
 void CleanupGLFW()

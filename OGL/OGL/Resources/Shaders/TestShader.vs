@@ -5,8 +5,12 @@ layout (location = 1) in vec3 l_normals;
 layout (location = 2) in vec2 l_texCoords;
 layout (location = 3) in mat4 instanceMatrix;
 
-uniform mat4 view;
-uniform mat4 projection;
+layout (std140) uniform Matrices
+{
+    mat4 projection;
+    mat4 view;
+};
+
 
 out vec3 o_normals;
 out vec2 o_texCoords;

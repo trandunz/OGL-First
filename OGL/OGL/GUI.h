@@ -5,7 +5,7 @@
 #include "ImGui/imgui_impl_glfw.h"
 #include "ImGui/imgui_impl_opengl3.h"
 
-static bool ISTOOLACTIVE = true;
+static bool ISTOOLACTIVE;
 
 class GUI :
     public NumptyBehavior

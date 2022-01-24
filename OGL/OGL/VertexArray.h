@@ -30,14 +30,14 @@ public:
         }
         vb.UnBind();
     }
-    inline void LinkAttibute(const VertexBuffer& vb, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset)
+    inline void LinkAttibute(const VertexBuffer& vb, GLuint layout, GLuint numComponents, GLenum type, GLsizei stride, void* offset)
     {
         vb.Bind();
         glEnableVertexAttribArray(layout);
         glVertexAttribPointer(layout, numComponents, type, GL_FALSE, stride, offset);
         vb.UnBind();
     }
-    inline void StreamAttibute(const VertexBuffer& vb, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset, std::vector<glm::mat4>& _data ,unsigned int instanceCount = 1 )
+    inline void StreamAttibute(const VertexBuffer& vb, GLuint layout, GLuint numComponents, GLenum type, GLsizei stride, void* offset, std::vector<glm::mat4>& _data ,unsigned int instanceCount = 1 )
     {
         vb.Bind();
         glBufferData(GL_ARRAY_BUFFER, instanceCount * sizeof(glm::mat4), &_data[0], GL_STREAM_DRAW);

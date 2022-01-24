@@ -22,7 +22,23 @@ Texture::Texture(const char* _image, const char* _type,GLenum _texType, GLenum _
 	glBindTexture(_texType, ID);
 
 	// Assigns the image to the OpenGL Texture object
-	GLint loadedComponents = (numColCh == 4) ? GL_RGBA : GL_RGB;
+	GLint loadedComponents = 0;
+	if (numColCh == 4)
+	{
+		loadedComponents = GL_SRGB_ALPHA;
+	}
+	else if (numColCh == 3)
+	{
+		loadedComponents = GL_SRGB;
+	}
+	else if (numColCh == 1)
+	{
+		loadedComponents = GL_SRGB;
+	}
+	else
+	{
+		loadedComponents = GL_RGB;
+	}
 	glTexImage2D(_texType, 0, loadedComponents, widthImg, heightImg, 0, _format, _pixelType, bytes);
 
 	// Generates MipMaps
@@ -62,7 +78,24 @@ Texture::Texture(const char* _image, GLenum _texType, GLenum _slot, GLenum _form
 	glBindTexture(_texType, ID);
 
 	// Assigns the image to the OpenGL Texture object
-	GLint loadedComponents = (numColCh == 4) ? GL_RGBA : GL_RGB;
+	GLint loadedComponents = 0;
+	if (numColCh == 4)
+	{
+		loadedComponents = GL_SRGB_ALPHA;
+	} 
+	else if (numColCh == 3)
+	{
+		loadedComponents = GL_SRGB;
+	}
+	else if (numColCh == 1)
+	{
+		loadedComponents = GL_SRGB;
+	}
+	else
+	{
+		loadedComponents = GL_RGB;
+	}
+
 	glTexImage2D(_texType, 0, loadedComponents, widthImg, heightImg, 0, _format, _pixelType, bytes);
 
 	// Generates MipMaps

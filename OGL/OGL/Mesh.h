@@ -4,6 +4,8 @@
 #include "CCamera.h"
 #include "Texture.h"
 #include "Renderer.h"
+#include "GUI.h"
+#include "UniformBuffer.h"
 
 class Mesh : public NumptyBehavior
 {
@@ -18,6 +20,7 @@ public:
 
 	void Compile();
 	void CompileShaders(const char* _vs, const char* _gs, const char* _fs);
+	void CompileNormal(const char* _normalMap);
 	void CompileTexture(const char* _albedo);
 
 	void Draw();
@@ -35,14 +38,17 @@ private:
 
 	Renderer m_Renderer;
 	Texture* m_Texture = nullptr;
+	Texture* m_Normal = nullptr;
 	Shader* m_Shader = nullptr;
 	VertexBuffer* m_VertBuffer = nullptr;
 	VertexBuffer* m_InstanceBuffer = nullptr;
+	UniformBuffer* m_UniformBuffer = nullptr;
 	IndexBuffer* m_IndexBuffer = nullptr;
 	VertexArray* m_VertexArray = nullptr;
 
 	std::vector<glm::mat4> m_InstanceMatrix;
 	unsigned int m_InstanceCount = 0;
+	unsigned int uboMatrices;
 
 	MESHTYPE m_Type = MESHTYPE::CUBE;
 	Camera* m_Camera = nullptr;

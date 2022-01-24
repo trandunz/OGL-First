@@ -1,9 +1,9 @@
 #version 460 core
-#define NR_POINT_LIGHTS 4
 
 struct Material 
 {
     sampler2D diffuse;
+    sampler2D normal;
     sampler2D specular;
     float shininess;
 }; 
@@ -50,7 +50,7 @@ out vec4 FragColor;
 
 uniform vec3 viewPos;
 uniform DirLight dirLight;
-uniform PointLight pointLights[NR_POINT_LIGHTS];
+uniform PointLight pointLights[20];
 uniform SpotLight spotLight;
 uniform Material material;
 
@@ -67,7 +67,7 @@ void main()
     // phase 1: directional lighting
     vec3 result = CalcDirLight(dirLight, norm, viewDir);
     // phase 2: point lights
-    for(int i = 0; i < NR_POINT_LIGHTS; i++)
+    for(int i = 0; i < 20; i++)
     {
         result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);    
     }
@@ -90,6 +90,10 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
     vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
     vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
+
+    if (texture(material.diffuse, TexCoords).a < 0.1 || texture(material.specular, TexCoords).a < 0.1)
+        discard;
+
     return (ambient + diffuse + specular);
 }
 
@@ -112,6 +116,10 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     ambient *= attenuation;
     diffuse *= attenuation;
     specular *= attenuation;
+
+    if (texture(material.diffuse, TexCoords).a < 0.1 || texture(material.specular, TexCoords).a < 0.1)
+        discard;
+
     return (ambient + diffuse + specular);
 }
 
@@ -138,5 +146,9 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     ambient *= attenuation * intensity;
     diffuse *= attenuation * intensity;
     specular *= attenuation * intensity;
+
+    if (texture(material.diffuse, TexCoords).a < 0.1 || texture(material.specular, TexCoords).a < 0.1)
+        discard;
+
     return (ambient + diffuse + specular);
 }

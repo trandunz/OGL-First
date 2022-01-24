@@ -1,54 +1,5 @@
-﻿  BaseObject.cpp
+﻿  Mesh.cpp
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(28,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(37,70): warning C4244: 'argument': conversion from 'GLsizeiptr' to 'GLsizei', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(45,70): warning C4244: 'argument': conversion from 'GLsizeiptr' to 'GLsizei', possible loss of data
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\IndexBuffer.h(17,1): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
-  CCamera.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.cpp(36,121): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.cpp(36,85): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.cpp(36,49): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
-  CShape.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(28,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(37,70): warning C4244: 'argument': conversion from 'GLsizeiptr' to 'GLsizei', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(45,70): warning C4244: 'argument': conversion from 'GLsizeiptr' to 'GLsizei', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\IndexBuffer.h(17,1): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
-  CSquare.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(28,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(37,70): warning C4244: 'argument': conversion from 'GLsizeiptr' to 'GLsizei', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(45,70): warning C4244: 'argument': conversion from 'GLsizeiptr' to 'GLsizei', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\IndexBuffer.h(17,1): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CSquare.cpp(164,9): warning C4244: '=': conversion from 'long double' to 'float', possible loss of data
-  Cubemap.cpp
-  Main.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(28,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(37,70): warning C4244: 'argument': conversion from 'GLsizeiptr' to 'GLsizei', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(45,70): warning C4244: 'argument': conversion from 'GLsizeiptr' to 'GLsizei', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\IndexBuffer.h(17,1): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(52,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(53,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(57,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(60,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(63,38): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(63,29): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(129,29): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(453,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(52,1): warning C4150: deletion of pointer to incomplete type 'GLFWwindow'; no destructor called
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\include\ImGui\imgui_impl_glfw.h(23): message : see declaration of 'GLFWwindow'
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\NumptyBehavior.h(42): message : see reference to function template instantiation 'void NumptyBehavior::DeletePointer<T>(T *)' being compiled
-          with
-          [
-              T=GLFWwindow
-          ]
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(448): message : see reference to function template instantiation 'void NumptyBehavior::CleanupPointer<GLFWwindow>(T *)' being compiled
-          with
-          [
-              T=GLFWwindow
-          ]
-  Mesh.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(28,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(37,70): warning C4244: 'argument': conversion from 'GLsizeiptr' to 'GLsizei', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(45,70): warning C4244: 'argument': conversion from 'GLsizeiptr' to 'GLsizei', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\IndexBuffer.h(17,1): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(216,21): warning C4018: '<': signed/unsigned mismatch
-  Generating Code...
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(247,21): warning C4018: '<': signed/unsigned mismatch
   OGL.vcxproj -> C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Debug\OGL.exe

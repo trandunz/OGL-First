@@ -13,11 +13,11 @@ struct Material
 
 struct DirLight
 {
-    glm::vec3 direction;
+    glm::vec3 direction = {-0.2f, -1.0f, -0.3f};
 
-    glm::vec3 ambient;
-    glm::vec3 diffuse;
-    glm::vec3 specular;
+    glm::vec3 ambient = { 0.05f, 0.05f, 0.05f };
+    glm::vec3 diffuse = { 0.4f, 0.4f, 0.4f };
+    glm::vec3 specular = { 0.5f, 0.5f, 0.5f };
 };
 
 struct PointLight

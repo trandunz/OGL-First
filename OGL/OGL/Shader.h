@@ -123,6 +123,8 @@ public:
         }
         return { ss[0].str(), ss[1].str() };
     }
+
+    unsigned int m_RendererID;
 private:
     GLint GetUniformLocation(const std::string& name) const
     {
@@ -137,7 +139,7 @@ private:
         }
     }
 
-    unsigned int m_RendererID;
+    
     std::string m_FilePath;
     mutable std::unordered_map<std::string, GLint> m_UniformLocationCache;
 };
