@@ -354,7 +354,7 @@ void Update()
 	{
 		if (m_MeshHandler.MESHES[0])
 		{
-			//m_MeshHandler.MESHES[0]->ModifyInstance(1, { m_MainCamera.Position + glm::vec3(m_MainCamera.Front.x * 5, m_MainCamera.Front.y * 5, m_MainCamera.Front.z * 5) });
+			m_MeshHandler.MESHES[0]->ModifyInstance(1, { m_MainCamera.Position + glm::vec3(m_MainCamera.Front.x * 5, m_MainCamera.Front.y * 5, m_MainCamera.Front.z * 5) });
 		}
 	}
 

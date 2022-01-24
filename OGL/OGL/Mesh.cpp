@@ -2,6 +2,8 @@
 
 Mesh::Mesh(Camera& _camera, MESHTYPE _type)
 {
+	m_PointLights = new PointLight[128];
+
 	for (int i = -10; i < 10; i++)
 	{
 		CreateInstance({ {i,1,1},{0,0,0},{1,1,1},0 });
@@ -14,6 +16,9 @@ Mesh::Mesh(Camera& _camera, MESHTYPE _type)
 
 Mesh::~Mesh()
 {
+	glDeleteBuffers(1, &uboPLights);
+	glDeleteBuffers(1, &uboMatrices);
+
 	CleanupPointer(m_Shader);
 	CleanupPointer(m_VertBuffer);
 	CleanupPointer(m_InstanceBuffer);
@@ -21,6 +26,11 @@ Mesh::~Mesh()
 	CleanupPointer(m_VertexArray);
 	CleanupPointer(m_Texture);
 	CleanupPointer(m_Normal);
+	if (m_PointLights)
+	{
+		delete[] m_PointLights;
+	}
+	m_PointLights = nullptr;
 	m_Camera = nullptr;
 }
 
@@ -28,15 +38,15 @@ void Mesh::Compile()
 {
 	if (m_LightingEnabled)
 	{
-		CompileShaders("Resources/Shaders/basic_lighting_2.vs", "", "Resources/Shaders/basic_lighting_2.fs");
+		CompileShaders("Resources/Shaders/basic_lighting_2.vs", "Resources/Shaders/TestShader_FILL.gs", "Resources/Shaders/basic_lighting_2.fs");
 	}
 	else
 	{
-		CompileShaders("Resources/Shaders/TestShader.vs", "", "Resources/Shaders/TestShader.fs");
+		CompileShaders("Resources/Shaders/TestShader.vs", "Resources/Shaders/TestShader_FILL.gs", "Resources/Shaders/TestShader.fs");
 	}
 	
-	CompileTexture("Resources/Textures/3.jpg");
-	//CompileNormal("Resources/Textures/normal.png");
+	CompileTexture("Resources/Textures/diffuse.png");
+	CompileNormal("Resources/Textures/normal.png");
 
 	CleanupPointer(m_VertBuffer);
 	m_VertBuffer = new VertexBuffer(VERT_CUBE, sizeof(VERT_CUBE));
@@ -51,6 +61,7 @@ void Mesh::Compile()
 	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof(glm::mat4));
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	CleanupPointer(m_VertexArray);
 	m_VertexArray = new VertexArray();
@@ -90,13 +101,18 @@ void Mesh::CompileShaders(const char* _vs, const char* _gs, const char* _fs)
 void Mesh::CompileNormal(const char* _normalMap)
 {
 	CleanupPointer(m_Normal);
-	m_Normal = new Texture(_normalMap, "normal",GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+	m_Normal = new Texture(_normalMap, "normal", GL_TEXTURE_2D, 1, GL_RGBA, GL_UNSIGNED_BYTE);
 }
 
-void Mesh::CompileTexture(const char* _defuse)
+void Mesh::CompileTexture(std::string _defuse)
 {
 	CleanupPointer(m_Texture);
-	m_Texture = new Texture(_defuse, GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+	std::string extension{};
+	extension = _defuse.substr(_defuse.find(".") + 1);
+	if (extension == "jpg")
+		m_Texture = new Texture(_defuse.c_str(), GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE);
+	else
+		m_Texture = new Texture(_defuse.c_str(), GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE);
 }
 
 void Mesh::Draw()
@@ -106,7 +122,6 @@ void Mesh::Draw()
 
 	// Light Texture
 	m_Texture->Bind();
-	glActiveTexture(m_Texture->ID);
 
 	m_VertexArray->Bind();
 	if (m_InstanceBuffer)
@@ -123,10 +138,14 @@ void Mesh::Draw()
 	}
 
 	// if Lighting enabled
-	HandleLightingUniforms();
-
-	if (!m_LightingEnabled)
+	if (m_LightingEnabled)
 	{
+		HandleLightingUniforms();
+	}
+	else
+	{
+		m_Texture->Bind();
+		m_Shader->SetUniform1i("u_Texture", m_Texture->Unit);
 		m_Shader->SetUniform4f("u_Color", m_Color[0], m_Color[1], m_Color[2], m_Color[3]);
 	}
 
@@ -141,11 +160,13 @@ void Mesh::Draw()
 	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), &m_ViewMat[0]);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	
+	
 	m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader, m_InstanceCount);
 	
 	m_IndexBuffer->UnBind();
 	m_VertexArray->UnBind();
 	m_Texture->Unbind();
+	m_Normal->Unbind();
 	m_Shader->UnBind();
 }
 
@@ -205,55 +226,57 @@ void Mesh::ModifyInstance(unsigned int _index, float _color[4])
 
 void Mesh::HandleLightingUniforms()
 {
-	if (m_LightingEnabled)
+	// SpotLight Uniforms
+	m_Shader->SetUniformVec3f("spotLight.position", m_Camera->Position);
+	m_Shader->SetUniformVec3f("spotLight.direction", m_Camera->Front);
+	m_Shader->SetUniform3f("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+	if (m_Camera->m_CamLightEnabled)
 	{
-		// SpotLight Uniforms
-		m_Shader->SetUniformVec3f("spotLight.position", m_Camera->Position);
-		m_Shader->SetUniformVec3f("spotLight.direction", m_Camera->Front);
-		m_Shader->SetUniform3f("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-		if (m_Camera->m_CamLightEnabled)
-		{
-			m_Shader->SetUniform3f("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-			m_Shader->SetUniform3f("spotLight.specular", 1.0f, 1.0f, 1.0f);
-		}
-		else
-		{
-			m_Shader->SetUniform3f("spotLight.diffuse", 0.0f, 0.0f, 0.0f);
-			m_Shader->SetUniform3f("spotLight.specular", 0.0f, 0.0f, 0.0f);
-		}
-		m_Shader->SetUniform1f("spotLight.constant", 1.0f);
-		m_Shader->SetUniform1f("spotLight.linear", 0.09f);
-		m_Shader->SetUniform1f("spotLight.quadratic", 0.032f);
-		m_Shader->SetUniform1f("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-		m_Shader->SetUniform1f("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+		m_Shader->SetUniform3f("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+		m_Shader->SetUniform3f("spotLight.specular", 1.0f, 1.0f, 1.0f);
+	}
+	else
+	{
+		m_Shader->SetUniform3f("spotLight.diffuse", 0.0f, 0.0f, 0.0f);
+		m_Shader->SetUniform3f("spotLight.specular", 0.0f, 0.0f, 0.0f);
+	}
+	m_Shader->SetUniform1f("spotLight.constant", 1.0f);
+	m_Shader->SetUniform1f("spotLight.linear", 0.09f);
+	m_Shader->SetUniform1f("spotLight.quadratic", 0.032f);
+	m_Shader->SetUniform1f("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+	m_Shader->SetUniform1f("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
-		// View Position Uniform
-		m_Shader->SetUniformVec3f("viewPos", m_Camera->Position);
+	// View Position Uniform
+	m_Shader->SetUniformVec3f("viewPos", m_Camera->Position);
 
-		//m_Normal->Bind();
+	m_Texture->Bind();
+	m_Shader->SetUniform1i("material.specular", m_Texture->Unit);
+	m_Shader->SetUniform1i("material.diffuse", m_Texture->Unit);
 
-		//m_Shader->SetUniform1i("material.normal", m_Normal->ID);
+	m_Normal->Bind();
+	// Light Texture
+	m_Shader->SetUniform1i("material.normal", m_Texture->Unit);
 
-		//  'Shininess'
-		m_Shader->SetUniform1f("material.shininess", 32.0f);
 
-		// Directional light Uniforms
-		m_Shader->SetUniform3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
-		m_Shader->SetUniform3f("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-		m_Shader->SetUniform3f("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-		m_Shader->SetUniform3f("dirLight.specular", 0.5f, 0.5f, 0.5f);
-		// Point Light Uniforms
-		for (int i = 0; i < m_InstanceCount; i++)
-		{
-			glm::vec3 pos = m_InstanceMatrix[i] * glm::vec4(0, 0, 0, 1);
-			m_Shader->SetUniformVec3f("pointLights[" + std::to_string(i) + "].position", pos);
-			m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].ambient", 0.05f, 0.05f, 0.05f);
-			m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].diffuse", abs(m_Color[0] - 0.2f), abs(m_Color[1] - 0.2f), abs(m_Color[2] - 0.2f));
-			m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].specular", m_Color[0], m_Color[1], m_Color[2]);
-			m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].constant", 1.0f);
-			m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].linear", 0.09f);
-			m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].quadratic", 0.032f);
-		}
+	//  'Shininess'
+	m_Shader->SetUniform1f("material.shininess", 32.0f);
+
+	// Directional light Uniforms
+	m_Shader->SetUniform3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
+	m_Shader->SetUniform3f("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+	m_Shader->SetUniform3f("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+	m_Shader->SetUniform3f("dirLight.specular", 0.5f, 0.5f, 0.5f);
+	// Point Light Uniforms
+	for (int i = 0; i < m_InstanceCount; i++)
+	{
+		glm::vec3 pos = glm::vec4(1, 1, 0, 1);
+		m_Shader->SetUniformVec3f("pointLights[" + std::to_string(i) + "].position", pos);
+		m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].ambient", 0.05f, 0.05f, 0.05f);
+		m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].diffuse", abs(m_Color[0] - 0.2f), abs(m_Color[1] - 0.2f), abs(m_Color[2] - 0.2f));
+		m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].specular", m_Color[0], m_Color[1], m_Color[2]);
+		m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].constant", 1.0f);
+		m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].linear", 0.09f);
+		m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].quadratic", 0.032f);
 	}
 }
 

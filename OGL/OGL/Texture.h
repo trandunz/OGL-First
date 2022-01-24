@@ -23,6 +23,7 @@ public:
 	void Unbind();
 	void Delete();
 
+	GLuint Unit;
 	GLuint ID;
 	GLenum Type;
 	const char* type;

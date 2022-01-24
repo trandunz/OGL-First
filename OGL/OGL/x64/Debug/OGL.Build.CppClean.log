@@ -1,6 +1,7 @@
 c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\debug\vc143.pdb
 c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\debug\vc143.idb
 c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\debug\texture.obj
+c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\debug\mesh.obj
 c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\debug\main.obj
 c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\debug\imgui_widgets.obj
 c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\debug\imgui_tables.obj
@@ -13,6 +14,7 @@ c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\debug\cubemap.obj
 c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\debug\csquare.obj
 c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\debug\cshape.obj
 c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\debug\ccamera.obj
+c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\debug\baseobject.obj
 c:\users\trand\documents\github\ogl-first\ogl\x64\debug\ogl.exe
 c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\debug\ogl.ilk
 c:\users\trand\documents\github\ogl-first\ogl\x64\debug\ogl.pdb

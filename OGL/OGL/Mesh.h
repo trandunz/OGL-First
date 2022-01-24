@@ -21,7 +21,7 @@ public:
 	void Compile();
 	void CompileShaders(const char* _vs, const char* _gs, const char* _fs);
 	void CompileNormal(const char* _normalMap);
-	void CompileTexture(const char* _albedo);
+	void CompileTexture(std::string _defuse);
 
 	void Draw();
 	void ImGuiHandler();
@@ -49,6 +49,8 @@ private:
 	std::vector<glm::mat4> m_InstanceMatrix;
 	unsigned int m_InstanceCount = 0;
 	unsigned int uboMatrices;
+	unsigned int uboPLights;
+	PointLight* m_PointLights = nullptr;
 
 	MESHTYPE m_Type = MESHTYPE::CUBE;
 	Camera* m_Camera = nullptr;

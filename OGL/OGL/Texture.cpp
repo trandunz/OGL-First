@@ -18,6 +18,8 @@ Texture::Texture(const char* _image, const char* _type,GLenum _texType, GLenum _
 	
 	// Generates an OpenGL texture object
 	glGenTextures(1, &ID);
+	glActiveTexture(GL_TEXTURE0 + _slot);
+	Unit = _slot;
 	// Assigns the texture to a Texture Unit
 	glBindTexture(_texType, ID);
 
@@ -74,6 +76,8 @@ Texture::Texture(const char* _image, GLenum _texType, GLenum _slot, GLenum _form
 
 	// Generates an OpenGL texture object
 	glGenTextures(1, &ID);
+	glActiveTexture(GL_TEXTURE0 + _slot);
+	Unit = _slot;
 	// Assigns the texture to a Texture Unit
 	glBindTexture(_texType, ID);
 
@@ -125,6 +129,7 @@ Texture::~Texture()
 
 void Texture::Bind()
 {
+	glActiveTexture(GL_TEXTURE0 + Unit);
 	glBindTexture(Type, ID);
 }
 
