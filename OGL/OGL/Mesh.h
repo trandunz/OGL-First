@@ -2,7 +2,7 @@
 #include "NumptyBehavior.h"
 #include "VertexBuffer.h"
 #include "CCamera.h"
-#include "Texture.h"
+#include "TextureMaster.h"
 #include "Renderer.h"
 #include "GUI.h"
 #include "UniformBuffer.h"
@@ -15,28 +15,33 @@ public:
 		CUBE,
 	};
 
-	Mesh(Camera& _camera, MESHTYPE _type = MESHTYPE::CUBE);
+	Mesh(Camera& _camera, TextureMaster& _textureMaster, MESHTYPE _type = MESHTYPE::CUBE);
 	~Mesh();
 
 	void Compile();
+	void SetTexture(Texture& _texture);
+	void SetNormal(Texture& _texture);
+	void SetSpecular(Texture& _texture);
 	void CompileShaders(const char* _vs, const char* _gs, const char* _fs);
-	void CompileSpecular(const char* _specularMap);
-	void CompileNormal(const char* _normalMap);
-	void CompileTexture(std::string _defuse);
 
 	void Draw();
 	void ImGuiHandler();
 
 	void CreateInstance(STransform _transform = STransform{ {0,0,0} ,{0,0,0}, {1,1,1},0 });
+	void ModifyInstanceMatrix(unsigned int _index, STransform _transform);
 	void ModifyInstance(unsigned int _index, STransform _transform);
 	void ModifyInstance(unsigned int _index, float _color[4]);
 
-	bool m_LightingEnabled = true;
+	int GetInstanceMatrixSize();
+	STransform GetInstanceMatrixTransform(int _index);
+
+	bool m_LightingEnabled = false;
 private:
 	void HandleLightingUniforms();
-	void SetMVPUniform(STransform _transform);
+	glm::mat4 ModifyModelTransformations(glm::mat4& _model, STransform _transform);
 	glm::mat4 CalculateModelTransformations(glm::mat4& _model, STransform _transform);
 
+	TextureMaster* m_TextureMaster = nullptr;
 	Renderer m_Renderer;
 	Texture* m_Texture = nullptr;
 	Texture* m_Normal = nullptr;

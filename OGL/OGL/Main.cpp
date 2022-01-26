@@ -1,14 +1,14 @@
 #include "CSquare.h"
 #include "MousePicker.h"
-#include "ICompList.h"
 #include "Cubemap.h"
-#include "MeshHandler.h"
+#include "FrameBuffer.h"
+#include "GameObject.h"
 
 static int m_WindowWidth = 1600;
 static int m_WindowHeight = 900;
 
-static long double deltaTime = 0.0;	// Time between current frame and last frame
-static long double lastFrame = 0.0; // Time of last frame
+static double deltaTime = 0.0;	// Time between current frame and last frame
+static double lastFrame = 0.0; // Time of last frame
 static unsigned int frameCounter = 0;
 
 void InitGLFW();
@@ -30,11 +30,12 @@ std::map<int, bool> m_Keypresses;
 std::map<int, bool> m_Mousepresses;
 
 GLFWwindow* m_RenderWindow = nullptr;
-Shape::CSquare* m_SquareTest = nullptr;
-Cubemap* skybox = nullptr;
+Cubemap* m_SkyBox = nullptr;
 Camera m_MainCamera(m_Keypresses, glm::vec3(0.0f, 0.0f, 3.0f));
-MeshHandler m_MeshHandler;
+GameObject* gameObject = nullptr;
 MousePicker m_MousePicker(&m_MainCamera);
+TextureMaster m_TextureMaster;
+FrameBuffer* m_FrameBuffer = nullptr;
 
 bool firstMouse = true;
 bool m_ShowMouse = false;
@@ -66,10 +67,6 @@ static void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos)
 
 static void cursorEnterCallback(GLFWwindow* window, int entered)
 {
-	if (m_SquareTest)
-	{
-		m_SquareTest->CursorEnterCallback(window, entered);
-	}
 }
 
 static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
@@ -109,9 +106,9 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 	// Object Input
 	m_MainCamera.Input();
-	if (m_SquareTest)
+	if (gameObject)
 	{
-		m_SquareTest->Input(m_MousePicker.GetCurrentRay(), window, key, scancode, action, mods);
+		gameObject->Input();
 	}
 }
 
@@ -139,6 +136,7 @@ int main()
 
 	while (!glfwWindowShouldClose(m_RenderWindow))
 	{
+		//m_FrameBuffer->Bind();
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearDepth(1);
@@ -148,6 +146,7 @@ int main()
 		Update();
 		//
 		GUI::EndImGUIFrame();
+		//m_FrameBuffer->Draw();
 		glfwSwapBuffers(m_RenderWindow);
 		glfwPollEvents();
 		CleanupObjects();
@@ -172,6 +171,13 @@ void InitGLFW()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
 	// Create Render Window
 	m_RenderWindow = glfwCreateWindow(m_WindowWidth, m_WindowHeight, "Harmony v0.01", NULL, NULL);
@@ -237,9 +243,9 @@ void HandleImGuiMenuBar()
 		if (ImGui::MenuItem("Close", "Ctrl+W")) { ISTOOLACTIVE = false; }
 		ImGui::EndMenu();
 	}
-	if (m_MeshHandler.MESHES.size() > 0)
+	if (gameObject)
 	{
-		m_MeshHandler.MESHES[0]->ImGuiHandler();
+		gameObject->GetMesh().ImGuiHandler();
 	}
 	ImGui::EndMenuBar();
 
@@ -308,6 +314,8 @@ void HandleImGuiDebugInfo()
 	camFront += camFrontZ.c_str();
 	camFront += "}";
 
+	m_MainCamera.ImGUIHandler();
+
 	ImGui::NextColumn();
 	// Display contents in a scrolling region
 	ImGui::TextColored(ImVec4(1, 1, 0, 1), "Console Output");
@@ -315,13 +323,19 @@ void HandleImGuiDebugInfo()
 	// Toggle Camera Light
 	ImGui::Text("Camera Spotlight");
 	GUI::ToggleButton("CamLight", &m_MainCamera.m_CamLightEnabled);
-	ImGui::Text("Mesh Lighting");
-	GUI::ToggleButton("MeshLighting", &m_MeshHandler.MESHES[0]->m_LightingEnabled);
-	if (ImGui::Button("Recompile All Meshes"))
+	
+	if (gameObject)
 	{
-		std::cout << m_MeshHandler.MESHES[0]->m_LightingEnabled << std::endl;
-		m_MeshHandler.RecompileMeshes();
+		ImGui::Text("Mesh Lighting");
+		GUI::ToggleButton("MeshLighting", &gameObject->GetMesh().m_LightingEnabled);
+		if (ImGui::Button("Recompile All Meshes"))
+		{
+			std::cout << gameObject->GetMesh().m_LightingEnabled << std::endl;
+			gameObject->GetMesh().Compile();
+		}
 	}
+	
+
 	ImGui::Text(frameTime.c_str());
 	ImGui::Text(mousePos.c_str());
 	ImGui::Text(camPos.c_str());
@@ -329,16 +343,27 @@ void HandleImGuiDebugInfo()
 	ImGui::EndChild();
 }
 
-void Start()
+void Start() 
 {
+	//if (!m_FrameBuffer)
+	//	m_FrameBuffer = new FrameBuffer();
+
 	/*if (!m_SquareTest)
 		m_SquareTest = new Shape::CSquare(m_Keypresses, m_MainCamera);*/
 	
-	std::shared_ptr<Mesh> test(new Mesh(m_MainCamera));
-	m_MeshHandler.AddMesh(test);
+	m_TextureMaster.LoadTexture("Resources/Textures/planks.png");
+	m_TextureMaster.LoadNormal("Resources/Textures/normal.png");
+	m_TextureMaster.LoadSpecular("Resources/Textures/planksSpec.png");
+	m_TextureMaster.LoadTexture("Resources/Textures/3.jpg");
+	m_TextureMaster.LoadTexture("Resources/Textures/diffuse.png");
 
-	if (!skybox)
-		skybox = new Cubemap(m_MainCamera);
+	if (!gameObject)
+	{
+		gameObject = new GameObject(m_MainCamera, m_TextureMaster, deltaTime, m_Keypresses);
+	}
+
+	if (!m_SkyBox)
+		m_SkyBox = new Cubemap(m_MainCamera);
 }
 
 void Update()
@@ -350,24 +375,14 @@ void Update()
 	HandleMouseVisible();
 	m_MainCamera.Movement(deltaTime);
 
-	if (m_MeshHandler.MESHES.size() > 0)
+	if (gameObject)
 	{
-		if (m_MeshHandler.MESHES[0])
-		{
-			m_MeshHandler.MESHES[0]->ModifyInstance(1, { m_MainCamera.Position + glm::vec3(m_MainCamera.Front.x * 5, m_MainCamera.Front.y * 5, m_MainCamera.Front.z * 5) });
-		}
+		gameObject->Update();
 	}
 
-	if (m_SquareTest)
+	if (m_SkyBox)
 	{
-		m_SquareTest->Update(deltaTime);
-	}
-
-	m_MeshHandler.Draw();
-
-	if (skybox)
-	{
-		skybox->Render();
+		m_SkyBox->Render();
 	}
 
 	HandleImGuiDebugInfo();
@@ -407,8 +422,8 @@ void InputActions()
 			}
 			case GLFW_KEY_K:
 			{
-				if (m_SquareTest)
-					m_SquareTest->MarkAsDestroy = true;
+				if (gameObject)
+					gameObject->MarkAsDestroy = true;
 
 				// Only Single Press Thanks
 				m_Keypresses[item.first] = false;
@@ -416,8 +431,8 @@ void InputActions()
 			}
 			case GLFW_KEY_L:
 			{
-				if (!m_SquareTest)
-					m_SquareTest = new Shape::CSquare(m_Keypresses, m_MainCamera);
+				if (!gameObject)
+					gameObject = new GameObject(m_MainCamera, m_TextureMaster, deltaTime, m_Keypresses);
 
 				// Only Single Press Thanks
 				m_Keypresses[item.first] = false;
@@ -432,12 +447,12 @@ void InputActions()
 
 bool CleanupObjects()
 {
-	if (m_SquareTest)
+	if (gameObject)
 	{
-		if (m_SquareTest->MarkAsDestroy)
+		if (gameObject->MarkAsDestroy)
 		{
-			delete m_SquareTest;
-			m_SquareTest = nullptr;
+			delete gameObject;
+			gameObject = nullptr;
 			return true;
 		}
 	}
@@ -456,11 +471,28 @@ int Cleanup()
 
 void CleanupAllPointers()
 {
-	NumptyBehavior::CleanupPointer(m_SquareTest);
-	NumptyBehavior::CleanupPointer(skybox);
+	if (m_SkyBox)
+	{
+		delete m_SkyBox;
+		m_SkyBox = nullptr;
+	}
+	if (gameObject)
+	{
+		delete gameObject;
+		gameObject = nullptr;
+	}
 	m_Mousepresses.clear();
 	m_Keypresses.clear();
-	NumptyBehavior::CleanupPointer(m_RenderWindow);
+	if (m_FrameBuffer)
+	{
+		delete m_FrameBuffer;
+		m_FrameBuffer = nullptr;
+	}
+	if (m_FrameBuffer)
+	{
+		delete m_RenderWindow;
+		m_RenderWindow = nullptr;
+	}
 }
 
 void CalculateDeltaTime()

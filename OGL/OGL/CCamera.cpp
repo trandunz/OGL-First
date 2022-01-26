@@ -58,6 +58,18 @@ bool Camera::UpdatePosition(float _x, float _y, float _z)
     return moved;
 }
 
+void Camera::ImGUIHandler()
+{
+    if (ImGui::CollapsingHeader("Camera Settings"))
+    {
+        ImGui::Text("");
+        ImGui::Text("MovementSpeed");
+        {
+            ImGui::SliderFloat(":Camera Movespeed", &MovementSpeed, 0, 500);
+        }
+    }
+}
+
 void Camera::Input()
 {
     // Reset Input Vec
@@ -66,7 +78,7 @@ void Camera::Input()
     m_InputVec.z = 0.0f;
 
     // Resett Move Speed For Sprint
-    MovementSpeed = 1.0f;
+   // MovementSpeed = 1.0f;
 
     for (auto& item : (*m_KeyPresses))
     {
@@ -96,7 +108,7 @@ void Camera::Input()
             }
             case GLFW_KEY_LEFT_SHIFT:
             {
-                MovementSpeed = 5.0f;
+               // MovementSpeed = 5.0f;
                 break;
             }
             default:
@@ -110,8 +122,6 @@ void Camera::Input()
 
 void Camera::ProcessMouse(float xoffset, float yoffset, GLboolean constrainPitch)
 {
-    ProjectionMatrix = glm::perspective(glm::radians(Zoom), 1920.0f / 1080.0f, 0.1f, 100.0f);
-
     xoffset *= MouseSensitivity;
     yoffset *= MouseSensitivity;
 

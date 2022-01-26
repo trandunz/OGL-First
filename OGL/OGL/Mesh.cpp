@@ -1,12 +1,16 @@
 #include "Mesh.h"
 
-Mesh::Mesh(Camera& _camera, MESHTYPE _type)
+Mesh::Mesh(Camera& _camera, TextureMaster& _textureMaster, MESHTYPE _type)
 {
-	m_PointLights = new PointLight[128];
+	m_TextureMaster = &_textureMaster;
+	srand(10000000);
 
-	for (int i = -10; i < 10; i++)
+	for (int i = -100; i < 100; i++)
 	{
-		CreateInstance({ {i,1,1},{0,0,0},{1,1,1},0 });
+		for (int j = -100; j < 100; j++)
+		{
+			CreateInstance({ {i + rand() % 4,j + rand() % 5,1},{0,0,0},{1,1,1},0});
+		}
 	}
 
 	m_Camera = &_camera;
@@ -24,15 +28,16 @@ Mesh::~Mesh()
 	CleanupPointer(m_InstanceBuffer);
 	CleanupPointer(m_IndexBuffer);
 	CleanupPointer(m_VertexArray);
-	CleanupPointer(m_Texture);
-	CleanupPointer(m_Normal);
-	CleanupPointer(m_Specular);
 	if (m_PointLights)
 	{
 		delete[] m_PointLights;
 	}
 	m_PointLights = nullptr;
 	m_Camera = nullptr;
+	m_Texture = nullptr;
+	m_Normal= nullptr;
+	m_Specular = nullptr;
+	m_TextureMaster = nullptr;
 }
 
 void Mesh::Compile()
@@ -46,9 +51,18 @@ void Mesh::Compile()
 		CompileShaders("Resources/Shaders/TestShader.vs", "Resources/Shaders/TestShader_FILL.gs", "Resources/Shaders/TestShader.fs");
 	}
 	
-	CompileTexture("Resources/Textures/planks.png");
-	CompileNormal("Resources/Textures/normal.png");
-	CompileSpecular("Resources/Textures/planksSpec.png");
+	if (!m_Texture)
+	{
+		m_Texture = m_TextureMaster->m_Textures[0];
+	}
+	if (!m_Normal)
+	{
+		//m_Normal = m_TextureMaster->m_Textures[1];
+	}
+	if (!m_Specular)
+	{
+		m_Specular = m_TextureMaster->m_Textures[2];
+	}
 
 	CleanupPointer(m_VertBuffer);
 	m_VertBuffer = new VertexBuffer(VERT_CUBE, sizeof(VERT_CUBE));
@@ -62,7 +76,7 @@ void Mesh::Compile()
 	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
 	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof(glm::mat4));
+	glBindBufferRange(GL_UNIFORM_BUFFER, uniformBlockIndexYellow, uboMatrices, 0, 2 * sizeof(glm::mat4));
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	CleanupPointer(m_VertexArray);
@@ -94,33 +108,31 @@ void Mesh::Compile()
 	m_Shader->UnBind();
 }
 
+void Mesh::SetTexture(Texture& _texture)
+{
+	srand(rand());
+	m_Texture = nullptr;
+	m_Texture = &_texture;
+}
+
+void Mesh::SetNormal(Texture& _texture)
+{
+	srand(rand());
+	m_Normal = nullptr;
+	m_Normal = &_texture;
+}
+
+void Mesh::SetSpecular(Texture& _texture)
+{
+	srand(rand());
+	m_Specular = nullptr;
+	m_Specular = &_texture;
+}
+
 void Mesh::CompileShaders(const char* _vs, const char* _gs, const char* _fs)
 {
 	CleanupPointer(m_Shader);
 	m_Shader = new Shader(_vs, _gs, _fs);
-}
-
-void Mesh::CompileSpecular(const char* _specularMap)
-{
-	CleanupPointer(m_Specular);
-	m_Specular = new Texture(_specularMap, GL_TEXTURE_2D, 2, GL_RED, GL_UNSIGNED_BYTE);
-}
-
-void Mesh::CompileNormal(const char* _normalMap)
-{
-	CleanupPointer(m_Normal);
-	m_Normal = new Texture(_normalMap, "normal", GL_TEXTURE_2D, 1, GL_RGBA, GL_UNSIGNED_BYTE);
-}
-
-void Mesh::CompileTexture(std::string _defuse)
-{
-	CleanupPointer(m_Texture);
-	std::string extension{};
-	extension = _defuse.substr(_defuse.find(".") + 1);
-	if (extension == "jpg")
-		m_Texture = new Texture(_defuse.c_str(), GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE);
-	else
-		m_Texture = new Texture(_defuse.c_str(), GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE);
 }
 
 void Mesh::Draw()
@@ -157,7 +169,7 @@ void Mesh::Draw()
 		m_Shader->SetUniform4f("u_Color", m_Color[0], m_Color[1], m_Color[2], m_Color[3]);
 	}
 
-	m_ProjectionMat = glm::perspective(glm::radians(m_Camera->Zoom), 1920.0f / 1080.0f, 0.1f, 100.0f);
+	m_ProjectionMat = m_Camera->GetProjectionMatrix();
 	m_ViewMat = m_Camera->GetViewMatrix();
 
 	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
@@ -174,7 +186,7 @@ void Mesh::Draw()
 	m_IndexBuffer->UnBind();
 	m_VertexArray->UnBind();
 	m_Texture->Unbind();
-	m_Normal->Unbind();
+	//m_Normal->Unbind();
 	m_Shader->UnBind();
 }
 
@@ -209,12 +221,38 @@ glm::mat4 Mesh::CalculateModelTransformations(glm::mat4& _model, STransform _tra
 	return _model;
 }
 
+glm::mat4 Mesh::ModifyModelTransformations(glm::mat4& _model, STransform _transform)
+{
+	_model = glm::translate(_model, _transform.position);
+	if (_transform.rotation.x != 0.0f)
+	{
+		_model = glm::rotate(_model, _transform.rotation.x, _transform.rotation);
+	}
+	if (_transform.rotation.y != 0.0f)
+	{
+		_model = glm::rotate(_model, _transform.rotation.y, _transform.rotation);
+	}
+	if (_transform.rotation.z != 0.0f)
+	{
+		_model = glm::rotate(_model, _transform.rotation.z, _transform.rotation);
+	}
+	_model = glm::scale(_model, _transform.scale);
+	return _model;
+}
+
 void Mesh::CreateInstance(STransform _transform)
 {
 	glm::mat4 tempMat;
 	CalculateModelTransformations(tempMat, _transform);
 	m_InstanceMatrix.push_back(tempMat);
 	m_InstanceCount++;
+}
+
+void Mesh::ModifyInstanceMatrix(unsigned int _index, STransform _transform)
+{
+	glm::mat4 tempMat = m_InstanceMatrix[_index];
+	ModifyModelTransformations(tempMat, _transform);
+	m_InstanceMatrix[_index] = tempMat;
 }
 
 void Mesh::ModifyInstance(unsigned int _index, STransform _transform)
@@ -230,6 +268,18 @@ void Mesh::ModifyInstance(unsigned int _index, float _color[4])
 	m_Color[1] = _color[1];
 	m_Color[2] = _color[2];
 	m_Color[3] = _color[3];
+}
+
+int Mesh::GetInstanceMatrixSize()
+{
+	return m_InstanceMatrix.size();
+}
+
+STransform Mesh::GetInstanceMatrixTransform(int _index)
+{
+	glm::vec4 pos{ 1,1,1,1 };
+	
+	return { {glm::vec3(pos * m_InstanceMatrix[_index])},{0,0,0},{1,1,1},0 };
 }
 
 void Mesh::HandleLightingUniforms()
@@ -265,13 +315,13 @@ void Mesh::HandleLightingUniforms()
 	// Light Texture
 	m_Shader->SetUniform1i("material.specular", m_Specular->Unit);
 
-	m_Normal->Bind();
-	// Light Texture
-	m_Shader->SetUniform1i("material.normal", m_Texture->Unit);
+	//m_Normal->Bind();
+	//// Light Texture
+	//m_Shader->SetUniform1i("material.normal", m_Normal->Unit);
 
 
 	//  'Shininess'
-	m_Shader->SetUniform1f("material.shininess", 64);
+	m_Shader->SetUniform1f("material.shininess", 128);
 
 	// Directional light Uniforms
 	m_Shader->SetUniform3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
@@ -279,7 +329,6 @@ void Mesh::HandleLightingUniforms()
 	m_Shader->SetUniform3f("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
 	m_Shader->SetUniform3f("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
-	// Point Light Uniforms
 	for (int i = 0; i < m_InstanceCount; i++)
 	{
 		glm::vec3 pos = glm::vec4(i, 3, 1, 1);
@@ -291,13 +340,4 @@ void Mesh::HandleLightingUniforms()
 		m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].linear", 0.09f);
 		m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].quadratic", 0.032f);
 	}
-}
-
-void Mesh::SetMVPUniform(STransform _transform)
-{
-	m_ProjectionMat = glm::perspective(glm::radians(m_Camera->Zoom), 1920.0f / 1080.0f, 0.1f, 100.0f);
-	CalculateModelTransformations(m_ModelMat, _transform);
-	m_ViewMat = m_Camera->GetViewMatrix();
-	glm::mat4 mvp = m_ProjectionMat * m_ViewMat * m_ModelMat;
-	m_Shader->SetUniformMat4fv("u_MVP", mvp);
 }

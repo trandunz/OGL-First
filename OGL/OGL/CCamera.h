@@ -3,6 +3,7 @@
 #define CAMERA_H
 
 #include "NumptyBehavior.h"
+#include "ImGui/imgui.h"
 
 enum Camera_Movement 
 {
@@ -27,6 +28,7 @@ public:
     ~Camera();
 
     inline glm::mat4 GetViewMatrix() {return glm::lookAt(Position, Position + Front, Up);}
+    inline glm::mat4 GetProjectionMatrix() { return glm::perspective(glm::radians(Zoom), 1920.0f / 1080.0f, 0.1f, 300.0f);}
 
     void Input();
     void Movement(long double _dt);
@@ -35,7 +37,7 @@ public:
 
     bool UpdatePosition(float _x = 0.0f, float _y = 0.0f, float _z = 0.0f);
 
-    glm::mat4 ProjectionMatrix = glm::perspective(glm::radians(Zoom), 1920.0f / 1080.0f, 0.1f, 100.0f);
+    void ImGUIHandler();
 
     glm::vec3 Position;
     glm::vec3 Front;

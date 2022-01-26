@@ -45,6 +45,14 @@ public:
         glVertexAttribPointer(layout, numComponents, type, GL_FALSE, stride, offset);
         vb.UnBind();
     }
+    inline void StreamAttibute(const VertexBuffer& vb, GLuint layout, GLuint numComponents, GLenum type, GLsizei stride, void* offset, std::vector<int>& _data, unsigned int instanceCount = 1)
+    {
+        vb.Bind();
+        glBufferData(GL_ARRAY_BUFFER, instanceCount * sizeof(int), &_data[0], GL_STREAM_DRAW);
+        glEnableVertexAttribArray(layout);
+        glVertexAttribPointer(layout, numComponents, type, GL_FALSE, stride, offset);
+        vb.UnBind();
+    }
     inline void Bind() const
     {
         glBindVertexArray(m_RendererID);

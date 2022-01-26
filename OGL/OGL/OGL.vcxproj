@@ -149,11 +149,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BaseObject.cpp" />
     <ClCompile Include="CCamera.cpp" />
     <ClCompile Include="CShape.cpp" />
     <ClCompile Include="CSquare.cpp" />
     <ClCompile Include="Cubemap.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="include\ImGui\imgui.cpp" />
     <ClCompile Include="include\ImGui\imgui_demo.cpp" />
     <ClCompile Include="include\ImGui\imgui_draw.cpp" />
@@ -167,13 +167,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseComponent.h" />
-    <ClInclude Include="BaseObject.h" />
     <ClInclude Include="BaseSystem.h" />
     <ClInclude Include="CCamera.h" />
     <ClInclude Include="CShaderLoader.h" />
     <ClInclude Include="CShape.h" />
     <ClInclude Include="CSquare.h" />
     <ClInclude Include="Cubemap.h" />
+    <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="ICompList.h" />
     <ClInclude Include="include\ImGui\imconfig.h" />
@@ -196,6 +197,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SHAPEARRAYS.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureMaster.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="UniformBuffer.h" />
     <ClInclude Include="VertexArray.h" />
@@ -208,6 +210,8 @@
     <None Include="Resources\Shaders\basic_lighting.vs" />
     <None Include="Resources\Shaders\basic_lighting_2.fs" />
     <None Include="Resources\Shaders\basic_lighting_2.vs" />
+    <None Include="Resources\Shaders\framebuffer.fs" />
+    <None Include="Resources\Shaders\framebuffer.vs" />
     <None Include="Resources\Shaders\skybox.fs" />
     <None Include="Resources\Shaders\skybox.vs" />
     <None Include="Resources\Shaders\TestShader.fs" />

@@ -37,13 +37,14 @@ namespace Shape
 			VertexBufferLayout _vbLayouts = VertexBufferLayout());
 		void Render();
 		void ImGuiHandler();
+		void ProcessRotationSlider();
 
 		void SetCopyColour(float _r, float _g, float _b, float _a);
 		void CreateCopy();
 
 		void Movement(float _dt);
 
-		void ProcessRotationSlider();
+
 	};
 }
 
