@@ -1,15 +1,7 @@
-﻿  CCamera.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.cpp(36,121): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.cpp(36,85): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CCamera.cpp(36,49): warning C4244: 'argument': conversion from 'long double' to 'float', possible loss of data
-  CShape.cpp
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(28,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\IndexBuffer.h(17,1): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
-  CSquare.cpp
+﻿  CSquare.cpp
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(28,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\IndexBuffer.h(17,1): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\CSquare.cpp(164,9): warning C4244: '=': conversion from 'long double' to 'float', possible loss of data
-  Cubemap.cpp
   GameObject.cpp
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\TextureMaster.h(22,1): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
           with
@@ -57,7 +49,7 @@ C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\TextureMaster.h(37,1): warning
           ]
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\TextureMaster.h(38,1): warning C4267: 'argument': conversion from 'size_t' to 'GLenum', possible loss of data
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(493,24): warning C4150: deletion of pointer to incomplete type 'GLFWwindow'; no destructor called
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\include\ImGui\imgui_impl_glfw.h(23): message : see declaration of 'GLFWwindow'
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\include\ImGui\imgui_impl_glfw.h(28): message : see declaration of 'GLFWwindow'
   Mesh.cpp
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\TextureMaster.h(22,1): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
           with
@@ -83,8 +75,8 @@ C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\IndexBuffer.h(17,1): warning C
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(275,32): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(332,20): warning C4018: '<': signed/unsigned mismatch
   Generating code
-  2 of 2449 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+  0 of 2820 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    30 functions had inline decision re-evaluated but remain unchanged
+    0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   OGL.vcxproj -> C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Release\OGL.exe
