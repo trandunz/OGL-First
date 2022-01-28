@@ -5,6 +5,7 @@ class VertexBuffer :
     public NumptyBehavior
 {
 public:
+    VertexBuffer() = default;
     VertexBuffer(const void* data, unsigned int size)
     {
         glCreateBuffers(1, &m_RendererID);

@@ -1,8 +1,6 @@
-#include "CSquare.h"
-#include "MousePicker.h"
 #include "Cubemap.h"
 #include "FrameBuffer.h"
-#include "GameObject.h"
+#include "Entity.h"
 
 static int m_WindowWidth = 1600;
 static int m_WindowHeight = 900;
@@ -10,6 +8,8 @@ static int m_WindowHeight = 900;
 static double deltaTime = 0.0;	// Time between current frame and last frame
 static double lastFrame = 0.0; // Time of last frame
 static unsigned int frameCounter = 0;
+
+using namespace Harmony;
 
 void InitGLFW();
 void InitGLFWCallbacks();
@@ -30,12 +30,14 @@ std::map<int, bool> m_Keypresses;
 std::map<int, bool> m_Mousepresses;
 
 GLFWwindow* m_RenderWindow = nullptr;
-Cubemap* m_SkyBox = nullptr;
-Camera m_MainCamera(m_Keypresses, glm::vec3(0.0f, 0.0f, 3.0f));
-GameObject* gameObject = nullptr;
-MousePicker m_MousePicker(&m_MainCamera);
 TextureMaster m_TextureMaster;
 FrameBuffer* m_FrameBuffer = nullptr;
+
+Scene m_Scene;
+Entity m_CamEntity;
+Entity m_TestEntity;
+Entity m_MousePickEntity;
+Entity m_CubemapEntity;
 
 bool firstMouse = true;
 bool m_ShowMouse = false;
@@ -48,7 +50,7 @@ static void error_callback(int error, const char* description)
 
 static void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos)
 {
-	m_MousePicker.GrabMousePosition(xPos, yPos);
+	m_MousePickEntity.GetComponent<MousePickerComponent>().MousePicker.GrabMousePosition(xPos, yPos);
 	if (firstMouse)
 	{
 		lastX = (float)xPos;
@@ -62,7 +64,7 @@ static void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos)
 	lastY = (float)yPos;
 
 	if (!m_ShowMouse)
-		m_MainCamera.ProcessMouse((float)xoffset, (float)yoffset);
+		m_CamEntity.GetComponent<CameraComponent>().Camera.ProcessMouse((float)xoffset, (float)yoffset);
 }
 
 static void cursorEnterCallback(GLFWwindow* window, int entered)
@@ -105,11 +107,8 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		m_Keypresses[key] = false;
 
 	// Object Input
-	m_MainCamera.Input();
-	if (gameObject)
-	{
-		gameObject->Input();
-	}
+	if (m_CamEntity.HasComponent< CameraComponent>())
+		m_CamEntity.GetComponent<CameraComponent>().Camera.Input();
 }
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -124,7 +123,7 @@ static void window_content_scale_callback(GLFWwindow* window, float xscale, floa
 
 static void scrollCallback(GLFWwindow* window, double xOffset, double yOffset)
 {
-	m_MainCamera.ProcessScroll((float)yOffset);
+	m_CamEntity.GetComponent<CameraComponent>().Camera.ProcessScroll((float)yOffset);
 }
 
 int main()
@@ -243,9 +242,12 @@ void HandleImGuiMenuBar()
 		if (ImGui::MenuItem("Close", "Ctrl+W")) { ISTOOLACTIVE = false; }
 		ImGui::EndMenu();
 	}
-	if (gameObject)
+	if (m_TestEntity.IsAlive())
 	{
-		gameObject->GetMesh().ImGuiHandler();
+		if (m_TestEntity.HasComponent<MeshComponent>())
+		{
+			m_TestEntity.GetComponent<MeshComponent>().Mesh.ImGuiHandler();
+		}
 	}
 	ImGui::EndMenuBar();
 
@@ -273,6 +275,9 @@ void HandleImGuiMenuBar()
 
 void HandleImGuiDebugInfo()
 {
+	MousePicker& mousePicker = m_MousePickEntity.GetComponent<MousePickerComponent>();
+	Camera& m_Camera = m_CamEntity.GetComponent<CameraComponent>();
+
 	std::string frameTime = "Fps = {";
 	frameTime += std::to_string((1 / deltaTime) * frameCounter);
 	frameTime += "}\n";
@@ -281,9 +286,9 @@ void HandleImGuiDebugInfo()
 	frameTime += "}";
 	frameCounter = 0;
 
-	std::string mousePosX = std::to_string(m_MousePicker.GetCurrentRay().x);
-	std::string mousePosZ = std::to_string(m_MousePicker.GetCurrentRay().z);
-	std::string mousePosY = std::to_string(m_MousePicker.GetCurrentRay().y);
+	std::string mousePosX = std::to_string(mousePicker.GetCurrentRay().x);
+	std::string mousePosZ = std::to_string(mousePicker.GetCurrentRay().z);
+	std::string mousePosY = std::to_string(mousePicker.GetCurrentRay().y);
 	std::string mousePos = "Mouse Position(i^,j^,k^) = {";
 	mousePos += mousePosX.c_str();
 	mousePos += ",";
@@ -293,10 +298,10 @@ void HandleImGuiDebugInfo()
 	mousePos += "}";
 
 	// Camera Position(x,y,z)
-	std::string camPosZ = std::to_string(m_MainCamera.Position.z);
-	std::string camPosY = std::to_string(m_MainCamera.Position.y);
+	std::string camPosZ = std::to_string(m_Camera.Position.z);
+	std::string camPosY = std::to_string(m_Camera.Position.y);
 	std::string camPos = "Main Camera Position(x,y,z) = {";
-	camPos += std::to_string(m_MainCamera.Position.x);
+	camPos += std::to_string(m_Camera.Position.x);
 	camPos += ",";
 	camPos += camPosY.c_str();
 	camPos += ",";
@@ -304,17 +309,17 @@ void HandleImGuiDebugInfo()
 	camPos += "}";
 
 	// Camera Front(x,y,z)
-	std::string camFrontZ = std::to_string(m_MainCamera.Front.z);
-	std::string camFrontY = std::to_string(m_MainCamera.Front.y);
+	std::string camFrontZ = std::to_string(m_Camera.Front.z);
+	std::string camFrontY = std::to_string(m_Camera.Front.y);
 	std::string camFront = "Main Camera Front(i^,j^,k^) = {";
-	camFront += std::to_string(m_MainCamera.Front.x);
+	camFront += std::to_string(m_Camera.Front.x);
 	camFront += ",";
 	camFront += camFrontY.c_str();
 	camFront += ",";
 	camFront += camFrontZ.c_str();
 	camFront += "}";
 
-	m_MainCamera.ImGUIHandler();
+	m_Camera.ImGUIHandler();
 
 	ImGui::NextColumn();
 	// Display contents in a scrolling region
@@ -322,19 +327,22 @@ void HandleImGuiDebugInfo()
 	ImGui::BeginChild("Scrolling");
 	// Toggle Camera Light
 	ImGui::Text("Camera Spotlight");
-	GUI::ToggleButton("CamLight", &m_MainCamera.m_CamLightEnabled);
+	GUI::ToggleButton("CamLight", &m_Camera.m_CamLightEnabled);
 	
-	if (gameObject)
+	
+	if (m_TestEntity.IsAlive())
 	{
-		ImGui::Text("Mesh Lighting");
-		GUI::ToggleButton("MeshLighting", &gameObject->GetMesh().m_LightingEnabled);
-		if (ImGui::Button("Recompile All Meshes"))
+		if (m_TestEntity.HasComponent<MeshComponent>())
 		{
-			std::cout << gameObject->GetMesh().m_LightingEnabled << std::endl;
-			gameObject->GetMesh().Compile();
+			Mesh& mesh = m_TestEntity.GetComponent<MeshComponent>();
+			ImGui::Text("Mesh Lighting");
+			GUI::ToggleButton("MeshLighting", &mesh.m_LightingEnabled);
+			if (ImGui::Button("Recompile All Meshes"))
+			{
+				mesh.RAW_Recompile();
+			}
 		}
 	}
-	
 
 	ImGui::Text(frameTime.c_str());
 	ImGui::Text(mousePos.c_str());
@@ -345,44 +353,68 @@ void HandleImGuiDebugInfo()
 
 void Start() 
 {
-	//if (!m_FrameBuffer)
-	//	m_FrameBuffer = new FrameBuffer();
+	Camera m_Camera{ m_Keypresses, glm::vec3(0.0f, 0.0f, 3.0f) };
+	m_CamEntity = m_Scene.CreateEntity("MainCamera");
+	auto& camRef = m_CamEntity.AddComponent<CameraComponent>(m_Camera);
 
-	/*if (!m_SquareTest)
-		m_SquareTest = new Shape::CSquare(m_Keypresses, m_MainCamera);*/
-	
+	MousePicker picker{&m_CamEntity.GetComponent<CameraComponent>().Camera};
+	m_MousePickEntity = m_Scene.CreateEntity("MousePicker");
+	auto& pickerRef = m_MousePickEntity.AddComponent<MousePickerComponent>(picker);
+
 	m_TextureMaster.LoadTexture("Resources/Textures/planks.png");
 	m_TextureMaster.LoadNormal("Resources/Textures/normal.png");
 	m_TextureMaster.LoadSpecular("Resources/Textures/planksSpec.png");
 	m_TextureMaster.LoadTexture("Resources/Textures/3.jpg");
 	m_TextureMaster.LoadTexture("Resources/Textures/diffuse.png");
 
-	if (!gameObject)
-	{
-		gameObject = new GameObject(m_MainCamera, m_TextureMaster, deltaTime, m_Keypresses);
-	}
+	m_TestEntity = m_Scene.CreateEntity("Meshes");
+	m_TestEntity.AddComponent<MeshComponent>(camRef,m_TextureMaster);
 
-	if (!m_SkyBox)
-		m_SkyBox = new Cubemap(m_MainCamera);
+	//if (!m_FrameBuffer)
+	//	m_FrameBuffer = new FrameBuffer();
+
+	/*if (!m_SquareTest)
+		m_SquareTest = new Shape::CSquare(m_Keypresses, m_MainCamera);*/
+
+	m_CubemapEntity = m_Scene.CreateEntity("Skybox");
+	m_CubemapEntity.AddComponent<CubemapComponent>(camRef);
 }
 
 void Update()
 {
-	m_MousePicker.Update();
 	HandleImGuiMenuBar();
-	CalculateDeltaTime(); 
+	CalculateDeltaTime();
 	InputActions();
 	HandleMouseVisible();
-	m_MainCamera.Movement(deltaTime);
 
-	if (gameObject)
+	if (m_MousePickEntity.HasComponent<MousePickerComponent>())
 	{
-		gameObject->Update();
+		MousePicker& mousePicker = m_MousePickEntity.GetComponent<MousePickerComponent>();
+		mousePicker.Update();
 	}
-
-	if (m_SkyBox)
+	if (m_CamEntity.HasComponent<CameraComponent>())
 	{
-		m_SkyBox->Render();
+		Camera& mainCamera = m_CamEntity.GetComponent<CameraComponent>();
+		mainCamera.Movement(deltaTime);
+
+		if (m_TestEntity.IsAlive())
+		{
+			if (m_TestEntity.HasComponent<MeshComponent>())
+			{
+				Mesh& gameobject = m_TestEntity.GetComponent<MeshComponent>();
+				gameobject.RAW_Draw();
+			}
+		}
+		
+	}
+	
+	if (m_CubemapEntity.IsAlive())
+	{
+		if (m_CubemapEntity.HasComponent<CubemapComponent>())
+		{
+			Cubemap& skybox = m_CubemapEntity.GetComponent<CubemapComponent>();
+			skybox.Render();
+		}
 	}
 
 	HandleImGuiDebugInfo();
@@ -420,10 +452,40 @@ void InputActions()
 				m_Keypresses[item.first] = false;
 				break;
 			}
+			case GLFW_KEY_O:
+			{
+				if (m_CubemapEntity.IsAlive())
+				{
+					m_CubemapEntity.Destory();
+				}
+
+				// Only Single Press Thanks
+				m_Keypresses[item.first] = false;
+				break;
+			}
+			case GLFW_KEY_P:
+			{
+				if (!m_CubemapEntity.IsAlive())
+				{
+					m_CubemapEntity = m_Scene.CreateEntity("Skybox");
+
+					if (!m_CubemapEntity.HasComponent<CubemapComponent>())
+					{
+						auto& camRef = m_CamEntity.GetComponent<CameraComponent>();
+						m_CubemapEntity.AddComponent<CubemapComponent>(camRef);
+					}
+				}
+
+				// Only Single Press Thanks
+				m_Keypresses[item.first] = false;
+				break;
+			}
 			case GLFW_KEY_K:
 			{
-				if (gameObject)
-					gameObject->MarkAsDestroy = true;
+				if (m_TestEntity.IsAlive())
+				{
+					m_TestEntity.Destory();
+				}
 
 				// Only Single Press Thanks
 				m_Keypresses[item.first] = false;
@@ -431,9 +493,17 @@ void InputActions()
 			}
 			case GLFW_KEY_L:
 			{
-				if (!gameObject)
-					gameObject = new GameObject(m_MainCamera, m_TextureMaster, deltaTime, m_Keypresses);
+				if (!m_TestEntity.IsAlive())
+				{
+					m_TestEntity = m_Scene.CreateEntity("Mesh");
 
+					if (!m_TestEntity.HasComponent<MeshComponent>())
+					{
+						auto& camRef = m_CamEntity.GetComponent<CameraComponent>();
+						m_TestEntity.AddComponent<MeshComponent>(camRef, m_TextureMaster);
+					}
+				}
+				
 				// Only Single Press Thanks
 				m_Keypresses[item.first] = false;
 				break;
@@ -447,15 +517,6 @@ void InputActions()
 
 bool CleanupObjects()
 {
-	if (gameObject)
-	{
-		if (gameObject->MarkAsDestroy)
-		{
-			delete gameObject;
-			gameObject = nullptr;
-			return true;
-		}
-	}
 		
 	return false;
 }
@@ -471,28 +532,24 @@ int Cleanup()
 
 void CleanupAllPointers()
 {
-	if (m_SkyBox)
-	{
-		delete m_SkyBox;
-		m_SkyBox = nullptr;
-	}
-	if (gameObject)
-	{
-		delete gameObject;
-		gameObject = nullptr;
-	}
+	m_CubemapEntity.Destory();
+	m_CamEntity.Destory();
+	m_TestEntity.Destory();
+	m_MousePickEntity.Destory();
 	m_Mousepresses.clear();
 	m_Keypresses.clear();
 	if (m_FrameBuffer)
 	{
 		delete m_FrameBuffer;
-		m_FrameBuffer = nullptr;
+		
 	}
-	if (m_FrameBuffer)
+	m_FrameBuffer = nullptr;
+	if (m_RenderWindow)
 	{
 		delete m_RenderWindow;
-		m_RenderWindow = nullptr;
+
 	}
+	m_RenderWindow = nullptr;
 }
 
 void CalculateDeltaTime()

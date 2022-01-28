@@ -62,7 +62,6 @@ in DATA
 
 void main()
 {
-
 	gl_Position = data_in[0].ViewMat * gl_in[0].gl_Position;
 	Normal = data_in[0].Normal;
 	TexCoords = data_in[0].TexCoords;

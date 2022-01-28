@@ -8,10 +8,7 @@ public:
 	{
 		for (auto& item : m_Textures)
 		{
-			if (item)
-			{
-				delete item;
-			}
+			delete item;
 			item = nullptr;
 		}
 		m_Textures.erase(std::remove(m_Textures.begin(), m_Textures.end(), nullptr), m_Textures.end());

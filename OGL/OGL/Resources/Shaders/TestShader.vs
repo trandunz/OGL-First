@@ -24,7 +24,8 @@ uniform vec3 viewPos;
 
 void main()
 {
-	gl_Position = instanceMatrix * vec4(l_position , 1.0);
+	
+	gl_Position = instanceMatrix * vec4(l_position, 1.0);
 	data_out.ViewMat = projection * view;
 	data_out.TexCoords = l_texCoords;
 	data_out.Normal = mat3(transpose(inverse(instanceMatrix))) * l_normals;  

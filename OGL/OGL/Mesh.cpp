@@ -1,343 +1,357 @@
 #include "Mesh.h"
-
-Mesh::Mesh(Camera& _camera, TextureMaster& _textureMaster, MESHTYPE _type)
+namespace Harmony
 {
-	m_TextureMaster = &_textureMaster;
-	srand(10000000);
-
-	for (int i = -100; i < 100; i++)
-	{
-		for (int j = -100; j < 100; j++)
-		{
-			CreateInstance({ {i + rand() % 4,j + rand() % 5,1},{0,0,0},{1,1,1},0});
-		}
-	}
-
-	m_Camera = &_camera;
-
-	Compile();
-}
-
-Mesh::~Mesh()
-{
-	glDeleteBuffers(1, &uboPLights);
-	glDeleteBuffers(1, &uboMatrices);
-
-	CleanupPointer(m_Shader);
-	CleanupPointer(m_VertBuffer);
-	CleanupPointer(m_InstanceBuffer);
-	CleanupPointer(m_IndexBuffer);
-	CleanupPointer(m_VertexArray);
-	if (m_PointLights)
-	{
-		delete[] m_PointLights;
-	}
-	m_PointLights = nullptr;
-	m_Camera = nullptr;
-	m_Texture = nullptr;
-	m_Normal= nullptr;
-	m_Specular = nullptr;
-	m_TextureMaster = nullptr;
-}
-
-void Mesh::Compile()
-{
-	if (m_LightingEnabled)
-	{
-		CompileShaders("Resources/Shaders/basic_lighting_2.vs", "Resources/Shaders/TestShader_FILL.gs", "Resources/Shaders/basic_lighting_2.fs");
-	}
-	else
-	{
-		CompileShaders("Resources/Shaders/TestShader.vs", "Resources/Shaders/TestShader_FILL.gs", "Resources/Shaders/TestShader.fs");
-	}
 	
-	if (!m_Texture)
+	Mesh::Mesh(Camera& _camera, TextureMaster& _textureMaster)
 	{
-		m_Texture = m_TextureMaster->m_Textures[0];
-	}
-	if (!m_Normal)
-	{
-		//m_Normal = m_TextureMaster->m_Textures[1];
-	}
-	if (!m_Specular)
-	{
-		m_Specular = m_TextureMaster->m_Textures[2];
-	}
 
-	CleanupPointer(m_VertBuffer);
-	m_VertBuffer = new VertexBuffer(VERT_CUBE, sizeof(VERT_CUBE));
+		m_TextureMaster = &_textureMaster;
+		srand(10000000);
 
-	CleanupPointer(m_IndexBuffer);
-	m_IndexBuffer = new IndexBuffer(INDEX_CUBE, 36);
-
-	unsigned int uniformBlockIndexYellow = glGetUniformBlockIndex(m_Shader->m_RendererID, "Matrices");
-	glUniformBlockBinding(m_Shader->m_RendererID, uniformBlockIndexYellow, 0);
-	glGenBuffers(1, &uboMatrices);
-	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	glBindBufferRange(GL_UNIFORM_BUFFER, uniformBlockIndexYellow, uboMatrices, 0, 2 * sizeof(glm::mat4));
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-	CleanupPointer(m_VertexArray);
-	m_VertexArray = new VertexArray();
-
-	m_Shader->Bind();
-	{
-		m_VertexArray->LinkAttibute(*m_VertBuffer, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
-		m_VertexArray->LinkAttibute(*m_VertBuffer, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(GLfloat)));
-		m_VertexArray->LinkAttibute(*m_VertBuffer, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(GLfloat)));
-
-		if (m_InstanceCount != 1)
+		for (int i = -10; i < 10; i++)
 		{
-			CleanupPointer(m_InstanceBuffer);
-			m_InstanceBuffer = new VertexBuffer(m_InstanceMatrix, m_InstanceCount);
+			CreateInstance({ {i + rand() % 4,0,1},{0,0,0},{1,1,1},0 });
+		}
+
+		m_Camera = &_camera;
+
+		RAW_Compile();
+	}
+
+	Mesh::~Mesh()
+	{
+		// Unbind
+		{
+			glBindTexture(m_TextureMaster->m_Textures[0]->Type, 0);
+			glBindTexture(m_TextureMaster->m_Textures[1]->Type, 0);
+			glBindTexture(m_TextureMaster->m_Textures[2]->Type, 0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindVertexArray(0);
+			glUseProgram(0);
+		}
+		// Delete
+		{
+			glDeleteVertexArrays(1, &m_VertexArrayID);
+			glDeleteBuffers(1, &m_UniformBufferID);
+			glDeleteBuffers(1, &m_VertBufferID);
+			glDeleteBuffers(1, &m_InstanceBufferID);
+			glDeleteBuffers(1, &m_IndexBufferID);
+			glDeleteProgram(m_ShaderID);
+		}
+
+		m_TextureMaster = nullptr;
+	}
+
+	void Mesh::RAW_Recompile()
+	{
+		// Unbind
+		{
+			m_TextureMaster->m_Textures[0]->Unbind();
+			m_TextureMaster->m_Textures[2]->Unbind();
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindVertexArray(0);
+			glUseProgram(0);
+		}
+		// Delete
+		{
+			glDeleteVertexArrays(1, &m_VertexArrayID);
+			glDeleteBuffers(1, &m_UniformBufferID);
+			glDeleteBuffers(1, &m_VertBufferID);
+			glDeleteBuffers(1, &m_InstanceBufferID);
+			glDeleteBuffers(1, &m_IndexBufferID);
+			glDeleteProgram(m_ShaderID);
+		}
+		RAW_Compile();
+	}
+
+	void Mesh::RAW_Compile()
+	{
+		if (m_LightingEnabled)
+		{
+			m_ShaderID = CShaderLoader::CreateShader("Resources/Shaders/basic_lighting_2.vs", "Resources/Shaders/TestShader_FILL.gs", "Resources/Shaders/basic_lighting_2.fs");
+		}
+		else
+		{
+			m_ShaderID = CShaderLoader::CreateShader("Resources/Shaders/TestShader.vs", "Resources/Shaders/TestShader_FILL.gs", "Resources/Shaders/TestShader.fs");
+		}
+
+		// VertexBuffer
+		glCreateBuffers(1, &m_VertBufferID);
+		glBindBuffer(GL_ARRAY_BUFFER, m_VertBufferID);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(VERT_CUBE), VERT_CUBE, GL_STATIC_DRAW);
+		
+		// Index Buffer
+		glCreateBuffers(1, &m_IndexBufferID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * sizeof(unsigned int), INDEX_CUBE, GL_STATIC_DRAW);
+
+		// Uniform Buffer
+		unsigned int uniformBlockIndexYellow = glGetUniformBlockIndex(m_ShaderID, "Matrices");
+		glUniformBlockBinding(m_ShaderID, uniformBlockIndexYellow, 0);
+		glCreateBuffers(1, &m_UniformBufferID);
+		glBindBuffer(GL_UNIFORM_BUFFER, m_UniformBufferID);
+		glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		glBindBufferRange(GL_UNIFORM_BUFFER, uniformBlockIndexYellow, m_UniformBufferID, 0, 2 * sizeof(glm::mat4));
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		// Vertex Array
+		glCreateVertexArrays(1, &m_VertexArrayID);
+		glBindVertexArray(m_VertexArrayID);
+
+		// Layouts
+		glUseProgram(m_ShaderID);
+		{
+			glBindBuffer(GL_ARRAY_BUFFER, m_VertBufferID);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(GLfloat)));
+			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(6 * sizeof(GLfloat)));
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+			// Instance Matrix Layout
+			if (m_InstanceCount != 1)
 			{
-				m_VertexArray->LinkAttibute(*m_InstanceBuffer, 3, 4, GL_FLOAT, sizeof(glm::mat4), (void*)0);
-				m_VertexArray->LinkAttibute(*m_InstanceBuffer, 4, 4, GL_FLOAT, sizeof(glm::mat4), (void*)(1 * sizeof(glm::vec4)));
-				m_VertexArray->LinkAttibute(*m_InstanceBuffer, 5, 4, GL_FLOAT, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
-				m_VertexArray->LinkAttibute(*m_InstanceBuffer, 6, 4, GL_FLOAT, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
-				glVertexAttribDivisor(3, 1);
-				glVertexAttribDivisor(4, 1);
-				glVertexAttribDivisor(5, 1);
-				glVertexAttribDivisor(6, 1);
+				glCreateBuffers(1, &m_InstanceBufferID);
+				glBindBuffer(GL_ARRAY_BUFFER, m_InstanceBufferID);
+				glBufferData(GL_ARRAY_BUFFER, m_InstanceCount * sizeof(glm::mat4), &m_InstanceMatrix[0], GL_STATIC_DRAW);
+				{
+					glBindBuffer(GL_ARRAY_BUFFER, m_InstanceBufferID);
+					glEnableVertexAttribArray(3);
+					glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
+					glEnableVertexAttribArray(4);
+					glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(1 * sizeof(glm::vec4)));
+					glEnableVertexAttribArray(5);
+					glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+					glEnableVertexAttribArray(6);
+					glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+					glBindBuffer(GL_ARRAY_BUFFER, 0);
+					glVertexAttribDivisor(3, 1);
+					glVertexAttribDivisor(4, 1);
+					glVertexAttribDivisor(5, 1);
+					glVertexAttribDivisor(6, 1);
+				}
 			}
 		}
+
+		glUniform1i(glGetUniformLocation(m_ShaderID, "material.diffuse"), m_TextureMaster->m_Textures[0]->Unit);
+		glUniform1i(glGetUniformLocation(m_ShaderID, "material.specular"), m_TextureMaster->m_Textures[2]->Unit);
+		glUniform1f(glGetUniformLocation(m_ShaderID, "material.shininess"), 128);
+
+		glUniform3f(glGetUniformLocation(m_ShaderID, "spotLight.ambient"), 0.0f, 0.0f, 0.0f);
+		glUniform1f(glGetUniformLocation(m_ShaderID, "spotLight.constant"), 1.0f);
+		glUniform1f(glGetUniformLocation(m_ShaderID, "spotLight.linear"), 0.09f);
+		glUniform1f(glGetUniformLocation(m_ShaderID, "spotLight.quadratic"), 0.032f);
+		glUniform1f(glGetUniformLocation(m_ShaderID, "spotLight.cutOff"), glm::cos(glm::radians(12.5f)));
+		glUniform1f(glGetUniformLocation(m_ShaderID, "spotLight.outerCutOff"), glm::cos(glm::radians(15.0f)));
+
+		glUniform3f(glGetUniformLocation(m_ShaderID, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
+		glUniform3f(glGetUniformLocation(m_ShaderID, "dirLight.ambient"), 0.05f, 0.05f, 0.05f);
+		glUniform3f(glGetUniformLocation(m_ShaderID, "dirLight.diffuse"), 0.4f, 0.4f, 0.4f);
+		glUniform3f(glGetUniformLocation(m_ShaderID, "dirLight.specular"), 0.5f, 0.5f, 0.5f);
+
+		glm::vec3 pos = glm::vec3(1, 1, 1);
+		std::string uniformName;
+		for (unsigned int i = 0; i < 20; i++)
+		{
+			uniformName = "pointLights[" + std::to_string(i) + "].position";
+			glUniform3f(glGetUniformLocation(m_ShaderID, uniformName.c_str()), pos.x, pos.y, pos.z);
+			uniformName = "pointLights[" + std::to_string(i) + "].ambient";
+			glUniform3f(glGetUniformLocation(m_ShaderID, uniformName.c_str()), 1.05f, 1.05f, 1.05f);
+			uniformName = "pointLights[" + std::to_string(i) + "].constant";
+			glUniform1f(glGetUniformLocation(m_ShaderID, uniformName.c_str()), 1.0f);
+			uniformName = "pointLights[" + std::to_string(i) + "].linear";
+			glUniform1f(glGetUniformLocation(m_ShaderID, uniformName.c_str()), 0.09f);
+			uniformName = "pointLights[" + std::to_string(i) + "].quadratic";
+			glUniform1f(glGetUniformLocation(m_ShaderID, uniformName.c_str()), 0.032f);
+			uniformName = "pointLights[" + std::to_string(i) + "].specular";
+			glUniform3f(glGetUniformLocation(m_ShaderID, uniformName.c_str()), abs(m_Color[0] - 0.2f), abs(m_Color[1] - 0.2f), abs(m_Color[2] - 0.2f));
+			uniformName = "pointLights[" + std::to_string(i) + "].diffuse";
+			glUniform3f(glGetUniformLocation(m_ShaderID, uniformName.c_str()), m_Color[0], m_Color[1], m_Color[2]);
+
+		}
 	}
-	m_VertexArray->UnBind();
-	m_Shader->UnBind();
-}
 
-void Mesh::SetTexture(Texture& _texture)
-{
-	srand(rand());
-	m_Texture = nullptr;
-	m_Texture = &_texture;
-}
-
-void Mesh::SetNormal(Texture& _texture)
-{
-	srand(rand());
-	m_Normal = nullptr;
-	m_Normal = &_texture;
-}
-
-void Mesh::SetSpecular(Texture& _texture)
-{
-	srand(rand());
-	m_Specular = nullptr;
-	m_Specular = &_texture;
-}
-
-void Mesh::CompileShaders(const char* _vs, const char* _gs, const char* _fs)
-{
-	CleanupPointer(m_Shader);
-	m_Shader = new Shader(_vs, _gs, _fs);
-}
-
-void Mesh::Draw()
-{
-	// Light (Body)
-	m_Shader->Bind();
-
-	// Light Texture
-	m_Texture->Bind();
-
-	m_VertexArray->Bind();
-	if (m_InstanceBuffer)
+	void Mesh::RAW_Draw()
 	{
-		m_VertexArray->StreamAttibute(*m_InstanceBuffer, 3, 4, GL_FLOAT, sizeof(glm::mat4), (void*)0, m_InstanceMatrix, m_InstanceCount);
-		m_VertexArray->StreamAttibute(*m_InstanceBuffer, 4, 4, GL_FLOAT, sizeof(glm::mat4), (void*)(1 * sizeof(glm::vec4)), m_InstanceMatrix, m_InstanceCount);
-		m_VertexArray->StreamAttibute(*m_InstanceBuffer, 5, 4, GL_FLOAT, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)), m_InstanceMatrix, m_InstanceCount);
-		m_VertexArray->StreamAttibute(*m_InstanceBuffer, 6, 4, GL_FLOAT, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)), m_InstanceMatrix, m_InstanceCount);
+		glUseProgram(m_ShaderID);
+
+		glBindVertexArray(m_VertexArrayID);
+
+		glBindBuffer(GL_ARRAY_BUFFER, m_InstanceBufferID);
+		glBufferData(GL_ARRAY_BUFFER, m_InstanceCount * sizeof(glm::mat4), &m_InstanceMatrix[0], GL_STREAM_DRAW);
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
+		glBufferData(GL_ARRAY_BUFFER, m_InstanceCount * sizeof(glm::mat4), &m_InstanceMatrix[0], GL_STREAM_DRAW);
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(1 * sizeof(glm::vec4)));
+		glBufferData(GL_ARRAY_BUFFER, m_InstanceCount * sizeof(glm::mat4), &m_InstanceMatrix[0], GL_STREAM_DRAW);
+		glEnableVertexAttribArray(5);
+		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+		glBufferData(GL_ARRAY_BUFFER, m_InstanceCount * sizeof(glm::mat4), &m_InstanceMatrix[0], GL_STREAM_DRAW);
+		glEnableVertexAttribArray(6);
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+		
 		glVertexAttribDivisor(3, 1);
 		glVertexAttribDivisor(4, 1);
 		glVertexAttribDivisor(5, 1);
 		glVertexAttribDivisor(6, 1);
-		m_InstanceBuffer->UnBind();
-	}
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	// if Lighting enabled
-	if (m_LightingEnabled)
-	{
-		HandleLightingUniforms();
-	}
-	else
-	{
-		m_Texture->Bind();
-		m_Shader->SetUniform1i("u_Texture", m_Texture->Unit);
-		m_Shader->SetUniform4f("u_Color", m_Color[0], m_Color[1], m_Color[2], m_Color[3]);
-	}
+		m_TextureMaster->m_Textures[0]->Bind();
+		
+		// Calculated View Mat And Proj Mat
+		m_ProjectionMat = m_Camera->GetProjectionMatrix();
+		m_ViewMat = m_Camera->GetViewMatrix();
 
-	m_ProjectionMat = m_Camera->GetProjectionMatrix();
-	m_ViewMat = m_Camera->GetViewMatrix();
+		// If Lighting
+		if (m_LightingEnabled)
+		{
+			m_TextureMaster->m_Textures[1]->Bind();
+			m_TextureMaster->m_Textures[2]->Bind();
 
-	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &m_ProjectionMat[0]);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+			if (m_Camera->m_CamLightEnabled)
+			{
+				glUniform3f(glGetUniformLocation(m_ShaderID, "spotLight.position"), m_Camera->Position.x, m_Camera->Position.y, m_Camera->Position.z);
+				glUniform3f(glGetUniformLocation(m_ShaderID, "spotLight.direction"), m_Camera->Front.x, m_Camera->Front.y, m_Camera->Front.z);
+				glUniform3f(glGetUniformLocation(m_ShaderID, "spotLight.diffuse"), 1.0f, 1.0f, 1.0f);
+				glUniform3f(glGetUniformLocation(m_ShaderID, "spotLight.specular"), 1.0f, 1.0f, 1.0f);
+			}
+			else
+			{
+				glUniform3f(glGetUniformLocation(m_ShaderID, "spotLight.diffuse"), 0.0f, 0.0f, 0.0f);
+				glUniform3f(glGetUniformLocation(m_ShaderID, "spotLight.specular"), 0.0f, 0.0f, 0.0f);
+			}
 
-	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), &m_ViewMat[0]);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	
-	
-	m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader, m_InstanceCount);
-	
-	m_IndexBuffer->UnBind();
-	m_VertexArray->UnBind();
-	m_Texture->Unbind();
-	//m_Normal->Unbind();
-	m_Shader->UnBind();
-}
-
-void Mesh::ImGuiHandler()
-{
-	if (ImGui::BeginMenu("Copy"))
-	{
-		if (ImGui::MenuItem("Mesh", "Single Mesh")) 
-		{ 
-			CreateInstance({ { m_Camera->Position + glm::vec3(m_Camera->Front.x * 5, m_Camera->Front.y * 5, m_Camera->Front.z * 5) }, { glm::vec3(0,0,0) }, { glm::vec3(1,1,1) } });
+			glUniform3f(glGetUniformLocation(m_ShaderID, "viewPos"), m_Camera->Position.x, m_Camera->Position.y, m_Camera->Position.z);
 		}
-		ImGui::EndMenu();
+		else
+		{
+			glUniform1i(glGetUniformLocation(m_ShaderID, "u_Texture"), m_TextureMaster->m_Textures[0]->Unit);
+			glUniform4f(glGetUniformLocation(m_ShaderID, "u_Color"), m_Color[0], m_Color[1], m_Color[2], m_Color[3]);
+		}
+
+		// Stream In Proj Mat
+		glBindBuffer(GL_UNIFORM_BUFFER, m_UniformBufferID);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &m_ProjectionMat[0]);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		// Stream In View Mat
+		glBindBuffer(GL_UNIFORM_BUFFER, m_UniformBufferID);
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), &m_ViewMat[0]);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		// Draw
+		glUseProgram(m_ShaderID);
+		glBindVertexArray(m_VertexArrayID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferID);
+		{
+			if (m_InstanceCount > 1)
+				glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, m_InstanceCount);
+			else
+				glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
+		}
+
+		// Unbind
+		{
+			m_TextureMaster->m_Textures[0]->Unbind();
+			m_TextureMaster->m_Textures[2]->Unbind();
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindVertexArray(0);
+			glUseProgram(0);
+		}
 	}
-}
 
-glm::mat4 Mesh::CalculateModelTransformations(glm::mat4& _model, STransform _transform)
-{
-	_model = glm::translate(glm::mat4(1.0f), _transform.position);
-	if (_transform.rotation.x != 0.0f)
+	void Mesh::ImGuiHandler()
 	{
-		_model = glm::rotate(_model, _transform.rotation.x, _transform.rotation);
+		if (ImGui::BeginMenu("Copy"))
+		{
+			if (ImGui::MenuItem("Mesh", "Single Mesh"))
+			{
+				CreateInstance({ { m_Camera->Position + glm::vec3(m_Camera->Front.x * 5, m_Camera->Front.y * 5, m_Camera->Front.z * 5) }, { glm::vec3(0,0,0) }, { glm::vec3(1,1,1) } });
+			}
+			ImGui::EndMenu();
+		}
 	}
-	if (_transform.rotation.y != 0.0f)
+
+	glm::mat4 Mesh::CalculateModelTransformations(glm::mat4& _model, STransform _transform)
 	{
-		_model = glm::rotate(_model, _transform.rotation.y, _transform.rotation);
+		_model = glm::translate(glm::mat4(1.0f), _transform.position);
+		if (_transform.rotation.x != 0.0f)
+		{
+			_model = glm::rotate(_model, _transform.rotation.x, _transform.rotation);
+		}
+		if (_transform.rotation.y != 0.0f)
+		{
+			_model = glm::rotate(_model, _transform.rotation.y, _transform.rotation);
+		}
+		if (_transform.rotation.z != 0.0f)
+		{
+			_model = glm::rotate(_model, _transform.rotation.z, _transform.rotation);
+		}
+		_model = glm::scale(_model, _transform.scale);
+		return _model;
 	}
-	if (_transform.rotation.z != 0.0f)
+
+	glm::mat4 Mesh::ModifyModelTransformations(glm::mat4& _model, STransform _transform)
 	{
-		_model = glm::rotate(_model, _transform.rotation.z, _transform.rotation);
+		_model = glm::translate(_model, _transform.position);
+		if (_transform.rotation.x != 0.0f)
+		{
+			_model = glm::rotate(_model, _transform.rotation.x, _transform.rotation);
+		}
+		if (_transform.rotation.y != 0.0f)
+		{
+			_model = glm::rotate(_model, _transform.rotation.y, _transform.rotation);
+		}
+		if (_transform.rotation.z != 0.0f)
+		{
+			_model = glm::rotate(_model, _transform.rotation.z, _transform.rotation);
+		}
+		_model = glm::scale(_model, _transform.scale);
+		return _model;
 	}
-	_model = glm::scale(_model, _transform.scale);
-	return _model;
-}
 
-glm::mat4 Mesh::ModifyModelTransformations(glm::mat4& _model, STransform _transform)
-{
-	_model = glm::translate(_model, _transform.position);
-	if (_transform.rotation.x != 0.0f)
+	void Mesh::CreateInstance(STransform _transform)
 	{
-		_model = glm::rotate(_model, _transform.rotation.x, _transform.rotation);
+		glm::mat4 tempMat;
+		CalculateModelTransformations(tempMat, _transform);
+		m_InstanceMatrix.push_back(tempMat);
+		m_InstanceCount++;
 	}
-	if (_transform.rotation.y != 0.0f)
+
+	void Mesh::ModifyInstanceMatrix(unsigned int _index, STransform _transform)
 	{
-		_model = glm::rotate(_model, _transform.rotation.y, _transform.rotation);
+		glm::mat4 tempMat = m_InstanceMatrix[_index];
+		ModifyModelTransformations(tempMat, _transform);
+		m_InstanceMatrix[_index] = tempMat;
 	}
-	if (_transform.rotation.z != 0.0f)
+
+	void Mesh::ModifyInstance(unsigned int _index, STransform _transform)
 	{
-		_model = glm::rotate(_model, _transform.rotation.z, _transform.rotation);
+		glm::mat4 tempMat;
+		CalculateModelTransformations(tempMat, _transform);
+		m_InstanceMatrix[_index] = tempMat;
 	}
-	_model = glm::scale(_model, _transform.scale);
-	return _model;
-}
 
-void Mesh::CreateInstance(STransform _transform)
-{
-	glm::mat4 tempMat;
-	CalculateModelTransformations(tempMat, _transform);
-	m_InstanceMatrix.push_back(tempMat);
-	m_InstanceCount++;
-}
-
-void Mesh::ModifyInstanceMatrix(unsigned int _index, STransform _transform)
-{
-	glm::mat4 tempMat = m_InstanceMatrix[_index];
-	ModifyModelTransformations(tempMat, _transform);
-	m_InstanceMatrix[_index] = tempMat;
-}
-
-void Mesh::ModifyInstance(unsigned int _index, STransform _transform)
-{
-	glm::mat4 tempMat;
-	CalculateModelTransformations(tempMat, _transform);
-	m_InstanceMatrix[_index] = tempMat;
-}
-
-void Mesh::ModifyInstance(unsigned int _index, float _color[4])
-{
-	m_Color[0] = _color[0];
-	m_Color[1] = _color[1];
-	m_Color[2] = _color[2];
-	m_Color[3] = _color[3];
-}
-
-int Mesh::GetInstanceMatrixSize()
-{
-	return m_InstanceMatrix.size();
-}
-
-STransform Mesh::GetInstanceMatrixTransform(int _index)
-{
-	glm::vec4 pos{ 1,1,1,1 };
-	
-	return { {glm::vec3(pos * m_InstanceMatrix[_index])},{0,0,0},{1,1,1},0 };
-}
-
-void Mesh::HandleLightingUniforms()
-{
-	// SpotLight Uniforms
-	m_Shader->SetUniformVec3f("spotLight.position", m_Camera->Position);
-	m_Shader->SetUniformVec3f("spotLight.direction", m_Camera->Front);
-	m_Shader->SetUniform3f("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-	if (m_Camera->m_CamLightEnabled)
+	void Mesh::ModifyInstance(unsigned int _index, float _color[4])
 	{
-		m_Shader->SetUniform3f("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-		m_Shader->SetUniform3f("spotLight.specular", 1.0f, 1.0f, 1.0f);
+		m_Color[0] = _color[0];
+		m_Color[1] = _color[1];
+		m_Color[2] = _color[2];
+		m_Color[3] = _color[3];
 	}
-	else
+
+	int Mesh::GetInstanceMatrixSize()
 	{
-		m_Shader->SetUniform3f("spotLight.diffuse", 0.0f, 0.0f, 0.0f);
-		m_Shader->SetUniform3f("spotLight.specular", 0.0f, 0.0f, 0.0f);
-	}
-	m_Shader->SetUniform1f("spotLight.constant", 1.0f);
-	m_Shader->SetUniform1f("spotLight.linear", 0.09f);
-	m_Shader->SetUniform1f("spotLight.quadratic", 0.032f);
-	m_Shader->SetUniform1f("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-	m_Shader->SetUniform1f("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
-
-	// View Position Uniform
-	m_Shader->SetUniformVec3f("viewPos", m_Camera->Position);
-
-	m_Texture->Bind();
-	m_Shader->SetUniform1i("material.specular", m_Texture->Unit);
-	m_Shader->SetUniform1i("material.diffuse", m_Texture->Unit);
-
-	m_Specular->Bind();
-	// Light Texture
-	m_Shader->SetUniform1i("material.specular", m_Specular->Unit);
-
-	//m_Normal->Bind();
-	//// Light Texture
-	//m_Shader->SetUniform1i("material.normal", m_Normal->Unit);
-
-
-	//  'Shininess'
-	m_Shader->SetUniform1f("material.shininess", 128);
-
-	// Directional light Uniforms
-	m_Shader->SetUniform3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
-	m_Shader->SetUniform3f("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-	m_Shader->SetUniform3f("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-	m_Shader->SetUniform3f("dirLight.specular", 0.5f, 0.5f, 0.5f);
-
-	for (int i = 0; i < m_InstanceCount; i++)
-	{
-		glm::vec3 pos = glm::vec4(i, 3, 1, 1);
-		m_Shader->SetUniformVec3f("pointLights[" + std::to_string(i) + "].position", pos);
-		m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].ambient", 0.05f, 0.05f, 0.05f);
-		m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].specular", abs(m_Color[0] - 0.2f), abs(m_Color[1] - 0.2f), abs(m_Color[2] - 0.2f));
-		m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].diffuse", m_Color[0], m_Color[1], m_Color[2]);
-		m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].constant", 1.0f);
-		m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].linear", 0.09f);
-		m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].quadratic", 0.032f);
+		return m_InstanceMatrix.size();
 	}
 }

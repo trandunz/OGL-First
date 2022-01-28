@@ -14,6 +14,7 @@ struct ShaderProgramSource
 class Shader : public NumptyBehavior
 {
 public:
+    Shader() = default;
     Shader(const std::string& _vertShader, const std::string& _geoShader, const std::string& _fragShader)
         : m_RendererID(0)
     {

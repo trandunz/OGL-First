@@ -5,15 +5,23 @@
 #include "ImGui/imgui_impl_glfw.h"
 #include "ImGui/imgui_impl_opengl3.h"
 
+static bool dockspaceOpen;
+static ImGuiDockNodeFlags dockspace_flags;
 static bool ISTOOLACTIVE;
+static bool FULLSCREEN;
+static ImGuiWindowFlags window_flags;
+static GLFWwindow* RenderWindow;
 
 class GUI :
     public NumptyBehavior
 {
 public:
 	GUI() { ISTOOLACTIVE = true; }
+	~GUI() { RenderWindow = nullptr; }
+	
     static void InitImGUI(GLFWwindow* _window)
     {
+		RenderWindow = _window;
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -24,26 +32,111 @@ public:
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
 		//ImGui::StyleColorsClassic();
-		ImGui_ImplGlfw_InitForOpenGL(_window, true);
+		ImGui_ImplGlfw_InitForOpenGL(RenderWindow, true);
 		ImGui_ImplOpenGL3_Init("#version 460");
 		ImGui::StyleColorsDark();
+
+		dockspace_flags = ImGuiDockNodeFlags_None;
     }
 	static void StartImGUIFrame()
 	{
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		ImGui::Begin("Tools V0.01", &ISTOOLACTIVE, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar);
+
+		window_flags |= ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		if (FULLSCREEN)
+		{
+			ImGuiViewport* viewport = ImGui::GetMainViewport();
+			ImGui::SetNextWindowPos(viewport->Pos);
+			ImGui::SetNextWindowSize(viewport->Size);
+			ImGui::SetNextWindowViewport(viewport->ID);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+			window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
+				| ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+		}
+		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+		{
+			window_flags |= ImGuiWindowFlags_NoBackground;
+		}
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::Begin("DockSpace", &dockspaceOpen, window_flags);
+
+		ImGui::PopStyleVar();
+		if (FULLSCREEN)
+		{
+			ImGui::PopStyleVar(2);
+		}
+
+		if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
+		{
+			ImGuiID dockspace_id = ImGui::GetID("DockSpace");
+			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+		}
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("Quit"))
+				{
+					glfwSetWindowShouldClose(RenderWindow, GLFW_TRUE);
+				}
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Window"))
+			{
+				if (ImGui::MenuItem("Flag: NoSplit", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0))
+				{
+					dockspace_flags ^= ImGuiDockNodeFlags_NoSplit;
+				}
+				if (ImGui::MenuItem("Flag: NoResize", "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0))
+				{
+					dockspace_flags ^= ImGuiDockNodeFlags_NoResize;
+				}
+				if (ImGui::MenuItem("Flag: NoDockingInCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingInCentralNode) != 0))
+				{
+					dockspace_flags ^= ImGuiDockNodeFlags_NoDockingInCentralNode;
+				}
+				if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0))
+				{
+					dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode;
+				}
+				if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0))
+				{
+					dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar;
+				}
+
+				ImGui::Separator();
+				if (ImGui::MenuItem("Close Dockspace", NULL, false, dockspaceOpen != NULL))
+				{
+					dockspaceOpen = false;
+				}
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMenuBar();
+		}
+		ImGui::End();
+
+		ImGui::Begin("Tools V0.01", &ISTOOLACTIVE, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollbar);
+		
 	}
 	static void EndImGUIFrame()
 	{
 		ImGui::End();
+		
+
 		ImGuiRender();
 	}
 	static void ImGuiRender()
 	{
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 
 		if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{

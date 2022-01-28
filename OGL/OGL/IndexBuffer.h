@@ -5,6 +5,7 @@ class IndexBuffer :
     public NumptyBehavior
 {
 public:
+    IndexBuffer() = default;
     IndexBuffer(const unsigned int* data, unsigned int indexCount)
         : m_IndexCount(indexCount)
     {

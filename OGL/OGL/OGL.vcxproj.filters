@@ -43,40 +43,25 @@
     <Filter Include="Resource Files\Vendor\Objects">
       <UniqueIdentifier>{0d7fd267-4a7d-48ef-8fd3-8b4793e00f25}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Components">
+      <UniqueIdentifier>{530f4624-8bac-4a99-8fd0-bdfb1dbe8493}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Vendor\ImGui">
+      <UniqueIdentifier>{a44c483b-e125-451d-a2f0-e537b1c28b4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Vendor\ENTT">
+      <UniqueIdentifier>{6b356366-b966-410e-8f81-0a1ab19dec60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene">
+      <UniqueIdentifier>{2495608b-acbf-41af-bb9d-6bd8ac29aa42}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\ImGui\imgui.cpp">
-      <Filter>Resource Files\Vendor</Filter>
-    </ClCompile>
-    <ClCompile Include="include\ImGui\imgui_demo.cpp">
-      <Filter>Resource Files\Vendor</Filter>
-    </ClCompile>
-    <ClCompile Include="include\ImGui\imgui_draw.cpp">
-      <Filter>Resource Files\Vendor</Filter>
-    </ClCompile>
-    <ClCompile Include="include\ImGui\imgui_tables.cpp">
-      <Filter>Resource Files\Vendor</Filter>
-    </ClCompile>
-    <ClCompile Include="include\ImGui\imgui_widgets.cpp">
-      <Filter>Resource Files\Vendor</Filter>
-    </ClCompile>
-    <ClCompile Include="include\ImGui\imgui_impl_glfw.cpp">
-      <Filter>Resource Files\Vendor</Filter>
-    </ClCompile>
-    <ClCompile Include="include\ImGui\imgui_impl_opengl3.cpp">
-      <Filter>Resource Files\Vendor</Filter>
-    </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="CSquare.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="CShape.cpp">
-      <Filter>Source Files\Objects</Filter>
     </ClCompile>
     <ClCompile Include="Cubemap.cpp">
       <Filter>Source Files\Rendering</Filter>
@@ -90,35 +75,35 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="include\ImGui\imgui.cpp">
+      <Filter>Resource Files\Vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_demo.cpp">
+      <Filter>Resource Files\Vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_draw.cpp">
+      <Filter>Resource Files\Vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_impl_glfw.cpp">
+      <Filter>Resource Files\Vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_impl_opengl3.cpp">
+      <Filter>Resource Files\Vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_tables.cpp">
+      <Filter>Resource Files\Vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_widgets.cpp">
+      <Filter>Resource Files\Vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\ImGui\imconfig.h">
-      <Filter>Resource Files\Vendor</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ImGui\imgui.h">
-      <Filter>Resource Files\Vendor</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ImGui\imgui_internal.h">
-      <Filter>Resource Files\Vendor</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ImGui\imstb_rectpack.h">
-      <Filter>Resource Files\Vendor</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ImGui\imstb_textedit.h">
-      <Filter>Resource Files\Vendor</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ImGui\imstb_truetype.h">
-      <Filter>Resource Files\Vendor</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ImGui\imgui_impl_glfw.h">
-      <Filter>Resource Files\Vendor</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ImGui\imgui_impl_opengl3.h">
-      <Filter>Resource Files\Vendor</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ImGui\imgui_impl_opengl3_loader.h">
-      <Filter>Resource Files\Vendor</Filter>
-    </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Header Files\Shaders</Filter>
     </ClInclude>
@@ -140,12 +125,6 @@
     <ClInclude Include="Renderer.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="CSquare.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="CShape.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="CCamera.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
@@ -166,18 +145,6 @@
     </ClInclude>
     <ClInclude Include="MousePicker.h">
       <Filter>Header Files\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="Types.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseSystem.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="ICompList.h">
-      <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="Physics.h">
       <Filter>Header Files\Helpers</Filter>
@@ -202,6 +169,42 @@
     </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imconfig.h">
+      <Filter>Resource Files\Vendor\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imgui.h">
+      <Filter>Resource Files\Vendor\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imgui_impl_glfw.h">
+      <Filter>Resource Files\Vendor\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imgui_impl_opengl3.h">
+      <Filter>Resource Files\Vendor\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imgui_impl_opengl3_loader.h">
+      <Filter>Resource Files\Vendor\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imgui_internal.h">
+      <Filter>Resource Files\Vendor\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imstb_rectpack.h">
+      <Filter>Resource Files\Vendor\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imstb_textedit.h">
+      <Filter>Resource Files\Vendor\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imstb_truetype.h">
+      <Filter>Resource Files\Vendor\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Components.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
