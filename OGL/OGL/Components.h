@@ -38,6 +38,8 @@ namespace Harmony
 		CameraComponent() = default;
 		CameraComponent(const Harmony::Camera& _camera)
 			:Camera(_camera) {}
+		CameraComponent(std::map<int,bool>& _keyMap, glm::vec3 _pos)
+			:Camera(_keyMap, _pos) {}
 		CameraComponent(const CameraComponent&) = default;
 
 		operator Harmony::Camera& () { return Camera; }
@@ -50,6 +52,8 @@ namespace Harmony
 		MousePickerComponent() = default;
 		MousePickerComponent(const Harmony::MousePicker& _mousePicker)
 			:MousePicker(_mousePicker) {}
+		MousePickerComponent(Harmony::Camera& _camera)
+			:MousePicker(&_camera) {}
 		MousePickerComponent(const MousePickerComponent&) = default;
 
 		operator Harmony::MousePicker& () { return MousePicker; }

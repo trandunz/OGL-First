@@ -329,17 +329,16 @@ void HandleImGuiDebugInfo()
 	ImGui::Text("Camera Spotlight");
 	GUI::ToggleButton("CamLight", &m_Camera.m_CamLightEnabled);
 	
-	
-	if (m_TestEntity.IsAlive())
 	{
-		if (m_TestEntity.HasComponent<MeshComponent>())
+		auto view = m_Scene.GetReg().view<MeshComponent>();
+		for (auto entity : view)
 		{
-			Mesh& mesh = m_TestEntity.GetComponent<MeshComponent>();
+			auto& mesh = view.get<MeshComponent>(entity);
 			ImGui::Text("Mesh Lighting");
-			GUI::ToggleButton("MeshLighting", &mesh.m_LightingEnabled);
+			GUI::ToggleButton("MeshLighting", &mesh.Mesh.m_LightingEnabled);
 			if (ImGui::Button("Recompile All Meshes"))
 			{
-				mesh.RAW_Recompile();
+				mesh.Mesh.RAW_Recompile();
 			}
 		}
 	}
@@ -353,31 +352,23 @@ void HandleImGuiDebugInfo()
 
 void Start() 
 {
-	Camera m_Camera{ m_Keypresses, glm::vec3(0.0f, 0.0f, 3.0f) };
-	m_CamEntity = m_Scene.CreateEntity("MainCamera");
-	auto& camRef = m_CamEntity.AddComponent<CameraComponent>(m_Camera);
-
-	MousePicker picker{&m_CamEntity.GetComponent<CameraComponent>().Camera};
-	m_MousePickEntity = m_Scene.CreateEntity("MousePicker");
-	auto& pickerRef = m_MousePickEntity.AddComponent<MousePickerComponent>(picker);
-
 	m_TextureMaster.LoadTexture("Resources/Textures/planks.png");
 	m_TextureMaster.LoadNormal("Resources/Textures/normal.png");
 	m_TextureMaster.LoadSpecular("Resources/Textures/planksSpec.png");
 	m_TextureMaster.LoadTexture("Resources/Textures/3.jpg");
 	m_TextureMaster.LoadTexture("Resources/Textures/diffuse.png");
 
+	m_CamEntity = m_Scene.CreateEntity("MainCamera");
+	m_MousePickEntity = m_Scene.CreateEntity("MousePicker");
 	m_TestEntity = m_Scene.CreateEntity("Meshes");
-	m_TestEntity.AddComponent<MeshComponent>(camRef,m_TextureMaster);
-
-	//if (!m_FrameBuffer)
-	//	m_FrameBuffer = new FrameBuffer();
-
-	/*if (!m_SquareTest)
-		m_SquareTest = new Shape::CSquare(m_Keypresses, m_MainCamera);*/
-
 	m_CubemapEntity = m_Scene.CreateEntity("Skybox");
-	m_CubemapEntity.AddComponent<CubemapComponent>(camRef);
+
+	Camera m_Camera{ m_Keypresses, glm::vec3(0.0f, 0.0f, 3.0f) };
+	auto& camRef = m_CamEntity.AddComponent<CameraComponent>(m_Camera);
+	MousePicker picker{ &camRef.Camera };
+	auto& pickerRef = m_MousePickEntity.AddComponent<MousePickerComponent>(picker);
+	auto& meshRef = m_TestEntity.AddComponent<MeshComponent>(camRef,m_TextureMaster);
+	auto& skyboxRef = m_CubemapEntity.AddComponent<CubemapComponent>(camRef);
 }
 
 void Update()
@@ -387,36 +378,39 @@ void Update()
 	InputActions();
 	HandleMouseVisible();
 
-	if (m_MousePickEntity.HasComponent<MousePickerComponent>())
 	{
-		MousePicker& mousePicker = m_MousePickEntity.GetComponent<MousePickerComponent>();
-		mousePicker.Update();
-	}
-	if (m_CamEntity.HasComponent<CameraComponent>())
-	{
-		Camera& mainCamera = m_CamEntity.GetComponent<CameraComponent>();
-		mainCamera.Movement(deltaTime);
-
-		if (m_TestEntity.IsAlive())
+		auto view = m_Scene.GetReg().view<MeshComponent>();
+		for (auto entity : view)
 		{
-			if (m_TestEntity.HasComponent<MeshComponent>())
-			{
-				Mesh& gameobject = m_TestEntity.GetComponent<MeshComponent>();
-				gameobject.RAW_Draw();
-			}
+			auto& mesh = view.get<MeshComponent>(entity);
+			mesh.Mesh.RAW_Draw();
 		}
-		
+	}
+	{
+		auto view = m_Scene.GetReg().view<CubemapComponent>();
+		for (auto entity : view)
+		{
+			auto& mesh = view.get<CubemapComponent>(entity);
+			mesh.Cubemap.Render();
+		}
+	}
+	{
+		auto view = m_Scene.GetReg().view<CameraComponent>();
+		for (auto entity : view)
+		{
+			auto& mesh = view.get<CameraComponent>(entity);
+			mesh.Camera.Movement(deltaTime);
+		}
+	}
+	{
+		auto view = m_Scene.GetReg().view<MousePickerComponent>();
+		for (auto entity : view)
+		{
+			auto& mesh = view.get<MousePickerComponent>(entity);
+			mesh.MousePicker.Update();
+		}
 	}
 	
-	if (m_CubemapEntity.IsAlive())
-	{
-		if (m_CubemapEntity.HasComponent<CubemapComponent>())
-		{
-			Cubemap& skybox = m_CubemapEntity.GetComponent<CubemapComponent>();
-			skybox.Render();
-		}
-	}
-
 	HandleImGuiDebugInfo();
 }
 
@@ -465,6 +459,7 @@ void InputActions()
 			}
 			case GLFW_KEY_P:
 			{
+
 				if (!m_CubemapEntity.IsAlive())
 				{
 					m_CubemapEntity = m_Scene.CreateEntity("Skybox");

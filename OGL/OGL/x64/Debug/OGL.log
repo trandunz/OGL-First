@@ -20,6 +20,6 @@ C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\TextureMaster.h(34,1): warning
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\TextureMaster.h(35,1): warning C4267: 'argument': conversion from 'size_t' to 'GLenum', possible loss of data
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(28,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\IndexBuffer.h(18,1): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(549,24): warning C4150: deletion of pointer to incomplete type 'GLFWwindow'; no destructor called
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Main.cpp(544,24): warning C4150: deletion of pointer to incomplete type 'GLFWwindow'; no destructor called
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\include\ImGui\imgui_impl_glfw.h(28): message : see declaration of 'GLFWwindow'
   OGL.vcxproj -> C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Debug\OGL.exe

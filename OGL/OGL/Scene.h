@@ -13,6 +13,8 @@ namespace Harmony
 		~Scene() = default;
 
 		Entity CreateEntity(const std::string _name = {});
+
+		entt::registry& GetReg() { return m_Registy; }
 		void DeleteEntity(entt::entity& _entity);
 	private:
 		friend class Entity;
