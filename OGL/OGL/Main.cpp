@@ -1,4 +1,3 @@
-#include "Cubemap.h"
 #include "FrameBuffer.h"
 #include "Entity.h"
 
@@ -34,10 +33,10 @@ TextureMaster m_TextureMaster;
 FrameBuffer* m_FrameBuffer = nullptr;
 
 Scene m_Scene;
-Entity m_CamEntity;
-Entity m_TestEntity;
-Entity m_MousePickEntity;
-Entity m_CubemapEntity;
+Harmony::Entity m_CamEntity;
+Harmony::Entity m_TestEntity;
+Harmony::Entity m_MousePickEntity;
+Harmony::Entity m_CubemapEntity;
 
 bool firstMouse = true;
 bool m_ShowMouse = false;
@@ -275,78 +274,93 @@ void HandleImGuiMenuBar()
 
 void HandleImGuiDebugInfo()
 {
-	MousePicker& mousePicker = m_MousePickEntity.GetComponent<MousePickerComponent>();
-	Camera& m_Camera = m_CamEntity.GetComponent<CameraComponent>();
-
-	std::string frameTime = "Fps = {";
-	frameTime += std::to_string((1 / deltaTime) * frameCounter);
-	frameTime += "}\n";
-	frameTime += "Frame Time (ms) = {";
-	frameTime += std::to_string((deltaTime * frameCounter) * 1000);
-	frameTime += "}";
-	frameCounter = 0;
-
-	std::string mousePosX = std::to_string(mousePicker.GetCurrentRay().x);
-	std::string mousePosZ = std::to_string(mousePicker.GetCurrentRay().z);
-	std::string mousePosY = std::to_string(mousePicker.GetCurrentRay().y);
-	std::string mousePos = "Mouse Position(i^,j^,k^) = {";
-	mousePos += mousePosX.c_str();
-	mousePos += ",";
-	mousePos += mousePosY.c_str();
-	mousePos += ",";
-	mousePos += mousePosZ.c_str();
-	mousePos += "}";
-
-	// Camera Position(x,y,z)
-	std::string camPosZ = std::to_string(m_Camera.Position.z);
-	std::string camPosY = std::to_string(m_Camera.Position.y);
-	std::string camPos = "Main Camera Position(x,y,z) = {";
-	camPos += std::to_string(m_Camera.Position.x);
-	camPos += ",";
-	camPos += camPosY.c_str();
-	camPos += ",";
-	camPos += camPosZ.c_str();
-	camPos += "}";
-
-	// Camera Front(x,y,z)
-	std::string camFrontZ = std::to_string(m_Camera.Front.z);
-	std::string camFrontY = std::to_string(m_Camera.Front.y);
-	std::string camFront = "Main Camera Front(i^,j^,k^) = {";
-	camFront += std::to_string(m_Camera.Front.x);
-	camFront += ",";
-	camFront += camFrontY.c_str();
-	camFront += ",";
-	camFront += camFrontZ.c_str();
-	camFront += "}";
-
-	m_Camera.ImGUIHandler();
-
-	ImGui::NextColumn();
-	// Display contents in a scrolling region
-	ImGui::TextColored(ImVec4(1, 1, 0, 1), "Console Output");
-	ImGui::BeginChild("Scrolling");
-	// Toggle Camera Light
-	ImGui::Text("Camera Spotlight");
-	GUI::ToggleButton("CamLight", &m_Camera.m_CamLightEnabled);
-	
 	{
-		auto view = m_Scene.GetReg().view<MeshComponent>();
+		auto view = m_Scene.GetReg().view<CameraComponent>();
 		for (auto entity : view)
 		{
-			auto& mesh = view.get<MeshComponent>(entity);
-			ImGui::Text("Mesh Lighting");
-			GUI::ToggleButton("MeshLighting", &mesh.Mesh.m_LightingEnabled);
-			if (ImGui::Button("Recompile All Meshes"))
+			auto& camera = view.get<CameraComponent>(entity);
+			std::string camPosZ = std::to_string(camera.Camera.Position.z);
+			std::string camPosY = std::to_string(camera.Camera.Position.y);
+			std::string camPos = "Main Camera Position(x,y,z) = {";
+			camPos += std::to_string(camera.Camera.Position.x);
+			camPos += ",";
+			camPos += camPosY.c_str();
+			camPos += ",";
+			camPos += camPosZ.c_str();
+			camPos += "}";
+
+			// Camera Front(x,y,z)
+			std::string camFrontZ = std::to_string(camera.Camera.Front.z);
+			std::string camFrontY = std::to_string(camera.Camera.Front.y);
+			std::string camFront = "Main Camera Front(i^,j^,k^) = {";
+			camFront += std::to_string(camera.Camera.Front.x);
+			camFront += ",";
+			camFront += camFrontY.c_str();
+			camFront += ",";
+			camFront += camFrontZ.c_str();
+			camFront += "}";
+
+			camera.Camera.ImGUIHandler();
+
+			// Column Seperation
+			ImGui::NextColumn();
+
+			// Display contents in a scrolling region
+			ImGui::TextColored(ImVec4(1, 1, 0, 1), "Console Output");
+			ImGui::BeginChild("Scrolling");
+			// Toggle Camera Light
+			ImGui::Text("Camera Spotlight");
+			GUI::ToggleButton("CamLight", &camera.Camera.m_CamLightEnabled);
+
 			{
-				mesh.Mesh.RAW_Recompile();
+				std::string frameTime = "Fps = {";
+				frameTime += std::to_string((1 / deltaTime) * frameCounter);
+				frameTime += "}\n";
+				frameTime += "Frame Time (ms) = {";
+				frameTime += std::to_string((deltaTime * frameCounter) * 1000);
+				frameTime += "}";
+				frameCounter = 0;
+
+				ImGui::Text(frameTime.c_str());
 			}
+			{
+				auto view = m_Scene.GetReg().view<MeshComponent>();
+				for (auto entity : view)
+				{
+					auto& mesh = view.get<MeshComponent>(entity);
+					ImGui::Text("Mesh Lighting");
+					GUI::ToggleButton("MeshLighting", &mesh.Mesh.m_LightingEnabled);
+					if (ImGui::Button("Recompile All Meshes"))
+					{
+						mesh.Mesh.RAW_Recompile();
+					}
+				}
+			}
+
+			ImGui::Text(camPos.c_str());
+			ImGui::Text(camFront.c_str());
 		}
 	}
+	{
+		auto view = m_Scene.GetReg().view<MousePickerComponent>();
+		for (auto entity : view)
+		{
+			auto& mousePicker = view.get<MousePickerComponent>(entity);
 
-	ImGui::Text(frameTime.c_str());
-	ImGui::Text(mousePos.c_str());
-	ImGui::Text(camPos.c_str());
-	ImGui::Text(camFront.c_str());
+			std::string mousePosX = std::to_string(mousePicker.MousePicker.GetCurrentRay().x);
+			std::string mousePosZ = std::to_string(mousePicker.MousePicker.GetCurrentRay().z);
+			std::string mousePosY = std::to_string(mousePicker.MousePicker.GetCurrentRay().y);
+			std::string mousePos = "Mouse Position(i^,j^,k^) = {";
+			mousePos += mousePosX.c_str();
+			mousePos += ",";
+			mousePos += mousePosY.c_str();
+			mousePos += ",";
+			mousePos += mousePosZ.c_str();
+			mousePos += "}";
+
+			ImGui::Text(mousePos.c_str());
+		}
+	}
 	ImGui::EndChild();
 }
 
@@ -368,6 +382,9 @@ void Start()
 	MousePicker picker{ &camRef.Camera };
 	auto& pickerRef = m_MousePickEntity.AddComponent<MousePickerComponent>(picker);
 	auto& meshRef = m_TestEntity.AddComponent<MeshComponent>(camRef,m_TextureMaster);
+	//reactphysics3d::Vector3 min = {-0.5f,-0.5f,-0.5f};
+	//reactphysics3d::Vector3 max = { 0.5f,0.5f,0.5f };
+	//auto& AABBRef = m_TestEntity.AddComponent<AABBComponent>(min, max);
 	auto& skyboxRef = m_CubemapEntity.AddComponent<CubemapComponent>(camRef);
 }
 
@@ -410,6 +427,7 @@ void Update()
 			mesh.MousePicker.Update();
 		}
 	}
+
 	
 	HandleImGuiDebugInfo();
 }

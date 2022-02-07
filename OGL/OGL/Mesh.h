@@ -1,11 +1,7 @@
 #pragma once
-
-#include "VertexBuffer.h"
 #include "CCamera.h"
 #include "TextureMaster.h"
-#include "Renderer.h"
 #include "GUI.h"
-#include "UniformBuffer.h"
 
 namespace Harmony
 {
@@ -32,10 +28,11 @@ namespace Harmony
 	private:
 		glm::mat4 ModifyModelTransformations(glm::mat4& _model, STransform _transform);
 		glm::mat4 CalculateModelTransformations(glm::mat4& _model, STransform _transform);
+		std::vector<float> BuildSphereUnitPositiveX(int _subDivisions);
+		std::vector<float> BuildSphereUnitNegativeX(int _subDivisions);
 		
 		Camera* m_Camera = nullptr;
 		TextureMaster* m_TextureMaster = nullptr;
-		Renderer m_Renderer;
 
 		unsigned int m_ShaderID;
 		unsigned int m_VertexArrayID;

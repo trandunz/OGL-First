@@ -1,6 +1,6 @@
 #pragma once
 #include <GLM/glm.hpp>
-#include "GameObject.h"
+#include "Mesh.h"
 #include "MousePicker.h"
 #include "Cubemap.h"
 

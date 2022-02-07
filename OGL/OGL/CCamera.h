@@ -4,6 +4,7 @@
 
 #include "NumptyBehavior.h"
 #include "ImGui/imgui.h"
+#include "GUI.h"
 
 namespace Harmony
 {

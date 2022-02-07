@@ -146,9 +146,6 @@
     <ClInclude Include="MousePicker.h">
       <Filter>Header Files\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="Physics.h">
-      <Filter>Header Files\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>

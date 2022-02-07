@@ -191,7 +191,6 @@
     <ClInclude Include="MeshHandler.h" />
     <ClInclude Include="MousePicker.h" />
     <ClInclude Include="NumptyBehavior.h" />
-    <ClInclude Include="Physics.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
