@@ -14,15 +14,11 @@ public:
 		glm::vec3 Get_High_pos() { return ModelMat * glm::vec4(Points_pos[1], 1.0f); }
 		glm::vec3 Get_Low_neg() { return ModelMat * glm::vec4(Points_neg[0], 1.0f); }
 		glm::vec3 Get_High_neg() { return ModelMat * glm::vec4(Points_neg[1], 1.0f); }
+		glm::vec3 GetPos() { return ModelMat * glm::vec4(glm::vec3(), 1.0f); }
 
-		glm::vec3 Get_Low_pos_op() { return ModelMat * glm::vec4(Points_pos[2], 1.0f); }
-		glm::vec3 Get_High_pos_op() { return ModelMat * glm::vec4(Points_pos[3], 1.0f); }
-		glm::vec3 Get_Low_neg_op() { return ModelMat * glm::vec4(Points_neg[2], 1.0f); }
-		glm::vec3 Get_High_neg_op() { return ModelMat * glm::vec4(Points_neg[3], 1.0f); }
-
-		glm::mat4 ModelMat = glm::mat4(1);
+		glm::mat4 ModelMat = glm::mat4(1.0);
 	};
-	static bool AABB(Cube& _cubeOne, Cube& _cubeTwo);
+	static bool Intersection(Cube& _cubeOne, Cube& _cubeTwo);
 	static bool Point(Cube& _cubeOne, glm::vec3 _point);
 };
 

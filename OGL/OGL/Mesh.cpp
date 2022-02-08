@@ -9,7 +9,10 @@ namespace Harmony
 
 		for (int i = -10; i < 10; i++)
 		{
-			CreateInstance({ {i + (i+ 10),0,1},{0,0,0},{1,1,1},0 });
+			STransform transform;
+			transform.position = { i + i,1 ,i + i };
+			transform.scale = { 2.1, 1,2.1 };
+			CreateInstance(transform);
 		}
 
 		m_Camera = &_camera;
@@ -257,8 +260,7 @@ namespace Harmony
 				glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
 		}
 
-		if (Contains(m_Camera->Position))
-
+		Intersects();
 
 		// Unbind
 		{
@@ -284,20 +286,20 @@ namespace Harmony
 		}
 	}
 
-	glm::mat4 Mesh::CalculateModelTransformations(glm::mat4& _model, STransform _transform)
+	glm::mat4 Mesh::CalculateModelTransformations(glm::mat4& _model, STransform& _transform)
 	{
-		_model = glm::translate(glm::mat4(1.0f), _transform.position);
+		_model = glm::translate(glm::mat4(1), _transform.position);
 		if (_transform.rotation.x != 0.0f)
 		{
-			_model = glm::rotate(_model, _transform.rotation.x, _transform.rotation);
+			_model = glm::rotate(_model, _transform.rotation_amount, _transform.rotation);
 		}
 		if (_transform.rotation.y != 0.0f)
 		{
-			_model = glm::rotate(_model, _transform.rotation.y, _transform.rotation);
+			_model = glm::rotate(_model, _transform.rotation_amount, _transform.rotation);
 		}
 		if (_transform.rotation.z != 0.0f)
 		{
-			_model = glm::rotate(_model, _transform.rotation.z, _transform.rotation);
+			_model = glm::rotate(_model, _transform.rotation_amount, _transform.rotation);
 		}
 		_model = glm::scale(_model, _transform.scale);
 		return _model;
@@ -308,15 +310,15 @@ namespace Harmony
 		_model = glm::translate(_model, _transform.position);
 		if (_transform.rotation.x != 0.0f)
 		{
-			_model = glm::rotate(_model, _transform.rotation.x, _transform.rotation);
+			_model = glm::rotate(_model, _transform.rotation_amount, _transform.rotation);
 		}
 		if (_transform.rotation.y != 0.0f)
 		{
-			_model = glm::rotate(_model, _transform.rotation.y, _transform.rotation);
+			_model = glm::rotate(_model, _transform.rotation_amount, _transform.rotation);
 		}
 		if (_transform.rotation.z != 0.0f)
 		{
-			_model = glm::rotate(_model, _transform.rotation.z, _transform.rotation);
+			_model = glm::rotate(_model, _transform.rotation_amount, _transform.rotation);
 		}
 		_model = glm::scale(_model, _transform.scale);
 		return _model;
@@ -365,12 +367,30 @@ namespace Harmony
 			meshCube.ModelMat = m_InstanceMatrix[i];
 			if (Physics::Point(meshCube, _point))
 			{
-				std::cout << "Total Instances : " << m_InstanceMatrix.size() << " !" << std::endl;
-				std::cout << "Collision On Instance : " << i + 1 << " !" << std::endl;
+				//std::cout << "Total Instances : " << m_InstanceMatrix.size() << " !" << std::endl;
+				//std::cout << "Collision On Instance : " << i + 1 << " !" << std::endl;
 				return true;
 			}
 		}
 		
+		return false;
+	}
+
+	bool Mesh::Intersects()
+	{
+		Physics::Cube meshCube;
+		Physics::Cube meshCube2;
+		for (int i = 0; i < m_InstanceMatrix.size() - 1; i++)
+		{
+			meshCube.ModelMat = m_InstanceMatrix[i];
+			meshCube2.ModelMat = m_InstanceMatrix[i + 1];
+
+			if (Physics::Intersection(meshCube, meshCube2))
+			{
+				std::cout << "Collision" << std::endl;
+			}
+		}
+
 		return false;
 	}
 

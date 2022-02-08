@@ -26,11 +26,12 @@ namespace Harmony
 		int GetInstanceMatrixSize();
 
 		bool Contains(glm::vec3 _point);
+		bool Intersects();
 
 		bool m_LightingEnabled = false;
 	private:
 		glm::mat4 ModifyModelTransformations(glm::mat4& _model, STransform _transform);
-		glm::mat4 CalculateModelTransformations(glm::mat4& _model, STransform _transform);
+		glm::mat4 CalculateModelTransformations(glm::mat4& _model, STransform& _transform);
 		std::vector<float> BuildSphereUnitPositiveX(int _subDivisions);
 		std::vector<float> BuildSphereUnitNegativeX(int _subDivisions);
 		

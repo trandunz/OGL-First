@@ -18,13 +18,14 @@ C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\TextureMaster.h(34,1): warning
               _Ty=int
           ]
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\TextureMaster.h(35,1): warning C4267: 'argument': conversion from 'size_t' to 'GLenum', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(357,2): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(379,34): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(379,23): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(392,30): warning C4018: '<': signed/unsigned mismatch
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(403,31): warning C4018: '<': signed/unsigned mismatch
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(436,34): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(436,23): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(449,30): warning C4018: '<': signed/unsigned mismatch
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(460,31): warning C4018: '<': signed/unsigned mismatch
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(16,35): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(361,2): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(401,34): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(401,23): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(414,30): warning C4018: '<': signed/unsigned mismatch
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(425,31): warning C4018: '<': signed/unsigned mismatch
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(458,34): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(458,23): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(471,30): warning C4018: '<': signed/unsigned mismatch
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(482,31): warning C4018: '<': signed/unsigned mismatch
   OGL.vcxproj -> C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Debug\OGL.exe
