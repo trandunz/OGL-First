@@ -51,6 +51,7 @@ namespace Harmony
 		}
 
 		operator bool() const { return m_EntityHandle != entt::null; }
+		operator entt::entity() const { return m_EntityHandle; }
 		bool NEW = true;
 	private:
 		entt::entity m_EntityHandle = entt::null;

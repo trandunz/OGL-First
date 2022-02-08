@@ -164,6 +164,7 @@
     <ClCompile Include="include\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
@@ -191,7 +192,7 @@
     <ClInclude Include="MeshHandler.h" />
     <ClInclude Include="MousePicker.h" />
     <ClInclude Include="NumptyBehavior.h" />
-    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Physics.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SHAPEARRAYS.h" />

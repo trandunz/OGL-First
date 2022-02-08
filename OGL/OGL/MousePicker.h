@@ -10,8 +10,8 @@ namespace Harmony
         MousePicker(Camera* _camera)
         {
             m_Camera = _camera;
-            //m_ProjectionMatrix = _projMat;
             m_ViewMatrix = m_Camera->GetViewMatrix();
+            m_ProjectionMatrix = m_Camera->GetProjectionMatrix();
         }
         ~MousePicker()
         {
@@ -27,12 +27,8 @@ namespace Harmony
         void Update()
         {
             m_ViewMatrix = m_Camera->GetViewMatrix();
+            m_ProjectionMatrix = m_Camera->GetProjectionMatrix();
             m_CurrentRay = CalculateMouseRay(m_MouseX, m_MouseY);
-        }
-
-        void ProcessMovement(glm::vec3 _movePerFrame)
-        {
-            Transform.position = _movePerFrame;
         }
 
         glm::vec3 GetCurrentRay()
@@ -40,18 +36,12 @@ namespace Harmony
             return m_CurrentRay;
         }
 
-        /*glm::vec3 GetCurrentTerrainPoint()
-        {
-            return m_CurrentTerrainPoint;
-        }*/
-
         float Range = 10.0f;
-        STransform Transform;
     private:
 
         //glm::vec3 m_CurrentTerrainPoint;
         glm::vec3 m_CurrentRay{ 0,0,0 };
-        glm::mat4 m_ProjectionMatrix = glm::perspective(45.0f, (float)1920.0f / (float)1080.0f, 0.1f, 1000.0f);
+        glm::mat4 m_ProjectionMatrix;
         glm::mat4 m_ViewMatrix;
         Camera* m_Camera = nullptr;
 
@@ -96,57 +86,6 @@ namespace Harmony
             glm::vec3 start = glm::vec3(camPos.x, camPos.y, camPos.z);
             glm::vec3 scaledRay = glm::vec3(_ray.x * _distance, _ray.y * _distance, _ray.z * _distance);
             return scaledRay + start;
-        }
-        glm::vec3 BinarySearch(int _count, float _start, float _finish, glm::vec3 _ray)
-        {
-            float half = _start + ((_finish - _start) / 2.f);
-            if (_count >= 10)
-            {
-                glm::vec3 endPoint = GetPointOnRay(_ray, half);
-                // Check Intersection
-                if (true)
-                {
-                    return endPoint;
-                }
-                else if (false)
-                {
-                    return glm::vec3(0);
-                }
-            }
-            if (IntersectionInRange(_start, half, _ray))
-            {
-                return BinarySearch(_count + 1, _start, half, _ray);
-            }
-            else
-            {
-                return BinarySearch(_count + 1, half, _finish, _ray);
-            }
-        }
-        bool IntersectionInRange(float _start, float _finish, glm::vec3 _ray)
-        {
-            glm::vec3 startPoint = GetPointOnRay(_ray, _start);
-            glm::vec3 endPoint = GetPointOnRay(_ray, _finish);
-            if (!IsUnderGround(startPoint) && IsUnderGround(endPoint))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        bool IsUnderGround(glm::vec3 _testPoint)
-        {
-            float height = 0;
-            /*Terrain terrain = getTerrain(_testPoint.getX(), _testPoint.getZ());*/
-            /*if (terrain != null)
-            {
-                height = terrain.getHeightOfTerrain(_testPoint.Transform.Position.x, _testPoint.Transform.Position.z);
-            }*/
-            if (_testPoint.y < height)
-                return true;
-            else
-                return false;
         }
     };
 }

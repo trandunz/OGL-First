@@ -102,6 +102,9 @@
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Physics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -120,9 +123,6 @@
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="CCamera.h">
@@ -202,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="Entity.h">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.h">
+      <Filter>Header Files\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -9,7 +9,7 @@ namespace Harmony
 
 		for (int i = -10; i < 10; i++)
 		{
-			CreateInstance({ {i + rand() % 4,0,1},{0,0,0},{1,1,1},0 });
+			CreateInstance({ {i + (i+ 10),0,1},{0,0,0},{1,1,1},0 });
 		}
 
 		m_Camera = &_camera;
@@ -257,6 +257,9 @@ namespace Harmony
 				glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
 		}
 
+		if (Contains(m_Camera->Position))
+
+
 		// Unbind
 		{
 			m_TextureMaster->m_Textures[0]->Unbind();
@@ -352,6 +355,23 @@ namespace Harmony
 	int Mesh::GetInstanceMatrixSize()
 	{
 		return m_InstanceMatrix.size();
+	}
+
+	bool Mesh::Contains(glm::vec3 _point)
+	{
+		Physics::Cube meshCube;
+		for (int i = 0; i < m_InstanceMatrix.size(); i++)
+		{
+			meshCube.ModelMat = m_InstanceMatrix[i];
+			if (Physics::Point(meshCube, _point))
+			{
+				std::cout << "Total Instances : " << m_InstanceMatrix.size() << " !" << std::endl;
+				std::cout << "Collision On Instance : " << i + 1 << " !" << std::endl;
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	std::vector<float> Mesh::BuildSphereUnitPositiveX(int subdivision)

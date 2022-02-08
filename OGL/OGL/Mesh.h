@@ -2,6 +2,7 @@
 #include "CCamera.h"
 #include "TextureMaster.h"
 #include "GUI.h"
+#include "Physics.h"
 
 namespace Harmony
 {
@@ -23,6 +24,8 @@ namespace Harmony
 		void ModifyInstance(unsigned int _index, float _color[4]);
 
 		int GetInstanceMatrixSize();
+
+		bool Contains(glm::vec3 _point);
 
 		bool m_LightingEnabled = false;
 	private:
