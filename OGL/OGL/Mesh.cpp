@@ -3,18 +3,27 @@ namespace Harmony
 {
 	Mesh::Mesh(Camera& _camera, TextureMaster& _textureMaster)
 	{
-
+		BuildNormals();
+		BuildVertexPoints();
 		m_TextureMaster = &_textureMaster;
 		srand(10000000);
 
 		for (int i = -10; i < 10; i++)
 		{
 			STransform transform;
-			transform.position = { i + i,1 ,i + i };
-			transform.scale = { 2.1, 1,2.1 };
+			transform.position = { i + i,20 ,0 };
+			transform.scale = { 1, 1,1 };
 			CreateInstance(transform);
 		}
-
+		STransform transform;
+		transform.position = { 0,-20 ,0 };
+		transform.scale = { 40, 1,10 };
+		CreateInstance(transform);
+		for (int i = 0; i < m_InstanceMatrix.size(); i++)
+		{
+			m_PreviousPositions.push_back(m_InstanceMatrix[i]);
+		}
+		
 		m_Camera = &_camera;
 
 		RAW_Compile();
@@ -84,12 +93,22 @@ namespace Harmony
 		// VertexBuffer
 		glCreateBuffers(1, &m_VertBufferID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_VertBufferID);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(VERT_CUBE), VERT_CUBE, GL_STATIC_DRAW);
+		if (m_Vertices.size() > 0)
+		{
+			glBufferData(GL_ARRAY_BUFFER, m_Vertices.size() * sizeof(Vertex), &m_Vertices[0], GL_STATIC_DRAW);
+		}
+		else
+			glBufferData(GL_ARRAY_BUFFER, sizeof(VERT_CUBE), VERT_CUBE, GL_STATIC_DRAW);
 		
 		// Index Buffer
 		glCreateBuffers(1, &m_IndexBufferID);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferID);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * sizeof(unsigned int), INDEX_CUBE, GL_STATIC_DRAW);
+		if (m_Indices.size() > 0)
+		{
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Indices.size() * sizeof(unsigned int), &m_Indices[0], GL_STATIC_DRAW);
+		}
+		else
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * sizeof(unsigned int), INDEX_CUBE, GL_STATIC_DRAW);
 
 		// Uniform Buffer
 		unsigned int uniformBlockIndexYellow = glGetUniformBlockIndex(m_ShaderID, "Matrices");
@@ -112,10 +131,20 @@ namespace Harmony
 			glEnableVertexAttribArray(0);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(GLfloat)));
-			glEnableVertexAttribArray(2);
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(6 * sizeof(GLfloat)));
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			if (m_Vertices.size() > 0)
+			{
+				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, Normal)));
+				glEnableVertexAttribArray(2);
+				glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, TexCoords)));
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
+			}
+			else
+			{
+				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(GLfloat)));
+				glEnableVertexAttribArray(2);
+				glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(6 * sizeof(GLfloat)));
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
+			}
 
 			// Instance Matrix Layout
 			if (m_InstanceCount != 1)
@@ -182,6 +211,10 @@ namespace Harmony
 
 	void Mesh::RAW_Draw()
 	{
+		for (int i = 0; i < m_InstanceMatrix.size(); i++)
+		{
+			m_PreviousPositions[i] = m_InstanceMatrix[i];
+		}
 		glUseProgram(m_ShaderID);
 
 		glBindVertexArray(m_VertexArrayID);
@@ -255,12 +288,15 @@ namespace Harmony
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferID);
 		{
 			if (m_InstanceCount > 1)
-				glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, m_InstanceCount);
+			{
+				if (m_Indices.size() > 0)
+					glDrawElementsInstanced(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0, m_InstanceCount);
+				else
+					glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, m_InstanceCount);
+			}
 			else
 				glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
 		}
-
-		Intersects();
 
 		// Unbind
 		{
@@ -376,22 +412,33 @@ namespace Harmony
 		return false;
 	}
 
-	bool Mesh::Intersects()
+	std::vector<bool> Mesh::Intersects()
 	{
 		Physics::Cube meshCube;
-		Physics::Cube meshCube2;
-		for (int i = 0; i < m_InstanceMatrix.size() - 1; i++)
+		Physics::Cube otherCube;
+		std::vector<bool> collisions;
+		for (int i = 0; i < m_InstanceMatrix.size(); i++)
+		{
+			collisions.push_back(false);
+		}
+
+		for (int i = 0; i < m_InstanceMatrix.size(); i++)
 		{
 			meshCube.ModelMat = m_InstanceMatrix[i];
-			meshCube2.ModelMat = m_InstanceMatrix[i + 1];
-
-			if (Physics::Intersection(meshCube, meshCube2))
+			
+			for (int j = i + 1; j < m_InstanceMatrix.size(); j++)
 			{
-				std::cout << "Collision" << std::endl;
+				otherCube.ModelMat = m_InstanceMatrix[j];
+				if (Physics::Intersection(meshCube, otherCube))
+				{
+					collisions[i] = true;
+					break;
+					std::cout << "Collision" << std::endl;
+				}
 			}
 		}
 
-		return false;
+		return collisions;
 	}
 
 	std::vector<float> Mesh::BuildSphereUnitPositiveX(int subdivision)
@@ -506,5 +553,78 @@ namespace Harmony
 		}
 
 		return vertices;
+	}
+	void Mesh::BuildNormals(std::string _shapeType)
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			m_Indices.push_back(0 + (6 * i));
+			m_Indices.push_back(1 + (6 * i));
+			m_Indices.push_back(2 + (6 * i));
+			m_Indices.push_back(2 + (6 * i));
+			m_Indices.push_back(4 + (6 * i));
+			m_Indices.push_back(0 + (6 * i));
+		}
+		//	0, 1, 2,
+		//	2, 4, 0,
+
+		//	6, 7, 8,
+		//	8, 10, 6,
+
+		//	12, 13, 14,
+		//	14, 16, 12,
+
+		//	18, 19, 20,
+		//	20, 22, 18,
+
+		//	24, 25, 26,
+		//	26, 28, 24,
+
+		//	30, 31, 32,
+		//	32, 34, 30
+	}
+	void Mesh::BuildVertexPoints(std::string _shapeType)
+	{
+		m_Vertices.push_back({ {-0.5f, -0.5f, -0.5f},{0.0f,  0.0f, -1.0f},{0.0f,  0.0f} });
+		m_Vertices.push_back({ { 0.5f, -0.5f, -0.5f},{0.0f,  0.0f, -1.0f},{1.0f,  0.0f} });
+		m_Vertices.push_back({ { 0.5f,  0.5f, -0.5f},{0.0f,  0.0f, -1.0f},{1.0f,  1.0f} });
+		m_Vertices.push_back({ { 0.5f,  0.5f, -0.5f},{0.0f,  0.0f, -1.0f},{1.0f,  1.0f} });
+		m_Vertices.push_back({ {-0.5f,  0.5f, -0.5f},{0.0f,  0.0f, -1.0f},{0.0f,  1.0f} });
+		m_Vertices.push_back({ {-0.5f, -0.5f, -0.5f},{0.0f,  0.0f, -1.0f},{0.0f,  0.0f} });
+
+		m_Vertices.push_back({ {-0.5f, -0.5f,  0.5f},{0.0f,  0.0f, 1.0f},{0.0f,  0.0f} });
+		m_Vertices.push_back({ { 0.5f, -0.5f,  0.5f},{0.0f,  0.0f, 1.0f},{1.0f,  0.0f} });
+		m_Vertices.push_back({ { 0.5f,  0.5f,  0.5f},{0.0f,  0.0f, 1.0f},{1.0f,  1.0f} });
+		m_Vertices.push_back({ { 0.5f,  0.5f,  0.5f},{0.0f,  0.0f, 1.0f},{1.0f,  1.0f} });
+		m_Vertices.push_back({ {-0.5f,  0.5f,  0.5f},{0.0f,  0.0f, 1.0f},{0.0f,  1.0f} });
+		m_Vertices.push_back({ {-0.5f, -0.5f,  0.5f},{0.0f,  0.0f, 1.0f},{0.0f,  0.0f} });
+
+		m_Vertices.push_back({ {-0.5f,  0.5f,  0.5f},{-1.0f,  0.0f,  0.0f},{1.0f,  0.0f} });
+		m_Vertices.push_back({ {-0.5f,  0.5f, -0.5f},{-1.0f,  0.0f,  0.0f},{1.0f,  1.0f} });
+		m_Vertices.push_back({ {-0.5f, -0.5f, -0.5f},{-1.0f,  0.0f,  0.0f},{0.0f,  1.0f} });
+		m_Vertices.push_back({ {-0.5f, -0.5f, -0.5f},{-1.0f,  0.0f,  0.0f},{0.0f,  1.0f} });
+		m_Vertices.push_back({ {-0.5f, -0.5f,  0.5f},{-1.0f,  0.0f,  0.0f},{0.0f,  0.0f} });
+		m_Vertices.push_back({ {-0.5f,  0.5f,  0.5f},{-1.0f,  0.0f,  0.0f},{1.0f,  0.0f} });
+
+		m_Vertices.push_back({ {0.5f,  0.5f,  0.5f},{1.0f,  0.0f,  0.0f},{1.0f,  0.0f} });
+		m_Vertices.push_back({ {0.5f,  0.5f, -0.5f},{1.0f,  0.0f,  0.0f},{1.0f,  1.0f} });
+		m_Vertices.push_back({ {0.5f, -0.5f, -0.5f},{1.0f,  0.0f,  0.0f},{0.0f,  1.0f} });
+		m_Vertices.push_back({ {0.5f, -0.5f, -0.5f},{1.0f,  0.0f,  0.0f},{0.0f,  1.0f} });
+		m_Vertices.push_back({ {0.5f, -0.5f,  0.5f},{1.0f,  0.0f,  0.0f},{0.0f,  0.0f} });
+		m_Vertices.push_back({ {0.5f,  0.5f,  0.5f},{1.0f,  0.0f,  0.0f},{1.0f,  0.0f} });
+
+		m_Vertices.push_back({ {-0.5f, -0.5f, -0.5f},{0.0f,  -1.0f, 0.0f},{0.0f,  1.0f} });
+		m_Vertices.push_back({ { 0.5f, -0.5f, -0.5f},{0.0f,  -1.0f, 0.0f},{1.0f,  1.0f} });
+		m_Vertices.push_back({ { 0.5f, -0.5f,  0.5f},{0.0f,  -1.0f, 0.0f},{1.0f,  0.0f} });
+		m_Vertices.push_back({ { 0.5f, -0.5f,  0.5f},{0.0f,  -1.0f, 0.0f},{1.0f,  0.0f} });
+		m_Vertices.push_back({ {-0.5f, -0.5f,  0.5f},{0.0f,  -1.0f, 0.0f},{0.0f,  0.0f} });
+		m_Vertices.push_back({ {-0.5f, -0.5f, -0.5f},{0.0f,  -1.0f, 0.0f},{0.0f,  1.0f} });
+
+		m_Vertices.push_back({ {-0.5f,  0.5f, -0.5f},{0.0f,  1.0f, 0.0f},{0.0f,  1.0f} });
+		m_Vertices.push_back({ { 0.5f,  0.5f, -0.5f},{0.0f,  1.0f, 0.0f},{1.0f,  1.0f} });
+		m_Vertices.push_back({ { 0.5f,  0.5f,  0.5f},{0.0f,  1.0f, 0.0f},{1.0f,  0.0f} });
+		m_Vertices.push_back({ { 0.5f,  0.5f,  0.5f},{0.0f,  1.0f, 0.0f},{1.0f,  0.0f} });
+		m_Vertices.push_back({ {-0.5f,  0.5f,  0.5f},{0.0f,  1.0f, 0.0f},{0.0f,  0.0f} });
+		m_Vertices.push_back({ {-0.5f,  0.5f, -0.5f},{0.0f,  1.0f, 0.0f},{0.0f,  1.0f} });
 	}
 }

@@ -55,6 +55,9 @@
     <Filter Include="Header Files\Scene">
       <UniqueIdentifier>{2495608b-acbf-41af-bb9d-6bd8ac29aa42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Vendor\Assimp">
+      <UniqueIdentifier>{459c0acb-4f39-446b-bd44-a8ed3d71ea1f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

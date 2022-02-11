@@ -30,13 +30,17 @@ namespace Harmony
         Camera(std::map<int, bool>& _keyMap, float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
         ~Camera();
 
-        inline glm::mat4 GetViewMatrix() { return glm::lookAt(Position, Position + Front, Up); }
+        inline glm::mat4 GetViewMatrix() 
+        {
+            glm::mat4 transform = glm::translate(glm::mat4(1.0f), Position);
+            return m_Perspective ? glm::lookAt(Position, Position + Front, Up) : glm::inverse(transform);
+        }
         inline glm::mat4 GetProjectionMatrix()
         {
             if (m_Perspective)
                 return glm::perspective(glm::radians(Zoom), 1920.0f / 1080.0f, 0.1f, 100.0f);
             else
-                return glm::ortho(-(1920 * 0.5f), 1920 * 0.5f, -(1080 * 0.5f), 1080 * 0.5f, 0.1f, 100.0f);
+                return glm::ortho(-(100 * 0.5f * (1 / Zoom)), 100 * 0.5f * (1 / Zoom), -(100 * 0.5f * (1 / Zoom)), 100 * 0.5f * (1 / Zoom), 0.1f, 100.0f);
         }
 
         void Input();
@@ -48,6 +52,7 @@ namespace Harmony
         bool SetPerspective();
 
         void ImGUIHandler();
+        void ImGUIHandler(const char* _type);
 
         glm::vec3 Position;
         glm::vec3 Front;

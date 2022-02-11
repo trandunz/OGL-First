@@ -35,7 +35,8 @@ namespace Harmony
 
     void Camera::Movement(long double _dt)
     {
-        UpdatePosition(m_InputVec.x * MovementSpeed * _dt, m_InputVec.y * MovementSpeed * _dt, m_InputVec.z * MovementSpeed * _dt);
+        if (m_Perspective)
+            UpdatePosition(m_InputVec.x * MovementSpeed * _dt, m_InputVec.y * MovementSpeed * _dt, m_InputVec.z * MovementSpeed * _dt);
     }
 
     bool Camera::UpdatePosition(float _x, float _y, float _z)
@@ -74,6 +75,25 @@ namespace Harmony
             ImGui::Text("MovementSpeed");
             {
                 ImGui::SliderFloat(":Camera Movespeed", &MovementSpeed, 0, 500);
+            }
+        }
+    }
+
+    void Camera::ImGUIHandler(const char* _type)
+    {
+        if (_type == "DebugInfo")
+        {
+            ImGUIHandler();
+        }
+        else if (_type == "MenuBar")
+        {
+            if (ImGui::BeginMenu("Camera"))
+            {
+                if (ImGui::MenuItem("Toggle Perspective", "Yes")) 
+                { 
+                    SetPerspective();
+                }
+                ImGui::EndMenu();
             }
         }
     }
@@ -153,7 +173,7 @@ namespace Harmony
 
         if (Zoom < 1.0f)
             Zoom = 1.0f;
-        if (Zoom > 45.0f)
+        if (Zoom > 45.0f && m_Perspective)
             Zoom = 45.0f;
     }
 

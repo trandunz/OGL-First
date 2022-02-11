@@ -1,4 +1,4 @@
-﻿  GameObject.cpp
+﻿  Mesh.cpp
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\TextureMaster.h(19,1): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
           with
           [
@@ -18,13 +18,34 @@ C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\TextureMaster.h(34,1): warning
               _Ty=int
           ]
 C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\TextureMaster.h(35,1): warning C4267: 'argument': conversion from 'size_t' to 'GLenum', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\VertexArray.h(28,1): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\IndexBuffer.h(17,1): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\GameObject.cpp(52,4): warning C4065: switch statement contains 'default' but no 'case' labels
-C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\GameObject.cpp(60,4): warning C4065: switch statement contains 'default' but no 'case' labels
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(293,97): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(395,2): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(446,34): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(446,23): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(459,30): warning C4018: '<': signed/unsigned mismatch
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(470,31): warning C4018: '<': signed/unsigned mismatch
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(503,34): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(503,23): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(516,30): warning C4018: '<': signed/unsigned mismatch
+C:\Users\trand\Documents\GitHub\OGL-First\OGL\OGL\Mesh.cpp(527,31): warning C4018: '<': signed/unsigned mismatch
   Generating code
-  12 of 3555 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    44 functions had inline decision re-evaluated but remain unchanged
+  Previous IPDB was built with incompatible compiler, fall back to full compilation.
+  All 4420 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
+imgui.obj : warning LNK4099: PDB 'vc143.pdb' was not found with 'imgui.obj' or at 'C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Release\vc143.pdb'; linking object as if no debug info
+imgui_demo.obj : warning LNK4099: PDB 'vc143.pdb' was not found with 'imgui_demo.obj' or at 'C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Release\vc143.pdb'; linking object as if no debug info
+imgui_draw.obj : warning LNK4099: PDB 'vc143.pdb' was not found with 'imgui_draw.obj' or at 'C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Release\vc143.pdb'; linking object as if no debug info
+imgui_impl_glfw.obj : warning LNK4099: PDB 'vc143.pdb' was not found with 'imgui_impl_glfw.obj' or at 'C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Release\vc143.pdb'; linking object as if no debug info
+imgui_impl_opengl3.obj : warning LNK4099: PDB 'vc143.pdb' was not found with 'imgui_impl_opengl3.obj' or at 'C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Release\vc143.pdb'; linking object as if no debug info
+imgui_tables.obj : warning LNK4099: PDB 'vc143.pdb' was not found with 'imgui_tables.obj' or at 'C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Release\vc143.pdb'; linking object as if no debug info
+imgui_widgets.obj : warning LNK4099: PDB 'vc143.pdb' was not found with 'imgui_widgets.obj' or at 'C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Release\vc143.pdb'; linking object as if no debug info
+CCamera.obj : warning LNK4020: a type record in 'c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\release\vc143.pdb' is corrupted; some symbols and types may not be accessible from the debugger
+GameObject.obj : warning LNK4020: a type record in 'c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\release\vc143.pdb' is corrupted; some symbols and types may not be accessible from the debugger
+GameObject.obj : warning LNK4020: a type record in 'c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\release\vc143.pdb' is corrupted; some symbols and types may not be accessible from the debugger
+GameObject.obj : warning LNK4020: a type record in 'c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\release\vc143.pdb' is corrupted; some symbols and types may not be accessible from the debugger
+Physics.obj : warning LNK4020: a type record in 'c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\release\vc143.pdb' is corrupted; some symbols and types may not be accessible from the debugger
+Physics.obj : warning LNK4020: a type record in 'c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\release\vc143.pdb' is corrupted; some symbols and types may not be accessible from the debugger
+Scene.obj : warning LNK4020: a type record in 'c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\release\vc143.pdb' is corrupted; some symbols and types may not be accessible from the debugger
+Scene.obj : warning LNK4020: a type record in 'c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\release\vc143.pdb' is corrupted; some symbols and types may not be accessible from the debugger
+Texture.obj : warning LNK4020: a type record in 'c:\users\trand\documents\github\ogl-first\ogl\ogl\x64\release\vc143.pdb' is corrupted; some symbols and types may not be accessible from the debugger
   OGL.vcxproj -> C:\Users\trand\Documents\GitHub\OGL-First\OGL\x64\Release\OGL.exe

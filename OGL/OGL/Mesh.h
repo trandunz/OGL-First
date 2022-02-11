@@ -4,6 +4,13 @@
 #include "GUI.h"
 #include "Physics.h"
 
+struct Vertex
+{
+	glm::vec3 Position;
+	glm::vec3 Normal;
+	glm::vec2 TexCoords;
+};
+
 namespace Harmony
 {
 	class Mesh
@@ -23,10 +30,21 @@ namespace Harmony
 		void ModifyInstance(unsigned int _index, STransform _transform);
 		void ModifyInstance(unsigned int _index, float _color[4]);
 
+		void HandleCollision()
+		{
+			std::vector<bool> intersections = Intersects();
+			for (int i = 0; i < m_InstanceMatrix.size(); i++)
+			{
+				if (intersections[i])
+				{
+					m_InstanceMatrix[i] = m_PreviousPositions[i];
+				}
+			}
+		}
 		int GetInstanceMatrixSize();
 
 		bool Contains(glm::vec3 _point);
-		bool Intersects();
+		std::vector<bool> Intersects();
 
 		bool m_LightingEnabled = false;
 	private:
@@ -34,6 +52,8 @@ namespace Harmony
 		glm::mat4 CalculateModelTransformations(glm::mat4& _model, STransform& _transform);
 		std::vector<float> BuildSphereUnitPositiveX(int _subDivisions);
 		std::vector<float> BuildSphereUnitNegativeX(int _subDivisions);
+		void BuildNormals(std::string _shapeType = "Square");
+		void BuildVertexPoints(std::string _shapeType = "Square");
 		
 		Camera* m_Camera = nullptr;
 		TextureMaster* m_TextureMaster = nullptr;
@@ -50,9 +70,12 @@ namespace Harmony
 		float m_Color[4]{ 1,1,1,1 };
 
 		std::vector<glm::mat4> m_InstanceMatrix;
+		std::vector<glm::mat4> m_PreviousPositions;
 		glm::mat4 m_ProjectionMat{};
 		glm::mat4 m_ViewMat{};
 
+		std::vector<Vertex> m_Vertices;
+		std::vector<unsigned int> m_Indices;
 		GLfloat VERT_CUBE[8 * 36] =
 		{
 			-0.5f, -0.5f, -0.5f,	 0.0f,  0.0f, -1.0f,	0.0f,  0.0f,

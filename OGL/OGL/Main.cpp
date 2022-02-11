@@ -1,3 +1,4 @@
+
 #include "FrameBuffer.h"
 #include "Entity.h"
 
@@ -10,6 +11,7 @@ static unsigned int frameCounter = 0;
 
 using namespace Harmony;
 
+//void initPhysics();
 void InitGLFW();
 void InitGLFWCallbacks();
 void InitInputMode();
@@ -37,6 +39,15 @@ Harmony::Entity m_CamEntity;
 Harmony::Entity m_TestEntity;
 Harmony::Entity m_MousePickEntity;
 Harmony::Entity m_CubemapEntity;
+
+//physx::PxDefaultAllocator m_Allocator;
+//physx::PxDefaultCpuDispatcher* m_Dispatcher = NULL;
+//physx::PxTolerancesScale m_ToleranceScale;
+//physx::PxFoundation* m_Foundation = NULL;
+//physx::PxPhysics* m_Physics = NULL;
+//physx::PxScene* m_PxScene = NULL;
+//physx::PxMaterial* m_Material = NULL;
+//physx::PxPvd* m_Pvd = NULL;
 
 bool firstMouse = true;
 bool m_ShowMouse = false;
@@ -129,15 +140,16 @@ int main()
 {
 	InitGLFW();
 	GUI::InitImGUI(m_RenderWindow);
+	//initPhysics();
 	// MAIN START
 	Start();
-
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClearDepth(1);
+	
 	while (!glfwWindowShouldClose(m_RenderWindow))
 	{
 		//m_FrameBuffer->Bind();
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearDepth(1);
 		GUI::StartImGUIFrame();
 		//
 		// MAIN UPDATE
@@ -153,6 +165,12 @@ int main()
 	// CLEANUP AND EXIT
 	return Cleanup();
 }
+
+//void initPhysics()
+//{
+//	physx::PxDefaultErrorCallback error;
+//	m_Foundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_Allocator, error);
+//}
 
 void InitGLFW()
 {
@@ -240,6 +258,13 @@ void HandleImGuiMenuBar()
 	{
 		if (ImGui::MenuItem("Close", "Ctrl+W")) { ISTOOLACTIVE = false; }
 		ImGui::EndMenu();
+	}
+	if (m_CamEntity.IsAlive())
+	{
+		if (m_CamEntity.HasComponent<CameraComponent>())
+		{
+			m_CamEntity.GetComponent<CameraComponent>().Camera.ImGUIHandler("MenuBar");
+		}
 	}
 	if (m_TestEntity.IsAlive())
 	{
@@ -382,14 +407,12 @@ void Start()
 	MousePicker picker{ &camRef.Camera };
 	auto& pickerRef = m_MousePickEntity.AddComponent<MousePickerComponent>(picker);
 	auto& meshRef = m_TestEntity.AddComponent<MeshComponent>(camRef,m_TextureMaster);
-	//reactphysics3d::Vector3 min = {-0.5f,-0.5f,-0.5f};
-	//reactphysics3d::Vector3 max = { 0.5f,0.5f,0.5f };
-	//auto& AABBRef = m_TestEntity.AddComponent<AABBComponent>(min, max);
 	auto& skyboxRef = m_CubemapEntity.AddComponent<CubemapComponent>(camRef);
 }
 
 void Update()
 {
+
 	HandleImGuiMenuBar();
 	CalculateDeltaTime();
 	InputActions();
@@ -401,33 +424,49 @@ void Update()
 		{
 			auto& mesh = view.get<MeshComponent>(entity);
 			mesh.Mesh.RAW_Draw();
+			//STransform tempTransform;
+			//tempTransform.position = m_CamEntity.GetComponent<CameraComponent>().Camera.Position + m_CamEntity.GetComponent<CameraComponent>().Camera.Front + m_CamEntity.GetComponent<CameraComponent>().Camera.Front + m_CamEntity.GetComponent<CameraComponent>().Camera.Front + m_CamEntity.GetComponent<CameraComponent>().Camera.Front;
+			//tempTransform.scale = { 1.0f,1.0f,1.0f };
+			//tempTransform.rotation_amount = 0;
+			//mesh.Mesh.ModifyInstance(2, tempTransform);
+
+			STransform GravityTrans;
+			GravityTrans.position = {0.0f, -9.81f * deltaTime, 0.0f};
+			GravityTrans.scale = { 1.0f,1.0f,1.0f };
+			GravityTrans.rotation_amount = 0;
+
+			for (int i = 0; i < mesh.Mesh.GetInstanceMatrixSize() - 1; i++)
+			{
+				mesh.Mesh.ModifyInstanceMatrix(i, GravityTrans);
+			}
+			
+			mesh.Mesh.HandleCollision();
 		}
 	}
 	{
 		auto view = m_Scene.GetReg().view<CubemapComponent>();
 		for (auto entity : view)
 		{
-			auto& mesh = view.get<CubemapComponent>(entity);
-			mesh.Cubemap.Render();
+			auto& cubeMap = view.get<CubemapComponent>(entity);
+			cubeMap.Cubemap.Render();
 		}
 	}
 	{
 		auto view = m_Scene.GetReg().view<CameraComponent>();
 		for (auto entity : view)
 		{
-			auto& mesh = view.get<CameraComponent>(entity);
-			mesh.Camera.Movement(deltaTime);
+			auto& camera = view.get<CameraComponent>(entity);
+			camera.Camera.Movement(deltaTime);
 		}
 	}
 	{
 		auto view = m_Scene.GetReg().view<MousePickerComponent>();
 		for (auto entity : view)
 		{
-			auto& mesh = view.get<MousePickerComponent>(entity);
-			mesh.MousePicker.Update();
+			auto& mousePicker = view.get<MousePickerComponent>(entity);
+			mousePicker.MousePicker.Update();
 		}
 	}
-
 	
 	HandleImGuiDebugInfo();
 }
