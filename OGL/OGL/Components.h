@@ -1,5 +1,8 @@
 #pragma once
-#include <GLM/glm.hpp>
+
+#ifndef COMPONENTS_H
+#define COMPONENTS_H
+
 #include "Mesh.h"
 #include "MousePicker.h"
 #include "Cubemap.h"
@@ -80,7 +83,7 @@ namespace Harmony
 		CubemapComponent() = default;
 		CubemapComponent(const Harmony::Cubemap _cubemap)
 			:Cubemap(_cubemap) {}
-		CubemapComponent(Harmony::Camera& _camera)
+		CubemapComponent(Camera& _camera)
 			:Cubemap(_camera) {}
 		CubemapComponent(const CubemapComponent&) = default;
 
@@ -88,4 +91,5 @@ namespace Harmony
 		operator const Harmony::Cubemap& () const { return Cubemap; }
 	};
 }
+#endif
 

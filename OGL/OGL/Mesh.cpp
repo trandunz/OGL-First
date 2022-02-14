@@ -16,7 +16,7 @@ namespace Harmony
 			CreateInstance(transform);
 		}
 		STransform transform;
-		transform.position = { 0,-20 ,0 };
+		transform.position = { 0,-10 ,0 };
 		transform.scale = { 40, 1,10 };
 		CreateInstance(transform);
 		for (int i = 0; i < m_InstanceMatrix.size(); i++)
@@ -33,9 +33,9 @@ namespace Harmony
 	{
 		// Unbind
 		{
-			glBindTexture(m_TextureMaster->m_Textures[0]->Type, 0);
-			glBindTexture(m_TextureMaster->m_Textures[1]->Type, 0);
-			glBindTexture(m_TextureMaster->m_Textures[2]->Type, 0);
+			m_TextureMaster->m_Textures[0]->Unbind();
+			m_TextureMaster->m_Textures[1]->Unbind();
+			m_TextureMaster->m_Textures[2]->Unbind();
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 			glBindBuffer(GL_UNIFORM_BUFFER, 0);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -60,6 +60,7 @@ namespace Harmony
 		// Unbind
 		{
 			m_TextureMaster->m_Textures[0]->Unbind();
+			m_TextureMaster->m_Textures[1]->Unbind();
 			m_TextureMaster->m_Textures[2]->Unbind();
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 			glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -83,11 +84,19 @@ namespace Harmony
 	{
 		if (m_LightingEnabled)
 		{
-			m_ShaderID = CShaderLoader::CreateShader("Resources/Shaders/basic_lighting_2.vs", "Resources/Shaders/TestShader_FILL.gs", "Resources/Shaders/basic_lighting_2.fs");
+			if (m_WireframeEnabled)
+				m_ShaderID = CShaderLoader::CreateShader("Resources/Shaders/basic_lighting_2.vs", "Resources/Shaders/TestShader_WF.gs", "Resources/Shaders/basic_lighting_2.fs");
+			else
+				m_ShaderID = CShaderLoader::CreateShader("Resources/Shaders/basic_lighting_2.vs", "Resources/Shaders/TestShader_FILL.gs", "Resources/Shaders/basic_lighting_2.fs");
+		
 		}
 		else
 		{
-			m_ShaderID = CShaderLoader::CreateShader("Resources/Shaders/TestShader.vs", "Resources/Shaders/TestShader_FILL.gs", "Resources/Shaders/TestShader.fs");
+			if (m_WireframeEnabled)
+				m_ShaderID = CShaderLoader::CreateShader("Resources/Shaders/TestShader.vs", "Resources/Shaders/TestShader_WF.gs", "Resources/Shaders/TestShader.fs");
+			else
+				m_ShaderID = CShaderLoader::CreateShader("Resources/Shaders/TestShader.vs", "Resources/Shaders/TestShader_FILL.gs", "Resources/Shaders/TestShader.fs");
+
 		}
 
 		// VertexBuffer
@@ -172,6 +181,7 @@ namespace Harmony
 		}
 
 		glUniform1i(glGetUniformLocation(m_ShaderID, "material.diffuse"), m_TextureMaster->m_Textures[0]->Unit);
+		glUniform1i(glGetUniformLocation(m_ShaderID, "material.normal"), m_TextureMaster->m_Textures[1]->Unit);
 		glUniform1i(glGetUniformLocation(m_ShaderID, "material.specular"), m_TextureMaster->m_Textures[2]->Unit);
 		glUniform1f(glGetUniformLocation(m_ShaderID, "material.shininess"), 128);
 
@@ -301,6 +311,7 @@ namespace Harmony
 		// Unbind
 		{
 			m_TextureMaster->m_Textures[0]->Unbind();
+			m_TextureMaster->m_Textures[1]->Unbind();
 			m_TextureMaster->m_Textures[2]->Unbind();
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 			glBindBuffer(GL_UNIFORM_BUFFER, 0);

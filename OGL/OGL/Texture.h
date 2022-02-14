@@ -1,32 +1,31 @@
-#ifndef TEXTURE_CLASS_H
-#define TEXTURE_CLASS_H
+#pragma once
 
+#ifndef TEXTURE_H
+#define TEXTURE_H
+#include "Includes.h"
 #include <stb-master/stb_image.h>
 
-#include "Shader.h"
-
-class Texture
+namespace Harmony
 {
-public:
-	Texture() = default;
-	Texture(const char* image, const char* type,GLenum texType, GLenum slot, GLenum format, GLenum pixelType);
-	Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType);
-
-	~Texture();
-
-	void texUnit(Shader& shader, const char* uniform, GLuint unit)
+	class Texture
 	{
-		shader.Bind();
-		shader.SetUniform1i(uniform, unit);
-	}
+	public:
+		Texture() = default;
+		Texture(const char* image, const char* type, GLenum texType, GLenum slot, GLenum format, GLenum pixelType);
+		Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType);
+		Texture(const char* image, GLenum slot, GLenum format);
 
-	void Bind();
-	void Unbind();
-	void Delete();
+		~Texture();
 
-	GLuint Unit;
-	GLuint ID;
-	GLenum Type;
-	std::string type;
-};
+		void Bind();
+		void Unbind();
+		void Delete();
+
+		GLuint Unit;
+		GLuint ID;
+		GLenum Type;
+		std::string type;
+	};
+}
+
 #endif

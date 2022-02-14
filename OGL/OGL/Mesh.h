@@ -1,18 +1,30 @@
 #pragma once
+
+#ifndef MESH_H
+#define MESH_H
 #include "CCamera.h"
 #include "TextureMaster.h"
 #include "GUI.h"
 #include "Physics.h"
-
-struct Vertex
-{
-	glm::vec3 Position;
-	glm::vec3 Normal;
-	glm::vec2 TexCoords;
-};
+#include "CShaderLoader.h"
 
 namespace Harmony
 {
+	struct Vertex
+	{
+		glm::vec3 Position;
+		glm::vec3 Normal;
+		glm::vec2 TexCoords;
+	};
+
+	struct STransform
+	{
+		glm::vec3 position{ 0,0,0 };
+		glm::vec3 rotation{ 0,0,0 };
+		glm::vec3 scale{ 1.0f,1.0f,1.0f };
+		float rotation_amount = 0.0f;
+	};
+
 	class Mesh
 	{
 	public:
@@ -47,6 +59,7 @@ namespace Harmony
 		std::vector<bool> Intersects();
 
 		bool m_LightingEnabled = false;
+		bool m_WireframeEnabled = false;
 	private:
 		glm::mat4 ModifyModelTransformations(glm::mat4& _model, STransform _transform);
 		glm::mat4 CalculateModelTransformations(glm::mat4& _model, STransform& _transform);
@@ -143,3 +156,4 @@ namespace Harmony
 		};
 	};
 }
+#endif

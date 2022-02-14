@@ -154,7 +154,6 @@
     <ClCompile Include="CCamera.cpp" />
     <ClCompile Include="Cubemap.cpp" />
     <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="include\ImGui\imgui.cpp" />
     <ClCompile Include="include\ImGui\imgui_demo.cpp" />
     <ClCompile Include="include\ImGui\imgui_draw.cpp" />
@@ -169,13 +168,12 @@
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Includes.h" />
     <ClInclude Include="CCamera.h" />
     <ClInclude Include="Components.h" />
     <ClInclude Include="CShaderLoader.h" />
     <ClInclude Include="Cubemap.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="FrameBuffer.h" />
-    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="include\ImGui\imconfig.h" />
     <ClInclude Include="include\ImGui\imgui.h" />
@@ -186,22 +184,12 @@
     <ClInclude Include="include\ImGui\imstb_rectpack.h" />
     <ClInclude Include="include\ImGui\imstb_textedit.h" />
     <ClInclude Include="include\ImGui\imstb_truetype.h" />
-    <ClInclude Include="IndexBuffer.h" />
-    <ClInclude Include="LightManager.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="MeshHandler.h" />
     <ClInclude Include="MousePicker.h" />
-    <ClInclude Include="NumptyBehavior.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="SHAPEARRAYS.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureMaster.h" />
-    <ClInclude Include="UniformBuffer.h" />
-    <ClInclude Include="VertexArray.h" />
-    <ClInclude Include="VertexBuffer.h" />
-    <ClInclude Include="VertexBufferLayout.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="instance.vert" />

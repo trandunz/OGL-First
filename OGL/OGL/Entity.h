@@ -1,6 +1,10 @@
 #pragma once
-#include "entt/entt.hpp"
+
+#ifndef ENTITY_H
+#define ENTITY_H
+#include "Includes.h"
 #include "Scene.h"
+
 namespace Harmony
 {
 	class Entity
@@ -58,4 +62,5 @@ namespace Harmony
 		Scene* m_Scene = nullptr;
 	};
 }
+#endif
 

@@ -1,5 +1,3 @@
-
-#include "FrameBuffer.h"
 #include "Entity.h"
 
 static int m_WindowWidth = 1600;
@@ -32,22 +30,12 @@ std::map<int, bool> m_Mousepresses;
 
 GLFWwindow* m_RenderWindow = nullptr;
 TextureMaster m_TextureMaster;
-FrameBuffer* m_FrameBuffer = nullptr;
 
 Scene m_Scene;
 Harmony::Entity m_CamEntity;
 Harmony::Entity m_TestEntity;
 Harmony::Entity m_MousePickEntity;
 Harmony::Entity m_CubemapEntity;
-
-//physx::PxDefaultAllocator m_Allocator;
-//physx::PxDefaultCpuDispatcher* m_Dispatcher = NULL;
-//physx::PxTolerancesScale m_ToleranceScale;
-//physx::PxFoundation* m_Foundation = NULL;
-//physx::PxPhysics* m_Physics = NULL;
-//physx::PxScene* m_PxScene = NULL;
-//physx::PxMaterial* m_Material = NULL;
-//physx::PxPvd* m_Pvd = NULL;
 
 bool firstMouse = true;
 bool m_ShowMouse = false;
@@ -355,6 +343,8 @@ void HandleImGuiDebugInfo()
 					auto& mesh = view.get<MeshComponent>(entity);
 					ImGui::Text("Mesh Lighting");
 					GUI::ToggleButton("MeshLighting", &mesh.Mesh.m_LightingEnabled);
+					ImGui::Text("Wireframe");
+					GUI::ToggleButton("Wireframe", &mesh.Mesh.m_WireframeEnabled);
 					if (ImGui::Button("Recompile All Meshes"))
 					{
 						mesh.Mesh.RAW_Recompile();
@@ -391,11 +381,9 @@ void HandleImGuiDebugInfo()
 
 void Start() 
 {
-	m_TextureMaster.LoadTexture("Resources/Textures/planks.png");
-	m_TextureMaster.LoadNormal("Resources/Textures/normal.png");
-	m_TextureMaster.LoadSpecular("Resources/Textures/planksSpec.png");
-	m_TextureMaster.LoadTexture("Resources/Textures/3.jpg");
-	m_TextureMaster.LoadTexture("Resources/Textures/diffuse.png");
+	m_TextureMaster.LoadTexture("Resources/Textures/Stone/diffuse.jpg");
+	m_TextureMaster.LoadTexture("Resources/Textures/Stone/normal.jpg");
+	m_TextureMaster.LoadSpecular("Resources/Textures/Stone/specular.jpg");
 
 	m_CamEntity = m_Scene.CreateEntity("MainCamera");
 	m_MousePickEntity = m_Scene.CreateEntity("MousePicker");
@@ -590,12 +578,6 @@ void CleanupAllPointers()
 	m_MousePickEntity.Destory();
 	m_Mousepresses.clear();
 	m_Keypresses.clear();
-	if (m_FrameBuffer)
-	{
-		delete m_FrameBuffer;
-		
-	}
-	m_FrameBuffer = nullptr;
 	if (m_RenderWindow)
 	{
 		delete m_RenderWindow;

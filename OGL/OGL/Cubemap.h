@@ -1,11 +1,13 @@
 #pragma once
-#include "NumptyBehavior.h"
-#include "Shader.h"
+
+#ifndef CUBEMAP_H
+#define CUBEMAP_H
 #include "CCamera.h"
+#include "CShaderLoader.h"
 
 namespace Harmony
 {
-	class Cubemap : public NumptyBehavior
+	class Cubemap
 	{
 	public:
 		Cubemap(Camera& _camera);
@@ -76,4 +78,5 @@ namespace Harmony
 		};
 	};
 }
+#endif
 

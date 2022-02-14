@@ -1,10 +1,12 @@
 #pragma once
-#include "NumptyBehavior.h"
+
+#ifndef MOUSE_PICKER_H
+#define MOUSE_PICKER_H
 #include "CCamera.h"
 
 namespace Harmony
 {
-    class MousePicker : public NumptyBehavior
+    class MousePicker
     {
     public:
         MousePicker(Camera* _camera)
@@ -89,4 +91,5 @@ namespace Harmony
         }
     };
 }
+#endif
 

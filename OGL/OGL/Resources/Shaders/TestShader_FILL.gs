@@ -3,48 +3,6 @@
 layout (triangles) in;
 layout (triangle_strip, max_vertices=3) out;
 
-struct Material 
-{
-    sampler2D diffuse;
-    sampler2D normal;
-    sampler2D specular;
-    float shininess;
-}; 
-
-struct DirLight 
-{
-    vec3 direction;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-};
-
-struct PointLight 
-{
-    vec3 position;
-    
-    float constant;
-    float linear;
-    float quadratic;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-};
-
-struct SpotLight 
-{
-    vec3 position;
-    vec3 direction;
-    float cutOff;
-    float outerCutOff;
-    float constant;
-    float linear;
-    float quadratic;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;       
-};
-
 out vec3 FragPos;
 out vec3 Normal;
 out vec2 TexCoords;

@@ -31,32 +31,20 @@
     <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{2c4215df-8bf0-4d05-8179-52c9ae3cfefa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Vendor">
-      <UniqueIdentifier>{3561e855-5896-4204-905f-6cf771c45db4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Components">
       <UniqueIdentifier>{e2e3dea0-c24c-48e2-be2a-b866a174bee2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Helpers">
       <UniqueIdentifier>{c97915a5-9309-4bd8-b156-8e9aa2450d46}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Vendor\Objects">
-      <UniqueIdentifier>{0d7fd267-4a7d-48ef-8fd3-8b4793e00f25}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Components">
       <UniqueIdentifier>{530f4624-8bac-4a99-8fd0-bdfb1dbe8493}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Vendor\ImGui">
-      <UniqueIdentifier>{a44c483b-e125-451d-a2f0-e537b1c28b4a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Vendor\ENTT">
-      <UniqueIdentifier>{6b356366-b966-410e-8f81-0a1ab19dec60}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Scene">
       <UniqueIdentifier>{2495608b-acbf-41af-bb9d-6bd8ac29aa42}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Vendor\Assimp">
-      <UniqueIdentifier>{459c0acb-4f39-446b-bd44-a8ed3d71ea1f}</UniqueIdentifier>
+    <Filter Include="Resource Files\ImGui">
+      <UniqueIdentifier>{f20d346c-5dab-4d2d-b5e5-5822476291d2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -75,30 +63,6 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="include\ImGui\imgui.cpp">
-      <Filter>Resource Files\Vendor\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="include\ImGui\imgui_demo.cpp">
-      <Filter>Resource Files\Vendor\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="include\ImGui\imgui_draw.cpp">
-      <Filter>Resource Files\Vendor\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="include\ImGui\imgui_impl_glfw.cpp">
-      <Filter>Resource Files\Vendor\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="include\ImGui\imgui_impl_opengl3.cpp">
-      <Filter>Resource Files\Vendor\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="include\ImGui\imgui_tables.cpp">
-      <Filter>Resource Files\Vendor\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="include\ImGui\imgui_widgets.cpp">
-      <Filter>Resource Files\Vendor\ImGui</Filter>
-    </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -108,34 +72,34 @@
     <ClCompile Include="Physics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="include\ImGui\imgui.cpp">
+      <Filter>Resource Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_demo.cpp">
+      <Filter>Resource Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_draw.cpp">
+      <Filter>Resource Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_impl_glfw.cpp">
+      <Filter>Resource Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_impl_opengl3.cpp">
+      <Filter>Resource Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_tables.cpp">
+      <Filter>Resource Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_widgets.cpp">
+      <Filter>Resource Files\ImGui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Shader.h">
-      <Filter>Header Files\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="IndexBuffer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexArray.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBuffer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBufferLayout.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="CCamera.h">
       <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="SHAPEARRAYS.h">
-      <Filter>Header Files\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="NumptyBehavior.h">
-      <Filter>Header Files\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="GUI.h">
       <Filter>Header Files\Helpers</Filter>
@@ -152,50 +116,8 @@
     <ClInclude Include="Mesh.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="FrameBuffer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="UniformBuffer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="TextureMaster.h">
       <Filter>Header Files\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshHandler.h">
-      <Filter>Header Files\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="LightManager.h">
-      <Filter>Header Files\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ImGui\imconfig.h">
-      <Filter>Resource Files\Vendor\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ImGui\imgui.h">
-      <Filter>Resource Files\Vendor\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ImGui\imgui_impl_glfw.h">
-      <Filter>Resource Files\Vendor\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ImGui\imgui_impl_opengl3.h">
-      <Filter>Resource Files\Vendor\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ImGui\imgui_impl_opengl3_loader.h">
-      <Filter>Resource Files\Vendor\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ImGui\imgui_internal.h">
-      <Filter>Resource Files\Vendor\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ImGui\imstb_rectpack.h">
-      <Filter>Resource Files\Vendor\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ImGui\imstb_textedit.h">
-      <Filter>Resource Files\Vendor\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ImGui\imstb_truetype.h">
-      <Filter>Resource Files\Vendor\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files\Scene</Filter>
@@ -208,6 +130,36 @@
     </ClInclude>
     <ClInclude Include="Physics.h">
       <Filter>Header Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imconfig.h">
+      <Filter>Resource Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imgui.h">
+      <Filter>Resource Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imgui_impl_glfw.h">
+      <Filter>Resource Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imgui_impl_opengl3.h">
+      <Filter>Resource Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imgui_impl_opengl3_loader.h">
+      <Filter>Resource Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imgui_internal.h">
+      <Filter>Resource Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imstb_rectpack.h">
+      <Filter>Resource Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imstb_textedit.h">
+      <Filter>Resource Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGui\imstb_truetype.h">
+      <Filter>Resource Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
