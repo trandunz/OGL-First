@@ -55,6 +55,7 @@ namespace Harmony
 		}
 		int GetInstanceMatrixSize();
 
+		void RayIntersection(glm::vec3 _direction);
 		bool Contains(glm::vec3 _point);
 		std::vector<bool> Intersects();
 

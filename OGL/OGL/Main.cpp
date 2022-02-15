@@ -1,7 +1,7 @@
 #include "Entity.h"
 
-static int m_WindowWidth = 1600;
-static int m_WindowHeight = 900;
+static int m_WindowWidth = 1920;
+static int m_WindowHeight = 1080;
 
 static double deltaTime = 0.0;	// Time between current frame and last frame
 static double lastFrame = 0.0; // Time of last frame
@@ -39,7 +39,7 @@ Harmony::Entity m_CubemapEntity;
 
 bool firstMouse = true;
 bool m_ShowMouse = false;
-static float lastX = 0.0f, lastY = 0.0f;
+static double lastX = 0, lastY = 0;
 
 static void error_callback(int error, const char* description)
 {
@@ -49,17 +49,18 @@ static void error_callback(int error, const char* description)
 static void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos)
 {
 	m_MousePickEntity.GetComponent<MousePickerComponent>().MousePicker.GrabMousePosition(xPos, yPos);
+
 	if (firstMouse)
 	{
-		lastX = (float)xPos;
-		lastY = (float)yPos;
+		lastX = xPos;
+		lastY = yPos;
 		firstMouse = false;
 	}
-	auto xoffset = (float)xPos - lastX;
-	lastX = (float)xPos;
+	auto xoffset = xPos - lastX;
+	lastX = xPos;
 
 	auto yoffset = lastY - yPos;
-	lastY = (float)yPos;
+	lastY = yPos;
 
 	if (!m_ShowMouse)
 		m_CamEntity.GetComponent<CameraComponent>().Camera.ProcessMouse((float)xoffset, (float)yoffset);
@@ -412,7 +413,7 @@ void Update()
 			//mesh.Mesh.ModifyInstance(2, tempTransform);
 
 			STransform GravityTrans;
-			GravityTrans.position = {0.0f, -9.81f * deltaTime, 0.0f};
+			GravityTrans.position = { -9.81f * deltaTime, -9.81f * deltaTime, 0 };
 			GravityTrans.scale = { 1.0f,1.0f,1.0f };
 			GravityTrans.rotation_amount = 0;
 
@@ -422,6 +423,8 @@ void Update()
 			}
 			
 			mesh.Mesh.HandleCollision();
+
+			mesh.Mesh.RayIntersection(m_CamEntity.GetComponent<CameraComponent>().Camera.Front);
 		}
 	}
 	{
@@ -441,10 +444,10 @@ void Update()
 		}
 	}
 	{
-		auto view = m_Scene.GetReg().view<MousePickerComponent>();
-		for (auto entity : view)
+		auto mouseView = m_Scene.GetReg().view<MousePickerComponent>();
+		for (auto entity : mouseView)
 		{
-			auto& mousePicker = view.get<MousePickerComponent>(entity);
+			auto& mousePicker = mouseView.get<MousePickerComponent>(entity);
 			mousePicker.MousePicker.Update();
 		}
 	}

@@ -12,7 +12,9 @@ namespace Harmony
 		{
 			STransform transform;
 			transform.position = { i + i,20 ,0 };
+			transform.rotation = { 0,0,1 };
 			transform.scale = { 1, 1,1 };
+			transform.rotation_amount = 45;
 			CreateInstance(transform);
 		}
 		STransform transform;
@@ -335,7 +337,7 @@ namespace Harmony
 
 	glm::mat4 Mesh::CalculateModelTransformations(glm::mat4& _model, STransform& _transform)
 	{
-		_model = glm::translate(glm::mat4(1), _transform.position);
+		_model = glm::translate(glm::mat4(1.0), _transform.position);
 		if (_transform.rotation.x != 0.0f)
 		{
 			_model = glm::rotate(_model, _transform.rotation_amount, _transform.rotation);
@@ -373,7 +375,7 @@ namespace Harmony
 
 	void Mesh::CreateInstance(STransform _transform)
 	{
-		glm::mat4 tempMat;
+		glm::mat4 tempMat(1);
 		CalculateModelTransformations(tempMat, _transform);
 		m_InstanceMatrix.push_back(tempMat);
 		m_InstanceCount++;
@@ -388,7 +390,7 @@ namespace Harmony
 
 	void Mesh::ModifyInstance(unsigned int _index, STransform _transform)
 	{
-		glm::mat4 tempMat;
+		glm::mat4 tempMat = m_InstanceMatrix[_index];
 		CalculateModelTransformations(tempMat, _transform);
 		m_InstanceMatrix[_index] = tempMat;
 	}
@@ -404,6 +406,19 @@ namespace Harmony
 	int Mesh::GetInstanceMatrixSize()
 	{
 		return m_InstanceMatrix.size();
+	}
+
+	void Mesh::RayIntersection(glm::vec3 _direction)
+	{
+		Physics::Cube meshCube;
+		for (int i = 0; i < m_InstanceMatrix.size(); i++)
+		{
+			if (Physics::hitsOBB(meshCube.Get_Low_neg(), meshCube.Get_High_pos(), m_InstanceMatrix[i], m_Camera->Position, _direction))
+			{
+				Print("Instance " + std::to_string(i) + " Intersected Camera Ray!");
+			}
+			
+		}
 	}
 
 	bool Mesh::Contains(glm::vec3 _point)

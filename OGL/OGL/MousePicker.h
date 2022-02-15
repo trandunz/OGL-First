@@ -20,7 +20,7 @@ namespace Harmony
             m_Camera = nullptr;
         }
 
-        void GrabMousePosition(double _xPos, double _yPos)
+        void GrabMousePosition(const double& _xPos, const double& _yPos)
         {
             m_MouseX = _xPos;
             m_MouseY = _yPos;
