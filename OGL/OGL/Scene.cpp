@@ -3,7 +3,7 @@
 
 namespace Harmony
 {
-	Entity Scene::CreateEntity(const std::string _name)
+	Entity Scene::CreateEntity(std::string_view _name)
 	{
 		Entity entity = { m_Registy.create(), this };
 		entity.AddComponent<TransformComponent>();	// Transform

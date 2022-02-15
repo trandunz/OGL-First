@@ -444,7 +444,7 @@ namespace Harmony
 				{
 					collisions[i] = true;
 					break;
-					std::cout << "Collision" << std::endl;
+					Print("Collision" );
 				}
 			}
 		}

@@ -11,7 +11,7 @@ namespace Harmony
 		Scene() = default;
 		~Scene() = default;
 
-		Entity CreateEntity(const std::string _name = {});
+		Entity CreateEntity(std::string_view _name = {});
 
 		entt::registry& GetReg() { return m_Registy; }
 		void DeleteEntity(entt::entity& _entity);

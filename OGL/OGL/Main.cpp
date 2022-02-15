@@ -168,7 +168,7 @@ void InitGLFW()
 	// Check if glfw Initalises correctly
 	if (glfwInit() == GLFW_FALSE)
 	{
-		std::cout << "Failed to Initalise GLFW" << std::endl;
+		Print("Failed to Initalise GLFW");
 	}
 
 	// Setting Version And Profile ; 460 : CORE
@@ -199,7 +199,7 @@ void InitGLFW()
 	glfwMakeContextCurrent(m_RenderWindow);
 
 	if (glewInit() != GLEW_OK)
-		std::cout << "Failed to Initalise GLEW" << std::endl;
+		Print("Failed to Initalise GLEW");
 
 	// Callbacks
 	InitGLFWCallbacks();
@@ -292,25 +292,21 @@ void HandleImGuiDebugInfo()
 		for (auto entity : view)
 		{
 			auto& camera = view.get<CameraComponent>(entity);
-			std::string camPosZ = std::to_string(camera.Camera.Position.z);
-			std::string camPosY = std::to_string(camera.Camera.Position.y);
 			std::string camPos = "Main Camera Position(x,y,z) = {";
 			camPos += std::to_string(camera.Camera.Position.x);
 			camPos += ",";
-			camPos += camPosY.c_str();
+			camPos += std::to_string(camera.Camera.Position.y);
 			camPos += ",";
-			camPos += camPosZ.c_str();
+			camPos += std::to_string(camera.Camera.Position.z);
 			camPos += "}";
 
 			// Camera Front(x,y,z)
-			std::string camFrontZ = std::to_string(camera.Camera.Front.z);
-			std::string camFrontY = std::to_string(camera.Camera.Front.y);
 			std::string camFront = "Main Camera Front(i^,j^,k^) = {";
 			camFront += std::to_string(camera.Camera.Front.x);
 			camFront += ",";
-			camFront += camFrontY.c_str();
+			camFront += std::to_string(camera.Camera.Front.y);
 			camFront += ",";
-			camFront += camFrontZ.c_str();
+			camFront += std::to_string(camera.Camera.Front.z);
 			camFront += "}";
 
 			camera.Camera.ImGUIHandler();
@@ -362,15 +358,12 @@ void HandleImGuiDebugInfo()
 		{
 			auto& mousePicker = view.get<MousePickerComponent>(entity);
 
-			std::string mousePosX = std::to_string(mousePicker.MousePicker.GetCurrentRay().x);
-			std::string mousePosZ = std::to_string(mousePicker.MousePicker.GetCurrentRay().z);
-			std::string mousePosY = std::to_string(mousePicker.MousePicker.GetCurrentRay().y);
 			std::string mousePos = "Mouse Position(i^,j^,k^) = {";
-			mousePos += mousePosX.c_str();
+			mousePos += std::to_string(mousePicker.MousePicker.GetCurrentRay().x);
 			mousePos += ",";
-			mousePos += mousePosY.c_str();
+			mousePos += std::to_string(mousePicker.MousePicker.GetCurrentRay().y);
 			mousePos += ",";
-			mousePos += mousePosZ.c_str();
+			mousePos += std::to_string(mousePicker.MousePicker.GetCurrentRay().z);
 			mousePos += "}";
 
 			ImGui::Text(mousePos.c_str());

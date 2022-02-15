@@ -76,7 +76,7 @@ namespace Harmony
 			}
 			else
 			{
-				std::cout << "Failed to load texture: " << facesCubemap[i] << std::endl;
+				Print("Failed to load texture: " + facesCubemap[i] );
 				stbi_image_free(data);
 			}
 		}

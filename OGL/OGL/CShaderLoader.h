@@ -21,7 +21,7 @@ namespace Harmony
             // Compile vertex shader
             if (IsDebug)
             {
-                std::cout << "Compiling vertex shader." << std::endl;
+                Print("Compiling vertex shader.");
             }
             glCompileShader(vertShader);
 
@@ -34,8 +34,8 @@ namespace Harmony
                 glGetShaderiv(vertShader, GL_INFO_LOG_LENGTH, &length);
                 char* message = (char*)_malloca(length * sizeof(char));
                 glGetShaderInfoLog(vertShader, length, &length, message);
-                std::cout << "Failed to Compile Vertex Shader" << std::endl;
-                std::cout << message << std::endl;
+                Print("Failed to Compile Vertex Shader");
+                Print(message);
                 glDeleteShader(vertShader);
                 return 0;
             }
@@ -52,7 +52,7 @@ namespace Harmony
             // Compile Frag shader
             if (IsDebug)
             {
-                std::cout << "Compiling fragment shader." << std::endl;
+                Print("Compiling fragment shader.");
             }
             glCompileShader(fragShader);
 
@@ -65,8 +65,8 @@ namespace Harmony
                 glGetShaderiv(fragShader, GL_INFO_LOG_LENGTH, &length);
                 char* message = (char*)_malloca(length * sizeof(char));
                 glGetShaderInfoLog(fragShader, length, &length, message);
-                std::cout << "Failed to Compile Vertex Shader" << std::endl;
-                std::cout << message << std::endl;
+                Print("Failed to Compile Vertex Shader");
+                Print(message);
                 glDeleteShader(fragShader);
                 return 0;
             }
@@ -83,7 +83,7 @@ namespace Harmony
             // Compile Frag shader
             if (IsDebug)
             {
-                std::cout << "Compiling Geometry shader." << std::endl;
+                Print("Compiling Geometry shader.");
             }
             glCompileShader(geoShader);
 
@@ -96,8 +96,8 @@ namespace Harmony
                 glGetShaderiv(geoShader, GL_INFO_LOG_LENGTH, &length);
                 char* message = (char*)_malloca(length * sizeof(char));
                 glGetShaderInfoLog(geoShader, length, &length, message);
-                std::cout << "Failed to Compile Vertex Shader" << std::endl;
-                std::cout << message << std::endl;
+                Print("Failed to Compile Vertex Shader");
+                Print(message);
                 glDeleteShader(geoShader);
                 return 0;
             }
@@ -120,7 +120,7 @@ namespace Harmony
 
             if (IsDebug)
             {
-                std::cout << "Attaching Shaders" << std::endl;
+                Print("Attaching Shaders");
             }
             glAttachShader(program, vertShader);
             if (_geoShader != "")
@@ -129,14 +129,14 @@ namespace Harmony
 
             if (IsDebug)
             {
-                std::cout << "Linking program" << std::endl;
+                Print("Linking program");
             }
             glLinkProgram(program);
             glValidateProgram(program);
 
             if (IsDebug)
             {
-                std::cout << "Deleting Shaders" << std::endl;
+                Print("Deleting Shaders" );
             }
             glDeleteShader(vertShader);
             if (_geoShader != "")
@@ -152,7 +152,7 @@ namespace Harmony
             std::ifstream fileStream(_fileAddress, std::ios::in);
 
             if (!fileStream.is_open()) {
-                std::cerr << "Could not read file " << _fileAddress << ". File does not exist." << std::endl;
+                Print("Could not read file " + _fileAddress + ". File does not exist." );
                 return "";
             }
 

@@ -20,20 +20,20 @@ namespace Harmony
 			m_Textures.erase(std::remove(m_Textures.begin(), m_Textures.end(), nullptr), m_Textures.end());
 			m_TextureIDs.clear();
 		}
-		void LoadTexture(std::string _path)
+		void LoadTexture(std::string_view _path)
 		{
 			m_TextureIDs.push_back(m_Textures.size());
-			m_Textures.push_back(new Texture(_path.c_str(), m_Textures.size(), GL_RGB));
+			m_Textures.push_back(new Texture(_path.data(), m_Textures.size(), GL_RGB));
 		}
-		void LoadNormal(std::string _path)
+		void LoadNormal(std::string_view _path)
 		{
 			m_TextureIDs.push_back(m_Textures.size());
-			m_Textures.push_back(new Texture(_path.c_str(), m_Textures.size(), GL_RGB));
+			m_Textures.push_back(new Texture(_path.data(), m_Textures.size(), GL_RGB));
 		}
-		void LoadSpecular(std::string _path)
+		void LoadSpecular(std::string_view _path)
 		{
 			m_TextureIDs.push_back(m_Textures.size());
-			m_Textures.push_back(new Texture(_path.c_str(), m_Textures.size(), GL_RED));
+			m_Textures.push_back(new Texture(_path.data(), m_Textures.size(), GL_RED));
 		}
 
 

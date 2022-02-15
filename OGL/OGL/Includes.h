@@ -16,6 +16,12 @@
 #include <map>
 #include <algorithm>
 #include <unordered_map>
+#include <charconv>
 
 #include <entt/entt.hpp>
+
+static void Print(std::string_view _string)
+{
+	std::cout << _string << std::endl;
+}
 
